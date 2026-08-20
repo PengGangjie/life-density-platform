@@ -4,3 +4,10 @@ __pycache__/
 *.pyc
 .venv/
 *.log
+
+# LOGO 生成中间态（data URI / 上传参数），勿进公开仓
+brand/_*
+brand/*.txt
+brand/*.jpg
+brand/*.json
+brand/app-logo-v*.png

@@ -1,17 +1,121 @@
+/* 人生量化 · 云端 UI：品牌栏 + 登录门禁 */
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  background: #f3f0ea;
+}
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.15;
+}
+.brand-mark {
+  font-family: var(--display);
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.brand-sub {
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .topnav-auth {
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .topnav-auth .topnav-cta { margin-left: 0; }
 .topnav-login, #navLogout, #navInstall {
-  display: inline-flex; align-items: center;
-  padding: 7px 12px; border-radius: 999px;
-  font-size: 0.78rem; text-decoration: none;
-  border: 1px solid var(--ink); color: var(--ink); background: transparent;
-  cursor: pointer; font: inherit;
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
 }
 #navLogout { border-color: var(--line); color: var(--muted); }
-#navUser { font-size: 0.75rem; color: var(--muted); max-width: 12em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cloud-sync-hint { font-size: 0.78rem; color: var(--muted); margin: 8px 0 0; }
+#navUser {
+  font-size: 0.75rem;
+  color: var(--muted);
+  max-width: 12em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cloud-sync-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+
+/* 登录门禁：未就绪先藏工具，避免闪一下 */
+body.auth-pending .auth-gated,
+body.auth-pending .guest-gate { display: none !important; }
+body.is-guest .auth-gated { display: none !important; }
+body.is-guest .topnav-links a[href="#paths"],
+body.is-guest .topnav-links a[href="#workspace"],
+body.is-guest .topnav-cta,
+body.is-guest .hero-actions .btn[href="#workspace"],
+body.is-guest .hero-actions .btn[href="#paths"] { display: none !important; }
+body.auth-pending .guest-only,
+body.is-authed .guest-only { display: none !important; }
+body.is-guest .guest-only { display: inline-flex !important; }
+body.is-authed .guest-gate { display: none !important; }
+body.is-guest .guest-gate { display: block; }
+
+.guest-gate {
+  max-width: 920px;
+  margin: 0 auto 48px;
+  padding: 28px 24px;
+}
+.guest-gate-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 28px 26px;
+  box-shadow: 0 10px 30px rgba(17, 17, 17, 0.04);
+}
+.guest-gate-card h2 {
+  font-family: var(--display);
+  font-size: 1.35rem;
+  margin: 0 0 10px;
+}
+.guest-gate-card p {
+  margin: 0 0 18px;
+  color: var(--ink-soft);
+  max-width: 36em;
+}
+.guest-gate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
 @media (max-width: 720px) {
   .topnav-auth .topnav-cta { display: none; }
+  .brand-sub { display: none; }
+  .brand-logo { width: 30px; height: 30px; }
 }

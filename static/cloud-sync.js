@@ -1,7 +1,7 @@
-/* 人生量化 · 登录态 + 云同步 + PWA 安装 */
+/* 人生量化 · 登录态 + 云同步 + PWA 安装 + 工具台门禁 */
 (function () {
   const CLOUD_DEBOUNCE_MS = 800;
-  let _me = { authenticated: false };
+  let _me = { authenticated: false, auth_configured: false };
   let _cloudTimer = null;
   let _deferredPrompt = null;
   let _hydrating = false;
@@ -13,12 +13,19 @@
     if (el) el.textContent = text || "";
   }
 
+  function canUseWorkspace() {
+    if (location.protocol === "file:") return true;
+    if (_me.authenticated) return true;
+    // 未配置 Logto（本地部署）时允许直接用工具台
+    return _me.auth_configured === false;
+  }
+
   async function fetchMe() {
     try {
       const res = await fetch("/api/me", { credentials: "same-origin" });
       _me = await res.json();
     } catch {
-      _me = { authenticated: false };
+      _me = { authenticated: false, auth_configured: false };
     }
     paintAuth();
     return _me;
@@ -28,26 +35,57 @@
     const login = $("navLogin");
     const logout = $("navLogout");
     const user = $("navUser");
-    if (!login) return;
+    const ok = canUseWorkspace();
+
+    document.body.classList.remove("auth-pending");
+    document.body.classList.toggle("is-authed", ok);
+    document.body.classList.toggle("is-guest", !ok);
+
+    const guest = $("guestGate");
+    if (guest) guest.hidden = ok;
+
     if (_me.authenticated) {
-      login.hidden = true;
+      if (login) login.hidden = true;
       if (logout) logout.hidden = false;
       if (user) {
         user.hidden = false;
-        user.textContent = _me.email || _me.phone || "已登录";
+        user.textContent = _me.email || _me.phone || _me.name || "已登录";
       }
       setSyncHint("已登录 · 保存会同步到云端");
     } else {
-      login.hidden = false;
+      if (login) login.hidden = false;
       if (logout) logout.hidden = true;
       if (user) {
         user.hidden = true;
         user.textContent = "";
       }
-      setSyncHint(_me.auth_configured === false
-        ? "云登录未配置 · 数据仅本机"
-        : "未登录 · 数据仅本机，登录后可跨设备");
+      if (!ok) {
+        setSyncHint("登录后可使用工具台，并跨设备同步");
+      } else if (_me.auth_configured === false) {
+        setSyncHint("云登录未配置 · 数据仅本机");
+      } else {
+        setSyncHint("未登录 · 数据仅本机，登录后可跨设备");
+      }
     }
+  }
+
+  function requireLogin(event) {
+    if (canUseWorkspace()) return false;
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    location.href = "/sign-in";
+    return true;
+  }
+
+  function setupAuthGuards() {
+    document.addEventListener("click", (event) => {
+      if (canUseWorkspace()) return;
+      const t = event.target.closest("[data-panel], a[href='#workspace'], a[href='#paths'], .path-card");
+      if (!t) return;
+      requireLogin(event);
+    }, true);
   }
 
   async function hydrateFromCloud() {
@@ -155,6 +193,11 @@
     navigator.serviceWorker.register("/sw.js").catch(() => {});
   }
 
+  if (!document.body.classList.contains("is-authed") && !document.body.classList.contains("is-guest")) {
+    document.body.classList.add("auth-pending");
+  }
+
+  setupAuthGuards();
   wrapSaveState();
   setupInstall();
   registerSw();

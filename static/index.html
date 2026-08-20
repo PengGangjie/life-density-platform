@@ -681,11 +681,14 @@
   <link rel="stylesheet" href="/cloud-ui.css" />
 </head>
 
-<body>
+<body class="auth-pending">
   <nav class="topnav" aria-label="主导航">
     <a class="brand" href="#top">
-      <span class="brand-mark">人生量化工具箱</span>
-      <span class="brand-sub">Life OS</span>
+      <img class="brand-logo" src="/brand/app-logo.png" width="34" height="34" alt="人生量化" />
+      <span class="brand-text">
+        <span class="brand-mark">人生量化工具箱</span>
+        <span class="brand-sub">Life OS</span>
+      </span>
     </a>
     <div class="topnav-links">
       <a href="#paths">路径</a>
@@ -709,10 +712,24 @@
     <div class="hero-actions">
       <a class="btn" href="#workspace" data-panel="density">打开工具台</a>
       <a class="btn btn-ghost" href="#paths">先看三条路径</a>
+      <a class="btn guest-only" href="/sign-in">登录后使用工具台</a>
+      <a class="btn btn-ghost guest-only" href="#faq">先看常见问题</a>
     </div>
   </header>
 
-  <section class="path-section" id="paths">
+  
+  <section class="guest-gate" id="guestGate" hidden>
+    <div class="guest-gate-card">
+      <h2>登录后进入工具台</h2>
+      <p>路径选择、十个模块与写入操作仅对登录用户开放。登录后可跨设备同步你的人生量化记录。</p>
+      <div class="guest-gate-actions">
+        <a class="btn" href="/sign-in">登录 / 注册</a>
+        <a class="btn btn-ghost" href="#faq">先看常见问题</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="path-section auth-gated" id="paths">
     <p class="section-kicker">从你最关心的地方开始</p>
     <h2 class="section-title">想先量化日常、理清决策、练 AI 协作、校准思维，还是看生命之轮？</h2>
     <p class="section-desc">五选一进入。工具都在同一套数据里，随时切换。</p>
@@ -750,7 +767,7 @@
     </div>
   </section>
 
-  <main class="workspace" id="workspace">
+  <main class="workspace auth-gated" id="workspace">
     <div class="workspace-shell">
       <div class="workspace-head">
         <p class="section-kicker">工具台 · Workspace</p>
@@ -1599,7 +1616,7 @@
           <p>Leon 的 Wheel of Life：健康 / 财富 / 幸福各三维，0–10 打分。真源腾讯文档 <code>DQkZ1RERNbEZOdmd0</code>。分数写入 <code>wheel</code>，快照写入 <code>wheelSnaps</code>。下方仍可检索三课卡片（<code>leonMarks</code>）。</p>
         </details>
       </div>
-      <p class="footer-note">人生量化工具箱 · 登录后跨设备同步 · 也可仅本机使用</p>
+      <p class="footer-note">人生量化工具箱 · 登录后使用工具台 · 跨设备同步</p>
     </div>
   </footer>
 

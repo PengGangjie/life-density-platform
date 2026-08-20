@@ -21,6 +21,7 @@ PUBLIC_PREFIXES = (
     "/callback",
     "/sign-out",
     "/assets/",
+    "/brand/",
     "/manifest.json",
     "/sw.js",
     "/icons/",
