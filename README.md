@@ -1,8 +1,17 @@
 # 人生量化工具箱（网页 + PWA）
 
-本地十合一工具的云端版：Logto 注册登录，Turso 同步数据，手机「添加到主屏幕」当 APP 用。
+独立项目，与实训科管理平台（`gxstzy-shixun`）**分开**：
 
-## 本地运行
+| | 人生量化 | 实训科 |
+|--|----------|--------|
+| Space | `life-density` | `gxstzy-shixun` |
+| 凭证 | `secrets/life-density/` | `secrets/shixun-platform/` |
+| Logto 应用 | 新建 `life-density` | `gxstzy-shixun-v2` |
+| Turso 库 | 新建 `life-density` | `gxstzy-shixun` |
+
+未登录可先试用（数据在浏览器）；配好独立 Logto + Turso 后可注册并云同步。
+
+## 本地
 
 ```powershell
 cd c:\00CS\text
@@ -11,13 +20,9 @@ cd output\life-density-platform
 ..\..\venv\Scripts\uvicorn.exe app.main:app --host 127.0.0.1 --port 8010
 ```
 
-打开 http://127.0.0.1:8010/ — 未登录也能用（数据在浏览器）；登录后写入云端。
+## 部署
 
-## Space
+1. 按 `secrets/life-density/README.md` 新建 Logto 应用与 Turso 库，写入 `.env`
+2. `.\venv\Scripts\python.exe scripts\deploy_life_density_space.py`
 
-- **service_name**：`life-density`
-- **URL**：https://life-density.ai-builders.space
-- Logto Redirect URI：`https://life-density.ai-builders.space/callback`
-- Post sign-out：`https://life-density.ai-builders.space/`
-
-可复用实训科同一套 Logto 应用，把上面两条 URI **Add another** 进去即可。
+线上：https://life-density.ai-builders.space

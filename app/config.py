@@ -1,4 +1,4 @@
-"""人生量化工具箱 · 配置（密钥从环境变量读取）。"""
+"""人生量化工具箱 · 配置（密钥从 secrets/life-density 读取，与实训科分离）。"""
 from __future__ import annotations
 
 import os
@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parents[1]
 for candidate in (
-    ROOT / "secrets" / "shixun-platform" / ".env",
-    Path(r"c:\00CS\text\secrets\shixun-platform\.env"),
+    ROOT / "secrets" / "life-density" / ".env",
+    Path(r"c:\00CS\text\secrets\life-density\.env"),
 ):
     if candidate.is_file():
         load_dotenv(candidate, override=False)
@@ -52,7 +52,6 @@ def get_settings() -> Settings:
     return Settings(
         app_name="life-density",
         session_secret=os.getenv("SESSION_SECRET", "dev-change-me-in-production"),
-        # 默认不强制登录：可先试用，登录后才云同步
         auth_required=os.getenv("AUTH_REQUIRED", "false").lower() in {"1", "true", "yes"},
         logto_endpoint=os.getenv("LOGTO_ENDPOINT", "").strip(),
         logto_app_id=os.getenv("LOGTO_APP_ID", "").strip(),
