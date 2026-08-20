@@ -1,0 +1,11 @@
+{
+  "repo_url": "https://github.com/PengGangjie/life-density-platform",
+  "service_name": "life-density",
+  "branch": "main",
+  "env_vars": {
+    "APP_MODE": "prod",
+    "LOG_LEVEL": "info",
+    "AUTH_REQUIRED": "false",
+    "PUBLIC_BASE_URL": "https://life-density.ai-builders.space"
+  }
+}

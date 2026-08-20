@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>认知偏差环 · Bloom Codex</title>
+  <style>
+    :root {
+      --bg: #efebe3;
+      --bg-soft: #f7f4ee;
+      --ink: #1c1a17;
+      --muted: #7a7368;
+      --line: #ddd4c6;
+      --card: #ffffff;
+      --info: #c9952a;
+      --meaning: #2a9d8a;
+      --action: #c45c4a;
+      --memory: #3d5a80;
+      --font: "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --display: "Libre Baskerville", "Songti SC", "Noto Serif SC", Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: var(--font);
+      color: var(--ink);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 70% 50% at 50% -10%, rgba(201, 149, 42, 0.08), transparent 50%),
+        linear-gradient(180deg, var(--bg-soft), var(--bg));
+      line-height: 1.5;
+    }
+    a { color: inherit; }
+
+    .top {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 22px;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      position: sticky; top: 0; z-index: 40;
+    }
+    .brand { text-decoration: none; }
+    .brand strong {
+      font-family: var(--display); font-size: 1.2rem; letter-spacing: -0.02em;
+    }
+    .brand span {
+      display: block; font-size: 0.68rem; color: var(--muted);
+      letter-spacing: 0.14em; text-transform: uppercase; margin-top: 2px;
+    }
+    .top-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .top-links a, .top-links button {
+      font: inherit; font-size: 0.8rem; text-decoration: none;
+      border: 1px solid var(--line); background: #fff; color: var(--ink);
+      border-radius: 999px; padding: 7px 14px; cursor: pointer;
+    }
+    .top-links .primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+    .shell {
+      max-width: 1280px; margin: 0 auto;
+      padding: 18px 18px 36px;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr) 320px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(28, 26, 23, 0.04);
+    }
+
+    .left { padding: 18px 16px; position: sticky; top: 68px; }
+    .left h2 {
+      font-family: var(--display); font-size: 1.55rem; margin: 0 0 6px;
+      letter-spacing: -0.02em;
+    }
+    .left .lead { font-size: 0.82rem; color: var(--muted); margin: 0 0 16px; }
+    .stat-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;
+    }
+    .stat {
+      background: var(--bg-soft); border-radius: 12px; padding: 10px 12px;
+      border: 1px solid var(--line);
+    }
+    .stat b {
+      display: block; font-family: var(--display); font-size: 1.35rem; line-height: 1.1;
+    }
+    .stat span { font-size: 0.7rem; color: var(--muted); }
+    .legend { display: grid; gap: 8px; margin-bottom: 16px; }
+    .legend button {
+      display: grid; grid-template-columns: 12px 1fr; gap: 10px; align-items: start;
+      text-align: left; border: 1px solid var(--line); background: #fff;
+      border-radius: 12px; padding: 10px; cursor: pointer; font: inherit;
+    }
+    .legend button.on { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+    .legend button:hover { background: var(--bg-soft); }
+    .legend .dot { width: 12px; height: 12px; border-radius: 3px; margin-top: 3px; }
+    .legend b { display: block; font-size: 0.86rem; }
+    .legend small { display: block; color: var(--muted); font-size: 0.72rem; margin-top: 2px; }
+    .howto {
+      font-size: 0.75rem; color: var(--muted); border-top: 1px solid var(--line);
+      padding-top: 12px; margin: 0;
+    }
+    .howto strong { color: var(--ink); }
+
+    .center { padding: 14px 14px 18px; min-height: 640px; }
+    .center-head {
+      display: flex; justify-content: space-between; align-items: flex-end; gap: 10px;
+      padding: 4px 6px 10px;
+    }
+    .center-head h1 {
+      font-family: var(--display); font-size: 1.25rem; margin: 0;
+    }
+    .center-head p { margin: 2px 0 0; font-size: 0.78rem; color: var(--muted); }
+    .crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 0.75rem; }
+    .crumbs button {
+      border: 1px solid var(--line); background: var(--bg-soft); border-radius: 999px;
+      padding: 4px 10px; font: inherit; font-size: 0.75rem; cursor: pointer;
+    }
+    .crumbs .here { font-weight: 700; }
+
+    .viz-wrap {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(180px, 0.85fr);
+      gap: 8px;
+      align-items: stretch;
+      min-height: 560px;
+    }
+    .ring-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .ring-box svg { width: 100%; height: 100%; display: block; }
+    .ring-box .hit { cursor: pointer; }
+    .ring-box .hit:hover { filter: brightness(1.05); }
+
+    .label-rail {
+      position: relative;
+      border-left: 1px dashed var(--line);
+      padding: 8px 4px 8px 10px;
+      max-height: 620px;
+      overflow: auto;
+    }
+    .rail-title {
+      font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); margin: 0 0 10px; font-weight: 700;
+    }
+    .rail-item {
+      display: grid; grid-template-columns: 14px 1fr; gap: 8px; align-items: start;
+      width: 100%; text-align: left; border: none; background: transparent;
+      padding: 7px 6px; border-radius: 10px; cursor: pointer; font: inherit;
+      margin-bottom: 2px;
+    }
+    .rail-item:hover, .rail-item.on { background: var(--bg-soft); }
+    .rail-item .tick {
+      width: 10px; height: 10px; border-radius: 50%; margin-top: 4px;
+      border: 2px solid currentColor; background: #fff;
+    }
+    .rail-item.on .tick { background: currentColor; }
+    .rail-item .name { font-size: 0.84rem; font-weight: 600; line-height: 1.3; }
+    .rail-item .meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .rail-empty {
+      font-size: 0.8rem; color: var(--muted); padding: 20px 8px; line-height: 1.55;
+    }
+
+    .right { padding: 18px 16px; position: sticky; top: 68px; max-height: calc(100vh - 86px); overflow: auto; }
+    .right .eyebrow {
+      font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); margin: 0 0 8px; font-weight: 700;
+    }
+    .right h2 {
+      font-family: var(--display); font-size: 1.45rem; margin: 0 0 4px; line-height: 1.25;
+    }
+    .right .en { color: var(--muted); font-size: 0.85rem; margin: 0 0 14px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid currentColor; border-radius: 999px;
+      padding: 5px 11px; font-size: 0.76rem; margin-bottom: 12px;
+    }
+    .pill i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .block {
+      border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px;
+      margin-bottom: 10px; background: var(--bg-soft);
+    }
+    .block h3 {
+      margin: 0 0 6px; font-size: 0.68rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .block p { margin: 0; font-size: 0.9rem; }
+    .related { display: flex; flex-wrap: wrap; gap: 6px; }
+    .related button, .related a {
+      font: inherit; font-size: 0.74rem; border: 1px solid var(--line);
+      background: #fff; border-radius: 8px; padding: 6px 10px; cursor: pointer; text-decoration: none;
+    }
+
+    .footnote {
+      max-width: 1280px; margin: 0 auto; padding: 0 18px 28px;
+      font-size: 0.74rem; color: var(--muted);
+    }
+
+    @media (max-width: 1100px) {
+      .shell { grid-template-columns: 1fr; }
+      .left, .right { position: relative; top: 0; max-height: none; }
+      .viz-wrap { grid-template-columns: 1fr; }
+      .label-rail { border-left: none; border-top: 1px dashed var(--line); max-height: 280px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="cognitive-bias-codex.html">
+      <strong>Bloom Codex</strong>
+      <span>Cognitive Bias Ring</span>
+    </a>
+    <div class="top-links">
+      <a href="cognitive-bias-explorer.html">检索界面</a>
+      <a href="index.html#workspace">工具箱</a>
+      <button type="button" class="primary" id="resetView">重置视图</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <!-- 左：图例与说明（Bloom 左下角图例 + 仪表盘左侧信息） -->
+    <aside class="card left">
+      <h2>Bloom</h2>
+      <p class="lead">同心环呈现四问题与策略弧；文字全部外置到引线列表，环上不堆字。</p>
+      <div class="stat-row">
+        <div class="stat"><b id="statTotal">—</b><span>偏差条目</span></div>
+        <div class="stat"><b id="statLayer">总览</b><span>当前层级</span></div>
+      </div>
+      <div class="legend" id="legend"></div>
+      <p class="howto">
+        <strong>读图：</strong>外环四色 = 四象限；中环弧段 = 策略；点弧或右侧名单展开下一层。引线连接「弧 ↔ 名称」。
+      </p>
+    </aside>
+
+    <!-- 中：环 + 引线标签轨 -->
+    <section class="card center">
+      <div class="center-head">
+        <div>
+          <h1>认知偏差环</h1>
+          <p>构图参考 Bloom 同心弧 + 仪表盘径向网格</p>
+        </div>
+        <div class="crumbs" id="crumbs"></div>
+      </div>
+      <div class="viz-wrap">
+        <div class="ring-box" id="ringBox">
+          <svg id="ringSvg" viewBox="0 0 1000 1000" role="img" aria-label="认知偏差同心环"></svg>
+        </div>
+        <div class="label-rail" id="labelRail">
+          <p class="rail-title" id="railTitle">Labels</p>
+          <div id="railList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 右：详情（仪表盘 Tasks 位） -->
+    <aside class="card right" id="detail">
+      <p class="eyebrow">Detail</p>
+      <h2 id="dTitle">选择环上的一截弧</h2>
+      <p class="en" id="dEn">或点右侧名单</p>
+      <div id="dBody"></div>
+    </aside>
+  </div>
+
+  <p class="footnote">
+    交互层级：四象限 → 策略弧 → 偏差名单。文字不在环上重叠。数据来自本地 Cognitive Bias Codex。
+  </p>
+
+  <script src="assets/cognitive-bias/biases-data.js"></script>
+  <script>
+    const QCOLOR = {
+      info: "#c9952a",
+      meaning: "#2a9d8a",
+      action: "#c45c4a",
+      memory: "#3d5a80"
+    };
+    const CX = 500, CY = 500;
+    // 四象限：上右 / 下右 / 下左 / 上左（顺时针，从 -90° 起算用我们的 polar）
+    // ang0..ang1 用 0=顶部 顺时针
+    const QUADS_LAYOUT = [
+      { id: "info", a0: 0, a1: 90 },
+      { id: "meaning", a0: 90, a1: 180 },
+      { id: "action", a0: 180, a1: 270 },
+      { id: "memory", a0: 270, a1: 360 }
+    ];
+
+    let focus = { quad: null, strat: null, bias: null };
+    /** 当前右侧名单对应的锚点（用于画引线） */
+    let railAnchors = []; // [{id, x, y, color, kind}]
+
+    function esc(s) {
+      return String(s ?? "").replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+    function codex() {
+      return window.COGNITIVE_BIAS_CODEX || { quadrants: [], biases: [], count: 0 };
+    }
+    function polar(r, deg) {
+      const a = (deg - 90) * Math.PI / 180;
+      return [CX + r * Math.cos(a), CY + r * Math.sin(a)];
+    }
+    function arcPath(r0, r1, a0, a1) {
+      const large = ((a1 - a0 + 360) % 360) > 180 ? 1 : 0;
+      const [x0, y0] = polar(r1, a0);
+      const [x1, y1] = polar(r1, a1);
+      const [x2, y2] = polar(r0, a1);
+      const [x3, y3] = polar(r0, a0);
+      return `M${x0} ${y0} A${r1} ${r1} 0 ${large} 1 ${x1} ${y1} L${x2} ${y2} A${r0} ${r0} 0 ${large} 0 ${x3} ${y3} Z`;
+    }
+    function midAng(a0, a1) { return (a0 + a1) / 2; }
+    function qMeta(id) { return (codex().quadrants || []).find((q) => q.id === id); }
+    function short(s, n = 22) {
+      s = String(s || "");
+      return s.length > n ? s.slice(0, n) + "…" : s;
+    }
+
+    function findStratOfBias(biasId) {
+      for (const q of (codex().quadrants || [])) {
+        const strats = q.strategies || [];
+        for (let si = 0; si < strats.length; si++) {
+          if ((strats[si].biases || []).some((b) => b.id === biasId)) {
+            focus.quad = q.id;
+            focus.strat = q.id + "::" + si;
+            return;
+          }
+        }
+      }
+    }
+
+    function renderLegend() {
+      const el = document.getElementById("legend");
+      el.innerHTML = (codex().quadrants || []).map((q) => `
+        <button type="button" class="${focus.quad === q.id ? "on" : ""}" data-quad="${esc(q.id)}">
+          <span class="dot" style="background:${QCOLOR[q.id]}"></span>
+          <span><b>${esc(q.zh)}</b><small>${esc(q.problem)}</small></span>
+        </button>`).join("");
+      el.querySelectorAll("[data-quad]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.quad;
+          focus = focus.quad === id && !focus.strat ? { quad: null, strat: null, bias: null }
+            : { quad: id, strat: null, bias: null };
+          renderAll();
+        });
+      });
+    }
+
+    function renderCrumbs() {
+      const el = document.getElementById("crumbs");
+      const parts = [`<button type="button" data-c="root">总览</button>`];
+      if (focus.quad) {
+        const q = qMeta(focus.quad);
+        parts.push(`<span>›</span>`);
+        parts.push(focus.strat
+          ? `<button type="button" data-c="quad">${esc(q.zh)}</button>`
+          : `<span class="here">${esc(q.zh)}</span>`);
+      }
+      if (focus.strat) {
+        const [qid, idx] = focus.strat.split("::");
+        const s = qMeta(qid)?.strategies?.[+idx];
+        parts.push(`<span>›</span>`);
+        parts.push(focus.bias
+          ? `<button type="button" data-c="strat">${esc(short(s?.zh, 12))}</button>`
+          : `<span class="here">${esc(short(s?.zh, 12))}</span>`);
+      }
+      if (focus.bias) {
+        const b = (codex().biases || []).find((x) => x.id === focus.bias);
+        parts.push(`<span>›</span><span class="here">${esc(b?.zh || "")}</span>`);
+      }
+      el.innerHTML = parts.join("");
+      el.querySelectorAll("[data-c]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const c = btn.dataset.c;
+          if (c === "root") focus = { quad: null, strat: null, bias: null };
+          if (c === "quad") focus = { quad: focus.quad, strat: null, bias: null };
+          if (c === "strat") focus = { quad: focus.quad, strat: focus.strat, bias: null };
+          renderAll();
+        });
+      });
+
+      document.getElementById("statTotal").textContent = String(codex().count || 0);
+      document.getElementById("statLayer").textContent =
+        focus.bias ? "偏差" : focus.strat ? "策略" : focus.quad ? "象限" : "总览";
+    }
+
+    function renderRing() {
+      const svg = document.getElementById("ringSvg");
+      railAnchors = [];
+      let g = "";
+
+      // 同心网格（仪表盘）
+      [120, 200, 280, 360, 430].forEach((r) => {
+        g += `<circle cx="${CX}" cy="${CY}" r="${r}" fill="none" stroke="#e5ddd0" stroke-dasharray="2 6" />`;
+      });
+      for (let i = 0; i < 12; i++) {
+        const a = i * 30;
+        const [x0, y0] = polar(110, a);
+        const [x1, y1] = polar(440, a);
+        g += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="#ebe3d6" stroke-width="1" />`;
+      }
+
+      // 中心盘
+      g += `<circle cx="${CX}" cy="${CY}" r="96" fill="#fff" stroke="#d9d0c2" />`;
+      g += `<text x="${CX}" y="${CY - 10}" text-anchor="middle" font-family="Georgia, Songti SC, serif" font-size="22" font-weight="700" fill="#1c1a17">${codex().count || 0}</text>`;
+      g += `<text x="${CX}" y="${CY + 16}" text-anchor="middle" font-size="11" fill="#7a7368" letter-spacing="1">BIASES</text>`;
+      g += `<text x="${CX}" y="${CY + 34}" text-anchor="middle" font-size="10" fill="#9a9286">four problems</text>`;
+
+      // 外环四色象限弧（Bloom 分类色带）
+      QUADS_LAYOUT.forEach((L) => {
+        const q = qMeta(L.id);
+        if (!q) return;
+        const color = QCOLOR[L.id];
+        const active = !focus.quad || focus.quad === L.id;
+        const opac = active ? 0.92 : 0.18;
+        g += `<path class="hit" data-quad="${L.id}" d="${arcPath(400, 448, L.a0 + 1.2, L.a1 - 1.2)}" fill="${color}" fill-opacity="${opac}" stroke="#fff" stroke-width="1.5"/>`;
+
+        // 象限短名：放在弧外中点，径向外侧，字少不叠
+        const ang = midAng(L.a0, L.a1);
+        const [tx, ty] = polar(475, ang);
+        const rot = ang > 90 && ang < 270 ? ang + 180 : ang;
+        g += `<text x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="middle"
+          transform="rotate(${rot} ${tx} ${ty})"
+          font-size="13" font-weight="700" fill="${active ? color : "#c5bdb0"}"
+          style="pointer-events:none">${esc(q.zh)}</text>`;
+
+        // 内层扇区底色
+        g += `<path d="${arcPath(108, 392, L.a0 + 0.8, L.a1 - 0.8)}" fill="${color}" fill-opacity="${focus.quad === L.id ? 0.08 : 0.03}" style="pointer-events:none"/>`;
+      });
+
+      // 策略层：Bloom 同心弧 —— 仅在选中象限时绘制
+      if (focus.quad) {
+        const L = QUADS_LAYOUT.find((x) => x.id === focus.quad);
+        const q = qMeta(focus.quad);
+        const strats = q?.strategies || [];
+        const color = QCOLOR[focus.quad];
+        const rInner = 150;
+        const rOuter = 385;
+        const band = (rOuter - rInner) / Math.max(strats.length, 1);
+
+        strats.forEach((s, si) => {
+          const key = focus.quad + "::" + si;
+          const r0 = rInner + si * band + 4;
+          const r1 = rInner + (si + 1) * band - 4;
+          const selected = focus.strat === key;
+          const dim = focus.strat && !selected;
+          // 弧只占该象限角度，两端留白
+          const pad = 6;
+          g += `<path class="hit" data-strat="${key}" d="${arcPath(r0, r1, L.a0 + pad, L.a1 - pad)}"
+            fill="${color}" fill-opacity="${dim ? 0.12 : selected ? 0.85 : 0.45}"
+            stroke="#fff" stroke-width="1"/>`;
+
+          // 锚点：弧中点外侧，供引线
+          const [ax, ay] = polar((r0 + r1) / 2, midAng(L.a0, L.a1));
+          railAnchors.push({
+            id: key, kind: "strat", x: ax, y: ay, color,
+            title: s.zh, meta: `${(s.biases || []).length} 条偏差`,
+            selected
+          });
+
+          // 选中策略后：在弧上画小刻度代表偏差（无文字）
+          if (selected) {
+            const biases = s.biases || [];
+            const span = (L.a1 - L.a0) - pad * 2;
+            biases.forEach((b, bi) => {
+              const t = biases.length <= 1 ? 0.5 : (bi + 0.5) / biases.length;
+              const ang = L.a0 + pad + t * span;
+              const [dx, dy] = polar(r1 + 6, ang);
+              const on = focus.bias === b.id;
+              g += `<circle class="hit" data-bias="${b.id}" cx="${dx}" cy="${dy}" r="${on ? 5 : 3.2}"
+                fill="${on ? color : "#fff"}" stroke="${color}" stroke-width="2"/>`;
+              railAnchors.push({
+                id: b.id, kind: "bias", x: dx, y: dy, color,
+                title: b.zh, meta: b.en, selected: on, bias: b
+              });
+            });
+          }
+        });
+      } else {
+        // 总览：每象限画若干细弧暗示「有多层策略」（装饰，不可点具体策略）
+        QUADS_LAYOUT.forEach((L) => {
+          const q = qMeta(L.id);
+          const n = Math.min((q?.strategies || []).length, 5);
+          const color = QCOLOR[L.id];
+          for (let i = 0; i < n; i++) {
+            const r0 = 160 + i * 42;
+            const r1 = r0 + 22;
+            g += `<path d="${arcPath(r0, r1, L.a0 + 10, L.a1 - 10)}" fill="${color}" fill-opacity="0.16" stroke="#fff" stroke-width="0.8" style="pointer-events:none"/>`;
+          }
+          // 总览引线锚点：象限中点
+          const [ax, ay] = polar(300, midAng(L.a0, L.a1));
+          railAnchors.push({
+            id: L.id, kind: "quad", x: ax, y: ay, color,
+            title: q?.zh || L.id, meta: `${q?.count || 0} 条 · ${ (q?.strategies||[]).length } 组策略`,
+            selected: false
+          });
+        });
+      }
+
+      // 引线画到右侧名单（SVG 内先画到环盒右缘，再用绝对定位对齐名单）
+      // 引线终点用固定 gutter，名单 HTML 对齐
+      const railX = 920;
+      const itemsForLines = focus.strat
+        ? railAnchors.filter((a) => a.kind === "bias")
+        : focus.quad
+          ? railAnchors.filter((a) => a.kind === "strat")
+          : railAnchors.filter((a) => a.kind === "quad");
+
+      itemsForLines.forEach((a, i) => {
+        const n = itemsForLines.length || 1;
+        const gy = 80 + (i + 0.5) * ((840) / n);
+        const [x1, y1] = [a.x, a.y];
+        const x2 = railX - 40;
+        const mid = (x1 + x2) / 2;
+        g += `<path d="M${x1} ${y1} C${mid} ${y1}, ${mid} ${gy}, ${x2} ${gy}"
+          fill="none" stroke="${a.color}" stroke-opacity="${a.selected ? 0.85 : 0.35}" stroke-width="${a.selected ? 1.6 : 1}"/>`;
+        g += `<circle cx="${x2}" cy="${gy}" r="3" fill="${a.color}" fill-opacity="${a.selected ? 1 : 0.55}"/>`;
+        a.lineY = gy; // 供名单垂直对齐参考（视觉近似）
+      });
+
+      svg.innerHTML = g;
+
+      svg.querySelectorAll("[data-quad]").forEach((el) => {
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const id = el.getAttribute("data-quad");
+          focus = { quad: id, strat: null, bias: null };
+          renderAll();
+        });
+      });
+      svg.querySelectorAll("[data-strat]").forEach((el) => {
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const key = el.getAttribute("data-strat");
+          focus = { quad: key.split("::")[0], strat: key, bias: null };
+          renderAll();
+        });
+      });
+      svg.querySelectorAll("[data-bias]").forEach((el) => {
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          focus.bias = el.getAttribute("data-bias");
+          renderAll();
+        });
+      });
+
+      renderRail(itemsForLines);
+    }
+
+    function renderRail(items) {
+      const title = document.getElementById("railTitle");
+      const list = document.getElementById("railList");
+      if (!focus.quad) {
+        title.textContent = "四象限";
+      } else if (!focus.strat) {
+        title.textContent = "策略弧";
+      } else {
+        title.textContent = "偏差名单";
+      }
+
+      if (!items.length) {
+        list.innerHTML = `<div class="rail-empty">点左侧图例或外环色带，开始展开。</div>`;
+        return;
+      }
+
+      list.innerHTML = items.map((a) => `
+        <button type="button" class="rail-item ${a.selected || focus.bias === a.id || focus.strat === a.id || focus.quad === a.id ? "on" : ""}"
+          style="color:${a.color}"
+          data-kind="${a.kind}" data-id="${esc(a.id)}">
+          <span class="tick"></span>
+          <span>
+            <div class="name">${esc(a.title)}</div>
+            <div class="meta">${esc(a.meta || "")}</div>
+          </span>
+        </button>`).join("");
+
+      list.querySelectorAll(".rail-item").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const kind = btn.dataset.kind;
+          const id = btn.dataset.id;
+          if (kind === "quad") focus = { quad: id, strat: null, bias: null };
+          if (kind === "strat") focus = { quad: id.split("::")[0], strat: id, bias: null };
+          if (kind === "bias") {
+            focus.bias = id;
+            if (!focus.strat) findStratOfBias(id);
+          }
+          renderAll();
+        });
+      });
+    }
+
+    function renderDetail() {
+      const body = document.getElementById("dBody");
+      const title = document.getElementById("dTitle");
+      const en = document.getElementById("dEn");
+
+      if (focus.bias) {
+        const b = (codex().biases || []).find((x) => x.id === focus.bias);
+        const q = qMeta(b?.quadrant);
+        title.textContent = b?.zh || "";
+        en.textContent = b?.en || "";
+        body.innerHTML = `
+          <div class="pill" style="color:${QCOLOR[b.quadrant]}"><i></i>${esc(q?.zh || "")}</div>
+          <div class="block"><h3>是什么</h3><p>${esc(b.desc || "—")}</p></div>
+          <div class="block"><h3>生活例子</h3><p>${esc(b.example || "—")}</p></div>
+          <div class="block"><h3>提醒</h3><p>${esc(b.tip || "—")}</p></div>
+          <div class="block"><h3>所属机制</h3><p>${esc(b.strategyZh || "")}</p></div>
+          <div class="block"><h3>继续</h3><div class="related">
+            <a href="cognitive-bias-explorer.html?id=${encodeURIComponent(b.id)}">打开检索界面</a>
+          </div></div>`;
+        return;
+      }
+
+      if (focus.strat) {
+        const [qid, idx] = focus.strat.split("::");
+        const q = qMeta(qid);
+        const s = q?.strategies?.[+idx];
+        title.textContent = s?.zh || "";
+        en.textContent = s?.en || "";
+        body.innerHTML = `
+          <div class="pill" style="color:${QCOLOR[qid]}"><i></i>${esc(q?.zh || "")}</div>
+          <div class="block"><h3>机制</h3><p>大脑用这条捷径应对「${esc(q?.zh || "")}」。</p></div>
+          <div class="block"><h3>包含偏差 · ${(s?.biases||[]).length}</h3>
+            <div class="related">${(s?.biases||[]).map((b) =>
+              `<button type="button" data-go-bias="${esc(b.id)}">${esc(b.zh)}</button>`
+            ).join("")}</div>
+          </div>`;
+        body.querySelectorAll("[data-go-bias]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            focus.bias = btn.dataset.goBias;
+            renderAll();
+          });
+        });
+        return;
+      }
+
+      if (focus.quad) {
+        const q = qMeta(focus.quad);
+        title.textContent = q?.zh || "";
+        en.textContent = q?.en || "";
+        body.innerHTML = `
+          <div class="pill" style="color:${QCOLOR[focus.quad]}"><i></i>${q?.count || 0} 条</div>
+          <div class="block"><h3>问题</h3><p>${esc(q?.problem || "")}</p></div>
+          <div class="block"><h3>副作用</h3><p>${esc(q?.sideEffect || "")}</p></div>
+          <div class="block"><h3>下一步</h3><p>点中环策略弧，或点右侧策略名单继续展开。</p></div>`;
+        return;
+      }
+
+      title.textContent = "认知偏差宝典";
+      en.textContent = "Bloom-style Cognitive Bias Codex";
+      body.innerHTML = `
+        <div class="block"><h3>构图</h3><p>外环四色象限 · 中环策略同心弧 · 右侧引线名单（文字不进环）。</p></div>
+        <div class="block"><h3>怎么读</h3><p>先选象限，再选策略弧，最后在名单或小圆点上选具体偏差，右侧看详解。</p></div>`;
+    }
+
+    function renderAll() {
+      renderLegend();
+      renderCrumbs();
+      renderRing();
+      renderDetail();
+    }
+
+    document.getElementById("resetView").addEventListener("click", () => {
+      focus = { quad: null, strat: null, bias: null };
+      renderAll();
+    });
+
+    (function boot() {
+      if (!window.COGNITIVE_BIAS_CODEX) {
+        document.getElementById("dTitle").textContent = "未加载数据";
+        document.getElementById("dEn").textContent = "请用打开认知偏差环.bat 启动本地服务";
+        return;
+      }
+      const id = new URLSearchParams(location.search).get("id");
+      if (id) {
+        focus.bias = id;
+        findStratOfBias(id);
+      }
+      renderAll();
+    })();
+  </script>
+</body>
+</html>

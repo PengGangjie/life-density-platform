@@ -1,0 +1,17 @@
+.topnav-auth {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.topnav-auth .topnav-cta { margin-left: 0; }
+.topnav-login, #navLogout, #navInstall {
+  display: inline-flex; align-items: center;
+  padding: 7px 12px; border-radius: 999px;
+  font-size: 0.78rem; text-decoration: none;
+  border: 1px solid var(--ink); color: var(--ink); background: transparent;
+  cursor: pointer; font: inherit;
+}
+#navLogout { border-color: var(--line); color: var(--muted); }
+#navUser { font-size: 0.75rem; color: var(--muted); max-width: 12em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cloud-sync-hint { font-size: 0.78rem; color: var(--muted); margin: 8px 0 0; }
+@media (max-width: 720px) {
+  .topnav-auth .topnav-cta { display: none; }
+}

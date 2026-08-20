@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>认知偏差检索 · Explorer</title>
+  <style>
+    :root {
+      --ink: #10141c;
+      --paper: #f4f1ea;
+      --card: #ffffff;
+      --muted: #6e685e;
+      --line: #ddd6c8;
+      --info: #c8891e;
+      --meaning: #1f8f7c;
+      --action: #c4473d;
+      --memory: #3f6fb8;
+      --font: "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --display: "IBM Plex Serif", "Songti SC", "Noto Serif SC", Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: var(--font); color: var(--ink); background: var(--paper);
+      background-image:
+        linear-gradient(180deg, #ebe6db 0%, var(--paper) 28%),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(63, 111, 184, 0.08), transparent 50%);
+      min-height: 100vh;
+    }
+    a { color: inherit; }
+
+    .top {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 14px 24px; border-bottom: 1px solid var(--line);
+      background: rgba(244, 241, 234, 0.9); backdrop-filter: blur(10px);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .brand strong { font-family: var(--display); font-size: 1.05rem; }
+    .brand span { display: block; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .top-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .top-links a {
+      text-decoration: none; border: 1px solid var(--line); border-radius: 999px;
+      padding: 7px 14px; font-size: 0.8rem; background: #fff;
+    }
+    .top-links a.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+    .layout {
+      max-width: 1180px; margin: 0 auto;
+      display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 20px;
+      padding: 24px 20px 48px;
+    }
+    .rail, .main, .detail {
+      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    }
+    .rail { padding: 18px; height: fit-content; position: sticky; top: 72px; }
+    .rail h2 { font-family: var(--display); font-size: 1rem; margin: 0 0 12px; }
+    .rail label { display: block; font-size: 0.75rem; color: var(--muted); margin: 0 0 6px; font-weight: 600; }
+    .rail input[type="search"], .rail select {
+      width: 100%; border: 1px solid var(--line); border-radius: 10px;
+      padding: 10px 12px; font: inherit; margin-bottom: 14px; background: #faf8f4;
+    }
+    .qbtn {
+      display: flex; width: 100%; text-align: left; gap: 10px; align-items: flex-start;
+      border: 1px solid var(--line); background: #faf8f4; border-radius: 12px;
+      padding: 10px 12px; margin-bottom: 8px; cursor: pointer; font: inherit;
+    }
+    .qbtn.on { border-color: var(--ink); background: #fff; box-shadow: 0 0 0 1px var(--ink) inset; }
+    .qbtn .dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex: none; }
+    .qbtn b { display: block; font-size: 0.88rem; }
+    .qbtn span { display: block; font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
+    .check { display: flex; align-items: center; gap: 8px; font-size: 0.84rem; margin: 8px 0 0; }
+    .check input { width: auto; margin: 0; }
+
+    .main { padding: 8px; min-height: 60vh; }
+    .main-head {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+      padding: 14px 14px 8px;
+    }
+    .main-head h1 { font-family: var(--display); font-size: 1.25rem; margin: 0; }
+    .main-head p { margin: 0; color: var(--muted); font-size: 0.82rem; }
+    .list { padding: 0 8px 12px; }
+    .strat-h {
+      font-size: 0.78rem; font-weight: 700; color: var(--muted);
+      padding: 14px 8px 6px; letter-spacing: 0.02em;
+    }
+    .row {
+      display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center;
+      border: 1px solid transparent; border-radius: 12px; padding: 10px 12px; cursor: pointer;
+    }
+    .row:hover, .row.on { background: #f7f3ea; border-color: var(--line); }
+    .row .zh { font-weight: 700; font-size: 0.95rem; margin: 0; }
+    .row .en { font-size: 0.78rem; color: var(--muted); margin: 2px 0 0; }
+    .row .snip { font-size: 0.8rem; color: #5c564c; margin: 6px 0 0; line-height: 1.45; }
+    .tag {
+      font-size: 0.68rem; border-radius: 999px; padding: 4px 8px;
+      border: 1px solid currentColor; white-space: nowrap;
+    }
+    .empty { padding: 40px; text-align: center; color: var(--muted); }
+
+    .detail-panel {
+      position: fixed; right: 20px; bottom: 20px; top: 80px;
+      width: min(380px, calc(100vw - 40px));
+      background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+      box-shadow: 0 18px 50px rgba(16, 20, 28, 0.12);
+      padding: 22px; overflow: auto; z-index: 30;
+      transform: translateY(12px); opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .detail-panel.open { opacity: 1; transform: none; pointer-events: auto; }
+    .detail-panel .close {
+      position: absolute; top: 14px; right: 14px; border: 1px solid var(--line);
+      background: #fff; border-radius: 999px; width: 32px; height: 32px; cursor: pointer; font: inherit;
+    }
+    .detail-panel .eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+    .detail-panel h2 { font-family: var(--display); font-size: 1.4rem; margin: 0 0 4px; padding-right: 36px; }
+    .detail-panel .en { color: var(--muted); margin: 0 0 14px; }
+    .block {
+      border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; background: #faf8f4;
+    }
+    .block h3 { margin: 0 0 6px; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+    .block p { margin: 0; font-size: 0.9rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .actions button, .actions a {
+      font: inherit; font-size: 0.82rem; border-radius: 999px; padding: 9px 14px;
+      border: 1px solid var(--line); background: #fff; cursor: pointer; text-decoration: none;
+    }
+    .actions .primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .actions .spotted { background: #fff7ed; border-color: #f0c27a; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .rail { position: relative; top: 0; }
+      .detail-panel { top: auto; bottom: 0; right: 0; left: 0; width: 100%; border-radius: 18px 18px 0 0; max-height: 70vh; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <strong>认知偏差检索</strong>
+      <span>Explorer · separate interface</span>
+    </div>
+    <div class="top-links">
+      <a href="cognitive-bias-codex.html">互动海报</a>
+      <a class="primary" href="index.html#workspace">人生量化工具箱</a>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="rail">
+      <h2>筛选</h2>
+      <label for="q">搜索</label>
+      <input type="search" id="q" placeholder="中文 / 英文 / 机制…" />
+      <label>象限</label>
+      <div id="quads"></div>
+      <label class="check"><input type="checkbox" id="onlySpot" /> 只看「我中过」</label>
+      <p style="font-size:0.78rem;color:var(--muted);margin:16px 0 0;line-height:1.55">
+        「我中过」保存在本机浏览器（与工具箱共用键 <code>life-density-v3</code> 内的 <code>biasSpots</code>，若无则用独立键）。
+      </p>
+    </aside>
+
+    <section class="main">
+      <div class="main-head">
+        <h1>偏差列表</h1>
+        <p id="countLine">—</p>
+      </div>
+      <div class="list" id="list"><div class="empty">加载中…</div></div>
+    </section>
+  </div>
+
+  <aside class="detail-panel" id="detail" aria-live="polite">
+    <button type="button" class="close" id="closeDetail" aria-label="关闭">×</button>
+    <p class="eyebrow" id="dQuad">Detail</p>
+    <h2 id="dZh">—</h2>
+    <p class="en" id="dEn">—</p>
+    <div class="block"><h3>是什么</h3><p id="dDesc">—</p></div>
+    <div class="block"><h3>生活例子</h3><p id="dExample">—</p></div>
+    <div class="block"><h3>提醒</h3><p id="dTip">—</p></div>
+    <div class="block"><h3>所属机制</h3><p id="dStrat">—</p></div>
+    <div class="block"><h3>象限问题</h3><p id="dProblem">—</p></div>
+    <div class="block"><h3>副作用</h3><p id="dSide">—</p></div>
+    <div class="block"><h3>个人备注</h3>
+      <p style="margin:0 0 8px"><input type="text" id="dNote" placeholder="什么场景中过？" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit" /></p>
+    </div>
+    <div class="actions">
+      <button type="button" class="primary" id="spotBtn">我中过</button>
+      <a id="posterLink" href="cognitive-bias-codex.html">在海报中定位</a>
+    </div>
+  </aside>
+
+  <script src="assets/cognitive-bias/biases-data.js"></script>
+  <script>
+    const QCOLOR = { info: "#c8891e", meaning: "#1f8f7c", action: "#c4473d", memory: "#3f6fb8" };
+    const STORAGE_KEY = "life-density-v3";
+    const FALLBACK_SPOTS = "cognitive-bias-spots-v1";
+    let filterQuad = "all";
+    let activeId = null;
+
+    function esc(s) {
+      const d = document.createElement("div"); d.textContent = s ?? ""; return d.innerHTML;
+    }
+    function codex() { return window.COGNITIVE_BIAS_CODEX || { quadrants: [], biases: [], count: 0 }; }
+
+    function loadSpots() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (raw && raw.biasSpots && typeof raw.biasSpots === "object") return { ...raw.biasSpots };
+      } catch {}
+      try { return JSON.parse(localStorage.getItem(FALLBACK_SPOTS) || "{}"); } catch { return {}; }
+    }
+    function saveSpots(spots) {
+      try {
+        const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        if (raw && typeof raw === "object") {
+          raw.biasSpots = spots;
+          if (!raw.entries) raw.entries = {};
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(raw));
+          return;
+        }
+      } catch {}
+      localStorage.setItem(FALLBACK_SPOTS, JSON.stringify(spots));
+    }
+
+    function renderQuads() {
+      const el = document.getElementById("quads");
+      const items = [{ id: "all", zh: "全部象限", problem: "显示全部偏差" }, ...(codex().quadrants || [])];
+      el.innerHTML = items.map((q) => `
+        <button type="button" class="qbtn ${filterQuad === q.id ? "on" : ""}" data-quad="${esc(q.id)}">
+          <span class="dot" style="background:${q.id === "all" ? "#10141c" : QCOLOR[q.id]}"></span>
+          <span><b>${esc(q.zh)}</b><span>${esc(q.problem || "")}</span></span>
+        </button>`).join("");
+      el.querySelectorAll("[data-quad]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          filterQuad = btn.dataset.quad;
+          renderQuads();
+          renderList();
+        });
+      });
+    }
+
+    function filtered() {
+      const q = (document.getElementById("q").value || "").trim().toLowerCase();
+      const only = document.getElementById("onlySpot").checked;
+      const spots = loadSpots();
+      const out = [];
+      for (const quad of (codex().quadrants || [])) {
+        if (filterQuad !== "all" && quad.id !== filterQuad) continue;
+        for (const strat of (quad.strategies || [])) {
+          const biases = (strat.biases || []).filter((b) => {
+            if (only && !spots[b.id]) return false;
+            if (!q) return true;
+            return `${b.zh} ${b.en} ${b.desc || ""} ${b.example || ""} ${strat.zh} ${strat.en} ${quad.zh}`.toLowerCase().includes(q);
+          });
+          if (biases.length) out.push({ quad, strat, biases });
+        }
+      }
+      return out;
+    }
+
+    function renderList() {
+      const groups = filtered();
+      const spots = loadSpots();
+      let n = 0;
+      let html = "";
+      for (const g of groups) {
+        html += `<div class="strat-h">${esc(g.quad.zh)} · ${esc(g.strat.zh)}</div>`;
+        for (const b of g.biases) {
+          n += 1;
+          const color = QCOLOR[b.quadrant];
+          html += `<div class="row ${activeId === b.id ? "on" : ""}" data-id="${esc(b.id)}">
+            <div>
+              <p class="zh">${esc(b.zh)}${spots[b.id] ? " · ✓" : ""}</p>
+              <p class="en">${esc(b.en)}</p>
+              <p class="snip">${esc(b.desc || "")}</p>
+            </div>
+            <span class="tag" style="color:${color}">${esc(g.quad.zh)}</span>
+          </div>`;
+        }
+      }
+      document.getElementById("list").innerHTML = n ? html : `<div class="empty">无匹配条目</div>`;
+      document.getElementById("countLine").textContent = `显示 ${n} / ${codex().count || 0}`;
+      document.querySelectorAll(".row[data-id]").forEach((row) => {
+        row.addEventListener("click", () => openDetail(row.dataset.id));
+      });
+    }
+
+    function openDetail(id) {
+      const b = (codex().biases || []).find((x) => x.id === id);
+      if (!b) return;
+      const q = (codex().quadrants || []).find((x) => x.id === b.quadrant);
+      const spots = loadSpots();
+      activeId = id;
+      document.getElementById("detail").classList.add("open");
+      document.getElementById("dQuad").textContent = q?.zh || "";
+      document.getElementById("dZh").textContent = b.zh;
+      document.getElementById("dEn").textContent = b.en;
+      document.getElementById("dDesc").textContent = b.desc || "（暂无详解）";
+      document.getElementById("dExample").textContent = b.example || "—";
+      document.getElementById("dTip").textContent = b.tip || "—";
+      document.getElementById("dStrat").textContent = b.strategyZh + " / " + b.strategyEn;
+      document.getElementById("dProblem").textContent = q?.problem || "";
+      document.getElementById("dSide").textContent = q?.sideEffect || "";
+      document.getElementById("dNote").value = spots[id]?.note || "";
+      const spotBtn = document.getElementById("spotBtn");
+      spotBtn.textContent = spots[id] ? "取消「我中过」" : "我中过";
+      spotBtn.classList.toggle("spotted", !!spots[id]);
+      document.getElementById("posterLink").href = "cognitive-bias-codex.html?id=" + encodeURIComponent(id);
+      renderList();
+    }
+
+    document.getElementById("closeDetail").addEventListener("click", () => {
+      document.getElementById("detail").classList.remove("open");
+      activeId = null;
+      renderList();
+    });
+    document.getElementById("q").addEventListener("input", renderList);
+    document.getElementById("onlySpot").addEventListener("change", renderList);
+    document.getElementById("spotBtn").addEventListener("click", () => {
+      if (!activeId) return;
+      const spots = loadSpots();
+      if (spots[activeId]) delete spots[activeId];
+      else spots[activeId] = { at: new Date().toISOString(), note: document.getElementById("dNote").value || "" };
+      saveSpots(spots);
+      openDetail(activeId);
+    });
+    document.getElementById("dNote").addEventListener("change", () => {
+      if (!activeId) return;
+      const spots = loadSpots();
+      if (!spots[activeId]) spots[activeId] = { at: new Date().toISOString(), note: "" };
+      spots[activeId].note = document.getElementById("dNote").value || "";
+      saveSpots(spots);
+    });
+
+    (function boot() {
+      if (!window.COGNITIVE_BIAS_CODEX) {
+        document.getElementById("list").innerHTML = `<div class="empty">未加载数据。请用本地服务打开本目录。</div>`;
+        return;
+      }
+      renderQuads();
+      renderList();
+      const id = new URLSearchParams(location.search).get("id");
+      if (id) openDetail(id);
+    })();
+  </script>
+</body>
+</html>
