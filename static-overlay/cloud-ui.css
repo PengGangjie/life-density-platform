@@ -126,4 +126,19 @@ body.is-guest .guest-gate { display: block; }
   .topnav-auth .topnav-cta { display: none; }
   .brand-sub { display: none; }
   .brand-logo { width: 28px; height: 28px; }
+  html { overflow-x: hidden; }
+  body { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .topnav {
+    height: auto !important;
+    min-height: var(--nav-h, 58px);
+    flex-wrap: wrap;
+    padding: max(8px, env(safe-area-inset-top, 0px)) 14px 8px !important;
+    gap: 8px !important;
+  }
+  #navUser { display: none !important; }
+  .topnav-login, #navLogout, #navInstall {
+    min-height: 44px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
 }

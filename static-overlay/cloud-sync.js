@@ -190,7 +190,7 @@
 
   function registerSw() {
     if (!("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    navigator.serviceWorker.register("/sw.js?v=20260825b").catch(() => {});
   }
 
   if (!document.body.classList.contains("is-authed") && !document.body.classList.contains("is-guest")) {

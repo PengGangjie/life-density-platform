@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>人生量化工具箱</title>
   <link rel="icon" href="/brand/app-logo-mark.svg" type="image/svg+xml" />
   <style>
@@ -26,6 +26,7 @@
       --display: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", Georgia, serif;
     }
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
@@ -672,11 +673,23 @@
     }
 
     @media (max-width: 720px) {
-      .topnav { padding: 0 14px; gap: 10px; }
+      html { overflow-x: hidden; }
+      body { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .topnav {
+        height: auto;
+        min-height: var(--nav-h);
+        flex-wrap: wrap;
+        padding: max(8px, env(safe-area-inset-top, 0px)) 14px 8px;
+        gap: 8px;
+      }
       .topnav-links { display: none; }
       .hero { padding: 36px 16px 24px; }
-      .path-section, .workspace { padding-left: 16px; padding-right: 16px; }
+      .path-section, .workspace { padding-left: 16px; padding-right: 16px; overflow-x: hidden; }
       .workspace-body { padding: 16px; }
+      #navUser { display: none !important; }
+      .topnav-login, #navLogout, #navInstall {
+        min-height: 44px; white-space: nowrap; flex-shrink: 0;
+      }
     }
 
   </style>
@@ -686,7 +699,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="人生量化" />
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-  <link rel="stylesheet" href="/cloud-ui.css" />
+  <link rel="stylesheet" href="/cloud-ui.css?v=20260825b" />
+  <style>
+    [hidden] { display: none !important; }
+    body.auth-pending .auth-gated,
+    body.auth-pending .guest-gate { display: none !important; }
+  </style>
 </head>
 
 <body class="auth-pending">
@@ -3599,6 +3617,6 @@
       renderLeonPanel();
     })();
   </script>
-  <script src="/cloud-sync.js"></script>
+  <script src="/cloud-sync.js?v=20260825b"></script>
 </body>
 </html>
