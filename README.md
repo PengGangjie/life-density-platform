@@ -6,7 +6,7 @@
 |--|----------|--------|
 | Space | `life-density` | `gxstzy-shixun` |
 | 凭证 | `secrets/life-density/` | `secrets/shixun-platform/` |
-| Logto 应用 | 新建 `life-density` | `gxstzy-shixun-v2` |
+| Logto 应用 | 新建 `life-density` | `gxstzy-shixun-platform` |
 | Turso 库 | 新建 `life-density` | `gxstzy-shixun` |
 
 未登录可先试用（数据在浏览器）；配好独立 Logto + Turso 后可注册并云同步。
