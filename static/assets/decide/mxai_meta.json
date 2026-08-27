@@ -1,6 +1,7 @@
 {
-  "source": "user_reference_side_by_side",
-  "reference": "山鬼钱正反面参考图",
+  "source": "user_reference",
+  "front": "单独正面参考图（山鬼雷霆）",
+  "back": "side_by_side参考图右侧八卦面",
   "files": {
     "front": "shangui-front.png",
     "back": "shangui-back.png"
