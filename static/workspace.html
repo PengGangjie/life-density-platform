@@ -1331,18 +1331,24 @@
   
     body.workspace-only { background: var(--bg); color: var(--ink); }
     body.workspace-only .workspace { padding-top: 8px; }
-    body.workspace-only .topnav { background: var(--surface); border-bottom: 1px solid var(--line-soft); }
+    body.workspace-only .topnav {
+      background: rgba(14, 12, 10, 0.92);
+      border-bottom: 1px solid rgba(243, 234, 216, 0.12);
+    }
+    body.workspace-only .tool-link,
+    body.workspace-only .topnav-login,
+    body.workspace-only .topnav-logout {
+      color: rgba(196, 176, 138, 0.88);
+      border-color: rgba(243, 234, 216, 0.2);
+    }
     
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260828v" />
 </head>
 <body class="auth-pending workspace-only">
   <nav class="topnav" aria-label="主导航">
-    <a class="brand" href="index.html">
-      <span class="brand-text">
-        <span class="brand-mark"><span class="char-li">砺</span>行</span>
-        <span class="brand-sub">工具台</span>
-      </span>
+    <a class="brand" href="index.html" aria-label="砺行 · 日省">
+      <img class="brand-logo" src="assets/brand-logo.png" alt="" width="34" height="34" decoding="async" />
     </a>
     <div class="topnav-auth">
       <a class="tool-link" href="index.html">← 今日卡片</a>

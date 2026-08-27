@@ -39,19 +39,23 @@ body.daily-page {
 
 /* —— 顶栏 —— */
 body.daily-page .topnav {
-  background: rgba(247, 245, 240, 0.82);
+  background: rgba(14, 12, 10, 0.88);
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--ts-line);
+  border-bottom: 1px solid rgba(243, 234, 216, 0.12);
+}
+
+body.daily-page .topnav .brand-text {
+  display: none;
 }
 
 body.daily-page .brand-mark {
-  color: var(--ts-ink);
+  color: rgba(243, 234, 216, 0.92);
   font-weight: 400;
   letter-spacing: 0.28em;
 }
 
 body.daily-page .brand-sub {
-  color: var(--ts-muted);
+  color: rgba(196, 176, 138, 0.75);
   letter-spacing: 0.22em;
 }
 
@@ -59,14 +63,14 @@ body.daily-page .tool-link,
 body.daily-page .topnav-login,
 body.daily-page .topnav-logout,
 body.daily-page #navUser {
-  color: var(--ts-muted);
-  border-color: var(--ts-line);
+  color: rgba(196, 176, 138, 0.88);
+  border-color: rgba(243, 234, 216, 0.2);
 }
 
 body.daily-page .tool-link:hover,
 body.daily-page .topnav-login:hover {
-  color: var(--ts-ink);
-  border-color: var(--ts-ink);
+  color: #f3ead8;
+  border-color: rgba(243, 234, 216, 0.45);
 }
 
 /* —— 主容器 —— */
@@ -1772,11 +1776,24 @@ body.home-three .store-item-label {
 }
 
 body.home-three .store-input {
-  color: #f6f0e4 !important;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(26, 26, 26, 0.12);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.96) !important;
+  color: #1a1a1a !important;
+  -webkit-text-fill-color: #1a1a1a;
+  caret-color: #1a1a1a;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  resize: vertical;
 }
 
 body.home-three .store-input::placeholder {
-  color: rgba(196, 176, 138, 0.45);
+  color: rgba(26, 26, 26, 0.42);
+  -webkit-text-fill-color: rgba(26, 26, 26, 0.42);
+  opacity: 1;
 }
 
 body.home-three .store-item-foot {

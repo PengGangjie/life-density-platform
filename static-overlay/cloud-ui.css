@@ -1,15 +1,87 @@
-/* 砺行 · 日省 云端轻量样式 */
+/* 砺行 · 日省 云端样式（顶栏深色 + 字体） */
+@font-face {
+  font-family: "LiFix";
+  src: url("/assets/fonts/LixingFix.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "GuoWen ZhengKai";
+  src: url("/assets/fonts/LixingFix.ttf") format("truetype");
+  unicode-range: U+783A-783B;
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "GuoWen ZhengKai";
+  src: url("/assets/fonts/KaiOldstyle.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --lixing-warm: #c67a2e;
-  --lixing-bg: #f7f2e8;
+  --lixing-bg: #0e0c0a;
 }
+
 body {
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
+  font-family: "GuoWen ZhengKai", "KaiTi", "STKaiti", serif;
 }
+
+.char-li {
+  font-family: "LiFix", "KaiTi", "STKaiti", serif;
+}
+
 .topnav {
-  background: rgba(247, 242, 232, 0.92) !important;
+  background: rgba(14, 12, 10, 0.92) !important;
+  border-bottom: 1px solid rgba(243, 234, 216, 0.12) !important;
+  backdrop-filter: blur(12px);
 }
-.topnav-cta {
-  background: #3d3428 !important;
+
+.topnav .brand-text {
+  display: none !important;
+}
+
+.topnav-auth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topnav-login,
+.topnav-logout,
+.tool-link {
+  font-family: "GuoWen ZhengKai", "KaiTi", "STKaiti", serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: rgba(196, 176, 138, 0.9) !important;
+  padding: 6px 12px;
+  border: 1px solid rgba(243, 234, 216, 0.22) !important;
+  border-radius: 999px;
+}
+
+.topnav-login:hover,
+.topnav-logout:hover,
+.tool-link:hover {
+  color: #f3ead8 !important;
+  border-color: rgba(243, 234, 216, 0.45) !important;
+}
+
+#navUser {
+  font-size: 0.78rem;
+  color: rgba(196, 176, 138, 0.75) !important;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.auth-pending .auth-gated {
+  display: none !important;
 }
