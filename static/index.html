@@ -1326,7 +1326,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260828w" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260828x" />
 
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0e0c0a" />
@@ -1368,7 +1368,10 @@
 
     <header class="journal-date-bar" id="journalDateBar" aria-label="当天日期">
       <label class="journal-date-picker">
-        <span class="journal-date-text" id="journalDateDisplay">—</span>
+        <span class="journal-date-text">
+          <span class="journal-date-greg" id="journalDateGreg">—</span>
+          <span class="journal-date-lunar" id="journalDateLunar"></span>
+        </span>
         <input type="date" id="date" aria-label="日期" />
       </label>
     </header>
@@ -1382,7 +1385,10 @@
       </div>
       <div class="decide-stage">
         <button type="button" class="decide-coin" id="decideCoin" aria-label="点击随机抉择">
-          <img class="decide-coin-img" src="assets/decide/shangui-coin.png" alt="" width="160" height="160" decoding="async" />
+          <span class="decide-coin-stack" aria-hidden="true">
+            <img class="decide-coin-img decide-coin-img--front" src="assets/decide/shangui-front.png" alt="" width="168" height="168" decoding="async" />
+            <img class="decide-coin-img decide-coin-img--back" src="assets/decide/shangui-back.png" alt="" width="168" height="168" decoding="async" />
+          </span>
           <span class="decide-coin-inner" id="decideCoinFace" aria-live="polite">？</span>
         </button>
         <p class="decide-hint" id="decideHint">点击或摇晃手机</p>
@@ -1415,7 +1421,8 @@
                 <span class="store-item-label">第一件小事</span>
                 <button type="button" class="voice-btn" data-voice-for="1" aria-label="语音输入第一件">语音</button>
               </header>
-              <textarea id="three1" class="store-input" rows="3" placeholder="写下今天工作之外想完成的一件小事…" aria-label="小目标一"></textarea>
+              <p class="card-preview store-preview is-empty" id="previewThree1" data-placeholder="写下今天工作之外想完成的一件小事…"></p>
+              <textarea id="three1" class="field-hidden" rows="3" placeholder="写下今天工作之外想完成的一件小事…" aria-label="小目标一"></textarea>
               <p class="store-item-foot" id="foot1">未写</p>
             </div>
           </article>
@@ -1426,7 +1433,8 @@
                 <span class="store-item-label">第二件（可空）</span>
                 <button type="button" class="voice-btn" data-voice-for="2" aria-label="语音输入第二件">语音</button>
               </header>
-              <textarea id="three2" class="store-input" rows="3" placeholder="第二件，也可以留空…" aria-label="小目标二"></textarea>
+              <p class="card-preview store-preview is-empty" id="previewThree2" data-placeholder="第二件，也可以留空…"></p>
+              <textarea id="three2" class="field-hidden" rows="3" placeholder="第二件，也可以留空…" aria-label="小目标二"></textarea>
               <p class="store-item-foot" id="foot2">未写</p>
             </div>
           </article>
@@ -1437,7 +1445,8 @@
                 <span class="store-item-label">第三件（可空）</span>
                 <button type="button" class="voice-btn" data-voice-for="3" aria-label="语音输入第三件">语音</button>
               </header>
-              <textarea id="three3" class="store-input" rows="3" placeholder="第三件，也可以留空…" aria-label="小目标三"></textarea>
+              <p class="card-preview store-preview is-empty" id="previewThree3" data-placeholder="第三件，也可以留空…"></p>
+              <textarea id="three3" class="field-hidden" rows="3" placeholder="第三件，也可以留空…" aria-label="小目标三"></textarea>
               <p class="store-item-foot" id="foot3">未写</p>
             </div>
           </article>
@@ -1542,9 +1551,11 @@
   </main>
 
   <script src="assets/lixing-cloud-auth.js"></script>
-  <script src="assets/lixing-v1.js?v=20260828u"></script>
+  <script src="assets/lixing-lunar.js?v=20260828x"></script>
+  <script src="assets/lixing-v1.js?v=20260828x"></script>
   <script src="assets/lixing-voice.js?v=20260828p"></script>
-  <script src="assets/lixing-decide.js?v=20260828w"></script>
+  <script src="assets/lixing-write-dialog.js?v=20260828x"></script>
+  <script src="assets/lixing-decide.js?v=20260828x"></script>
   <script src="assets/lixing-home.js?v=20260828q"></script>
   <script>
     const STORAGE_KEY = "life-density-v3";
@@ -1946,27 +1957,46 @@
 
     function updateNotebookDateDisplay() {
       const date = document.getElementById("date").value || todayStr();
-      const journalEl = document.getElementById("journalDateDisplay");
+      const gregEl = document.getElementById("journalDateGreg");
+      const lunarEl = document.getElementById("journalDateLunar");
       const reviewDateEl = document.getElementById("reviewCoverDate");
       const label = document.getElementById("dateWorkspaceLabel");
       let pretty = date;
-      let journalLine = "—";
+      let gregLine = "—";
+      let lunarLine = "";
       let issueLine = "—";
-      try {
-        const d = new Date(date + "T12:00:00");
-        pretty = d.toLocaleDateString("zh-CN", {
-          year: "numeric", month: "long", day: "numeric", weekday: "long",
-        });
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const day = String(d.getDate()).padStart(2, "0");
-        const weekday = d.toLocaleDateString("zh-CN", { weekday: "long" });
-        journalLine = y + "." + m + "." + day + " · " + weekday;
-        issueLine = y + " · " + m + " · " + day;
-      } catch (_) {}
-      if (journalEl) journalEl.textContent = journalLine;
+      if (window.LixingLunar) {
+        gregLine = window.LixingLunar.formatGregorianLine(date);
+        lunarLine = window.LixingLunar.formatLunarLine(date);
+        issueLine = window.LixingLunar.formatIssueLine(date);
+      } else {
+        try {
+          const d = new Date(date + "T12:00:00");
+          pretty = d.toLocaleDateString("zh-CN", {
+            year: "numeric", month: "long", day: "numeric", weekday: "long",
+          });
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, "0");
+          const day = String(d.getDate()).padStart(2, "0");
+          gregLine = y + "." + m + "." + day + " · " + d.toLocaleDateString("zh-CN", { weekday: "long" });
+          issueLine = y + " · " + m + " · " + day;
+        } catch (_) {}
+      }
+      if (gregEl) gregEl.textContent = gregLine;
+      if (lunarEl) {
+        lunarEl.textContent = lunarLine;
+        lunarEl.hidden = !lunarLine;
+      }
       if (reviewDateEl) reviewDateEl.textContent = issueLine;
-      if (label) label.textContent = pretty;
+      if (label) {
+        try {
+          const d = new Date(date + "T12:00:00");
+          pretty = d.toLocaleDateString("zh-CN", {
+            year: "numeric", month: "long", day: "numeric", weekday: "long",
+          });
+        } catch (_) {}
+        label.textContent = lunarLine ? pretty + " · " + lunarLine.replace(/^农历\s*/, "") : pretty;
+      }
     }
 
     function saveNotebookThree() {

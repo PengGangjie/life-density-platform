@@ -408,6 +408,9 @@
     const manual = kwEl && kwEl.dataset.manual === "1";
     paintCol(i, text, manual ? kwEl.textContent : "", manual);
     unlockCols();
+    if (window.LixingWriteDialog && window.LixingWriteDialog.syncPreviews) {
+      window.LixingWriteDialog.syncPreviews();
+    }
   }
 
   function setDailyFields(e) {
