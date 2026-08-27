@@ -158,7 +158,6 @@
   function paintCol(i, text, kw, manual) {
     const col = document.querySelector('.poster-col[data-col="' + i + '"]');
     const kwEl = document.getElementById("kw" + i);
-    const sub = document.getElementById("sub" + i);
     const foot = document.getElementById("foot" + i);
     const filled = !!(text && text.trim());
     const word = (kw && kw.trim()) || extractKeyword(text);
@@ -171,7 +170,6 @@
       col.classList.toggle("has-kw", !!word);
       if (filled || i === 1) col.classList.remove("is-wait");
     }
-    if (sub) sub.textContent = filled ? (word ? "工作外 · " + word : "工作外 · 小事") : "工作外 · 小事";
     if (foot) foot.textContent = filled ? "已写" : "未写";
   }
 
