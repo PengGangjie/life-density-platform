@@ -27,6 +27,8 @@
       wishes: ["", "", ""],
       quizAnswers: ["", "", ""],
       completedAt: "",
+      wishesLockedAt: "",
+      yearlyReviews: [],
       sixMonth: { lines: ["", "", ""], lockedAt: "" },
     };
   }
@@ -42,6 +44,8 @@
         ? w.quizAnswers.slice(0, 3).concat(["", "", ""]).slice(0, 3)
         : base.quizAnswers,
       completedAt: w.completedAt || "",
+      wishesLockedAt: w.wishesLockedAt || "",
+      yearlyReviews: Array.isArray(w.yearlyReviews) ? w.yearlyReviews : [],
       sixMonth: {
         lines: Array.isArray(w.sixMonth && w.sixMonth.lines)
           ? w.sixMonth.lines.slice(0, 3).concat(["", "", ""]).slice(0, 3)
@@ -49,6 +53,37 @@
         lockedAt: (w.sixMonth && w.sixMonth.lockedAt) || "",
       },
     };
+  }
+
+  function wishesLockedUntil(lw) {
+    const at = lw.wishesLockedAt || lw.completedAt;
+    if (!at) return null;
+    const t = Date.parse(at);
+    if (Number.isNaN(t)) return null;
+    return new Date(t + SIX_MONTH_MS);
+  }
+
+  function isWishesLocked(lw) {
+    const until = wishesLockedUntil(lw);
+    return until && Date.now() < until.getTime();
+  }
+
+  function yearlyReviewEligibleAt(lw) {
+    const at = lw.wishesLockedAt || lw.completedAt;
+    if (!at) return null;
+    const t = Date.parse(at);
+    if (Number.isNaN(t)) return null;
+    return new Date(t + 365 * 24 * 3600 * 1000);
+  }
+
+  function needsYearlyWishReview(lw) {
+    if (!lw.completedAt || !lw.wishes.some((w) => w && w.trim())) return false;
+    const completed = Date.parse(lw.wishesLockedAt || lw.completedAt);
+    if (Number.isNaN(completed)) return false;
+    const oneYearMs = 365 * 24 * 3600 * 1000;
+    if (Date.now() < completed + oneYearMs) return false;
+    const year = new Date().getFullYear();
+    return !(lw.yearlyReviews || []).some((r) => r && r.year === year);
   }
 
   function sixMonthLockedUntil(lockedAt) {
@@ -148,6 +183,8 @@
       three: ["", "", ""],
       threeKw: ["", "", ""],
       feeling: "",
+      mood: "auto",
+      themeColor: "auto",
       reviewDone: [null, null, null],
       reviewNote: "",
       reviewedAt: "",
@@ -187,16 +224,125 @@
     };
   }
 
-  function paintReviewMark(i, state) {
+  function collectHarvestWins(entries) {
+    const wins = [];
+    Object.keys(entries || {})
+      .sort()
+      .reverse()
+      .forEach(function (date) {
+        const e = entries[date];
+        if (!e) return;
+        const three = e.three || [];
+        const kws = e.threeKw || [];
+        const marks = e.reviewDone || [];
+        [0, 1, 2].forEach(function (i) {
+          if (marks[i] !== "yes") return;
+          const text = (three[i] || "").trim();
+          if (!text) return;
+          wins.push({
+            date: date,
+            text: text,
+            kw: (kws[i] || "").trim(),
+            index: i + 1,
+          });
+        });
+      });
+    return wins;
+  }
+
+  function renderHarvestPanel() {
+    const host = document.getElementById("harvestPanel");
+    if (!host || typeof loadState !== "function") return;
+    const wins = collectHarvestWins(loadState().entries || {});
+    if (!wins.length) {
+      host.innerHTML =
+        '<p class="harvest-empty">复盘时点「成」的小事会出现在这里 · 点「否」则折叠收起</p>';
+      return;
+    }
+    host.innerHTML =
+      '<ul class="harvest-win-list">' +
+      wins
+        .map(function (w) {
+          const kw = w.kw ? '<span class="harvest-win-kw">' + escapeHtml(w.kw) + "</span>" : "";
+          return (
+            '<li class="harvest-win-item"><div class="harvest-win-meta"><time>' +
+            escapeHtml(w.date) +
+            "</time>" +
+            kw +
+            '</div><p class="harvest-win-text">' +
+            escapeHtml(w.text) +
+            "</p></li>"
+          );
+        })
+        .join("") +
+      "</ul>";
+  }
+
+  function persistReviewMarks() {
+    if (typeof saveNotebookThree === "function") {
+      saveNotebookThree();
+      return;
+    }
+    if (typeof loadState !== "function" || typeof saveState !== "function") return;
+    const dateEl = document.getElementById("date");
+    const date = (dateEl && dateEl.value) || todayStr();
+    const st = loadState();
+    st.entries = st.entries || {};
+    const prev = st.entries[date] || {};
+    const fields = getDailyFields();
+    st.entries[date] = Object.assign({}, prev, {
+      three: fields.three,
+      threeKw: fields.threeKw,
+      reviewDone: fields.reviewDone,
+      reviewedAt: new Date().toISOString(),
+    });
+    saveState(st);
+    renderHarvestPanel();
+  }
+
+  function applyReviewRowUI(i, state, animate) {
+    const row = document.querySelector('.review-row[data-col="' + i + '"]');
+    if (!row) return;
+    row.classList.remove("is-yes-locked", "is-collapsing", "is-dismissed");
+    const btns = row.querySelector(".review-row-btns");
+    if (state === "yes") {
+      row.classList.add("is-yes-locked");
+      if (btns) btns.hidden = true;
+      return;
+    }
+    if (state === "no") {
+      if (btns) btns.hidden = true;
+      if (animate) {
+        row.classList.add("is-collapsing");
+        window.setTimeout(function () {
+          row.classList.add("is-dismissed");
+          row.classList.remove("is-collapsing");
+        }, 420);
+      } else {
+        row.classList.add("is-dismissed");
+      }
+      return;
+    }
+    if (btns) btns.hidden = false;
+  }
+
+  function paintReviewMark(i, state, options) {
+    const opts = options || {};
     const circle = document.getElementById("reviewCircle" + i);
     const btns = document.querySelectorAll('.review-btns button[data-review="' + i + '"]');
+    const row = document.querySelector('.review-row[data-col="' + i + '"]');
     if (!circle) return;
     circle.classList.remove("is-yes", "is-no");
     if (state === "yes") circle.classList.add("is-yes");
     else if (state === "no") circle.classList.add("is-no");
-    btns.forEach((btn) => {
+    btns.forEach(function (btn) {
       btn.classList.toggle("is-active", btn.dataset.v === state);
     });
+    if (row) {
+      row.classList.remove("is-yes", "is-no");
+      if (state === "yes" || state === "no") row.classList.add("is-" + state);
+    }
+    applyReviewRowUI(i, state, opts.animate !== false && state === "no");
     const foot = document.getElementById("foot" + i);
     if (!foot) return;
     if (state === "yes") foot.textContent = "已成";
@@ -206,23 +352,30 @@
   function paintWishFeeling(wish, feeling) {
     const footWish = document.getElementById("footWish");
     const footFeel = document.getElementById("footFeel");
-    const feelCol = document.querySelector('.poster-col[data-col="feel"]');
-    if (footWish) footWish.textContent = wish && wish.trim() ? "已许" : "未许";
+    const feelCol = document.querySelector('.write-feel[data-col="feel"]');
+    if (footWish) footWish.textContent = wish && wish.trim() ? "已许" : "";
     if (footFeel) footFeel.textContent = feeling && feeling.trim() ? "已写" : "未写";
     if (feelCol) feelCol.classList.toggle("has-feel", !!(feeling && feeling.trim()));
   }
 
   function updateFeelingNudge() {
     const nudge = document.getElementById("feelingNudge");
-    const poster = document.getElementById("threePoster");
+    const reviewPane = document.getElementById("action-review");
     const feeling = (document.getElementById("dailyFeeling") || {}).value || "";
     if (!nudge) return;
-    const show = poster && poster.classList.contains("is-review") && !feeling.trim();
+    const show = reviewPane && !reviewPane.hidden && !feeling.trim();
     nudge.classList.toggle("is-show", show);
   }
 
+  function goalCol(i) {
+    return (
+      document.querySelector('.store-item[data-col="' + i + '"]') ||
+      document.querySelector('.write-card[data-col="' + i + '"]')
+    );
+  }
+
   function paintCol(i, text, kw, manual) {
-    const col = document.querySelector('.poster-col[data-col="' + i + '"]');
+    const col = goalCol(i);
     const kwEl = document.getElementById("kw" + i);
     const foot = document.getElementById("foot" + i);
     const filled = !!(text && text.trim());
@@ -234,6 +387,7 @@
     }
     if (col) {
       col.classList.toggle("has-kw", !!word);
+      col.classList.toggle("has-text", filled);
     }
     if (foot && !document.getElementById("threePoster")?.classList.contains("is-review")) {
       foot.textContent = filled ? "已写" : "未写";
@@ -241,19 +395,9 @@
   }
 
   function unlockCols() {
-    const wish = ((document.getElementById("dailyWish") || {}).value || "").trim();
-    const texts = [1, 2, 3].map((i) => (document.getElementById("three" + i) || {}).value || "");
-    [1, 2, 3].forEach((i) => {
-      const col = document.querySelector('.poster-col[data-col="' + i + '"]');
-      if (!col) return;
-      if (i === 1) {
-        if (wish) col.classList.remove("is-wait");
-        else col.classList.add("is-wait");
-        return;
-      }
-      const prevFilled = !!(texts[i - 2] && texts[i - 2].trim());
-      if (wish && (prevFilled || (texts[i - 1] && texts[i - 1].trim()))) col.classList.remove("is-wait");
-      else col.classList.add("is-wait");
+    [1, 2, 3].forEach(function (i) {
+      var col = goalCol(i);
+      if (col) col.classList.remove("is-wait");
     });
   }
 
@@ -290,74 +434,33 @@
         }
       }
       paintCol(i, entry.three[i - 1] || "", savedKw || extractKeyword(entry.three[i - 1] || ""), !!savedKw);
-      paintReviewMark(i, entry.reviewDone[i - 1] || null);
+      paintReviewMark(i, entry.reviewDone[i - 1] || null, { animate: false });
     });
     unlockCols();
     updateFeelingNudge();
     const harvestEl = document.getElementById("harvest");
     const thickEl = document.getElementById("thickness");
     const noteEl = document.getElementById("note");
-    const harvest = entry.feeling || entry.harvest || entry.note || "";
+    const harvest = entry.harvest || entry.note || "";
     if (harvestEl) harvestEl.value = harvest;
     if (thickEl) thickEl.value = entry.thickness || "";
     if (noteEl && !entry.harvest) noteEl.value = entry.note || "";
+    if (window.LixingWriteDialog) window.LixingWriteDialog.syncPreviews();
+    if (typeof renderReviewSummary === "function") renderReviewSummary();
   }
 
   function showPoster(skipAnim) {
-    const ask = document.getElementById("askStage");
     const poster = document.getElementById("threePoster");
     if (!poster) return;
-    const reveal = function () {
-      if (ask) {
-        ask.hidden = true;
-        ask.classList.remove("is-out");
-      }
-      document.getElementById("studyScene")?.classList.add("is-open");
-      poster.hidden = false;
-      requestAnimationFrame(function () {
-        poster.classList.add("is-in");
-      });
-    };
-    if (skipAnim || !ask || ask.hidden) {
-      reveal();
-      return;
-    }
-    ask.classList.add("is-out");
-    setTimeout(reveal, 640);
+    poster.hidden = false;
+    poster.classList.add("is-in");
+    document.getElementById("studyScene")?.classList.add("is-open");
   }
 
   function initAskFlow() {
-    const ask = document.getElementById("askStage");
     const poster = document.getElementById("threePoster");
-    const begin = document.getElementById("askBegin");
-    if (!ask || !poster) return;
-    const already =
-      ((document.getElementById("dailyWish") || {}).value || "").trim() ||
-      [1, 2, 3].some((i) => {
-        const el = document.getElementById("three" + i);
-        return el && el.value.trim();
-      });
-    if (already) {
-      ask.hidden = true;
-      showPoster(true);
-    } else {
-      poster.hidden = true;
-      poster.classList.remove("is-in");
-      requestAnimationFrame(function () {
-        ask.classList.add("is-ready");
-      });
-      setTimeout(function () {
-        ask.classList.add("is-clear");
-      }, 900);
-    }
-    begin?.addEventListener("click", function () {
-      showPoster(false);
-      setTimeout(function () {
-        const wish = document.getElementById("dailyWish");
-        if (wish && !wish.value.trim()) wish.focus();
-        else document.getElementById("three1")?.focus();
-      }, 720);
-    });
+    if (!poster) return;
+    showPoster(true);
     document.getElementById("dailyWish")?.addEventListener("input", function () {
       paintWishFeeling(this.value, (document.getElementById("dailyFeeling") || {}).value || "");
       unlockCols();
@@ -366,27 +469,29 @@
       paintWishFeeling((document.getElementById("dailyWish") || {}).value || "", this.value);
       updateFeelingNudge();
     });
-    document.querySelectorAll(".review-btns button").forEach((btn) => {
+    document.querySelectorAll(".review-btns button").forEach(function (btn) {
       btn.addEventListener("click", function () {
         const i = parseInt(btn.dataset.review, 10);
         const v = btn.dataset.v;
         const circle = document.getElementById("reviewCircle" + i);
-        const cur = circle && circle.classList.contains("is-yes") ? "yes" : circle && circle.classList.contains("is-no") ? "no" : null;
-        paintReviewMark(i, cur === v ? null : v);
+        const row = document.querySelector('.review-row[data-col="' + i + '"]');
+        if (row && (row.classList.contains("is-yes-locked") || row.classList.contains("is-dismissed"))) return;
+        const cur =
+          circle && circle.classList.contains("is-yes")
+            ? "yes"
+            : circle && circle.classList.contains("is-no")
+              ? "no"
+              : null;
+        if (cur === v) return;
+        paintReviewMark(i, v, { animate: v === "no" });
+        persistReviewMarks();
         updateFeelingNudge();
       });
     });
     document.getElementById("openReviewBtn")?.addEventListener("click", function () {
-      const poster = document.getElementById("threePoster");
-      const btn = document.getElementById("openReviewBtn");
-      if (!poster) return;
-      const on = !poster.classList.contains("is-review");
-      poster.classList.toggle("is-review", on);
-      btn?.classList.toggle("is-active", on);
-      updateFeelingNudge();
-      if (on) {
-        const feel = document.getElementById("dailyFeeling");
-        if (feel && !feel.value.trim()) feel.focus();
+      if (window.LixingHome) {
+        window.LixingHome.setModule("action");
+        window.LixingHome.setActionTab("review");
       }
     });
     [1, 2, 3].forEach((i) => {
@@ -394,6 +499,7 @@
         const kwEl = document.getElementById("kw" + i);
         if (kwEl) delete kwEl.dataset.manual;
         syncHomeFromText(i);
+        if (typeof renderReviewSummary === "function") renderReviewSummary();
       });
       document.getElementById("kw" + i)?.addEventListener("keydown", function (ev) {
         if (ev.key === "Enter") ev.preventDefault();
@@ -403,7 +509,7 @@
         el.dataset.manual = "1";
         let t = el.textContent.replace(/\s/g, "").slice(0, 2);
         if (el.textContent !== t) el.textContent = t;
-        const col = document.querySelector('.poster-col[data-col="' + i + '"]');
+        const col = goalCol(i);
         if (col) col.classList.toggle("has-kw", !!t);
       });
     });
@@ -460,9 +566,11 @@
           if (el) st.lifeWishes.wishes[i] = el.value.trim();
         });
         st.lifeWishes.completedAt = st.lifeWishes.completedAt || new Date().toISOString();
+        st.lifeWishes.wishesLockedAt = st.lifeWishes.wishesLockedAt || new Date().toISOString();
         saveState(st);
         quizStep = 0;
         renderWishesPanel();
+        renderHomeWishes();
         if (typeof showToast === "function") showToast("savedWishToast");
       });
       return;
@@ -599,6 +707,75 @@
       }
       renderQuizStep();
       if (quizStep >= QUIZ.length) renderWishesPanel();
+      renderHomeWishes();
+    });
+  }
+
+  function renderHomeWishes() {
+    const host = document.getElementById("wishHomeHost");
+    if (!host || typeof loadState !== "function") return;
+    const lw = normalizeLifeWishes(loadState().lifeWishes);
+    const locked = isWishesLocked(lw);
+    const until = wishesLockedUntil(lw);
+    const yearly = needsYearlyWishReview(lw);
+    const hasWishes = lw.completedAt || lw.wishes.some((w) => w && w.trim());
+
+    if (!hasWishes) {
+      host.innerHTML = `
+        <p class="wish-home-lead">若人生只能许三个愿望，你会选哪三个？定稿后 <strong>6 个月内不可改</strong>，压箱底；每年复盘一次。</p>
+        <div class="wish-quiz-nav">
+          <button type="button" class="btn-ghost-sm" id="wishQuizPrev">上一问</button>
+          <button type="button" class="btn-ghost-sm" id="wishQuizNext">下一问</button>
+        </div>
+        <div id="wishQuizHost"></div>`;
+      bindQuizNav();
+      renderQuizStep();
+      return;
+    }
+
+    let html = "";
+    if (locked && until) {
+      html += `<p class="lock-badge">三愿已锁定 · 至 ${formatDate(until)} 不可修改</p>`;
+    }
+    html += `<ol class="wish-home-list">${[0, 1, 2]
+      .map(
+        (i) =>
+          `<li><span class="wish-home-num">${i + 1}</span><span class="wish-home-text">${escapeHtml(lw.wishes[i] || "—")}</span></li>`
+      )
+      .join("")}</ol>`;
+    if (yearly) {
+      html += `
+        <div class="yearly-review-box">
+          <p class="card-title">年度复盘 · ${new Date().getFullYear()}</p>
+          <p class="card-desc">一年一度，回看三愿是否仍值得奔赴。</p>
+          <textarea id="yearlyReviewNote" rows="3" placeholder="这一年的靠近与偏差…"></textarea>
+          <button type="button" class="btn-save-wish" id="saveYearlyReviewBtn">保存年度复盘</button>
+        </div>`;
+    } else if ((lw.yearlyReviews || []).length) {
+      const last = lw.yearlyReviews[lw.yearlyReviews.length - 1];
+      html += `<p class="card-desc yearly-done">已于 ${last.year} 年复盘</p>`;
+    } else {
+      const eligible = yearlyReviewEligibleAt(lw);
+      if (eligible && Date.now() < eligible.getTime()) {
+        html += `<p class="card-desc wish-year-wait">压箱底中 · 满一年（${formatDate(eligible)} 起）可年度复盘</p>`;
+      }
+    }
+    host.innerHTML = html;
+
+    document.getElementById("saveYearlyReviewBtn")?.addEventListener("click", () => {
+      const note = (document.getElementById("yearlyReviewNote") || {}).value?.trim() || "";
+      if (!note) {
+        alert("写一句年度复盘再保存。");
+        return;
+      }
+      const st = loadState();
+      st.lifeWishes = normalizeLifeWishes(st.lifeWishes);
+      const year = new Date().getFullYear();
+      st.lifeWishes.yearlyReviews = (st.lifeWishes.yearlyReviews || []).filter((r) => r.year !== year);
+      st.lifeWishes.yearlyReviews.push({ year, note, reviewedAt: new Date().toISOString() });
+      saveState(st);
+      renderHomeWishes();
+      if (typeof showToast === "function") showToast("savedNotebookToast");
     });
   }
 
@@ -623,8 +800,14 @@
       updateFeelingNudge();
     },
     renderKeywords,
+    renderHarvestPanel,
+    collectHarvestWins,
     renderWishSummary,
     renderWishesPanel,
+    renderHomeWishes,
+    updateFeelingNudge,
+    isWishesLocked,
+    needsYearlyWishReview,
     init() {
       document.getElementById("panel-wishes")?.addEventListener("click", (e) => {
         if (e.target.id === "lockSixMonthBtn") lockSixMonth();
@@ -632,8 +815,10 @@
       bindQuizNav();
       bindSaveWishes();
       renderKeywords();
+      renderHarvestPanel();
       renderWishSummary();
       renderWishesPanel();
+      renderHomeWishes();
       initAskFlow();
     },
   };

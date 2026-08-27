@@ -31,6 +31,8 @@ class Settings:
     logto_post_logout_uri: str
     turso_database_url: str
     turso_auth_token: str
+    ai_builder_token: str
+    ai_builders_backend: str
     static_dir: Path
     port: int
 
@@ -60,6 +62,8 @@ def get_settings() -> Settings:
         logto_post_logout_uri=post_logout,
         turso_database_url=turso_url,
         turso_auth_token=os.getenv("TURSO_AUTH_TOKEN", "").strip(),
+        ai_builder_token=os.getenv("AI_BUILDER_TOKEN", "").strip(),
+        ai_builders_backend=os.getenv("AI_BUILDERS_BACKEND", "https://space.ai-builders.com/backend").strip().rstrip("/"),
         static_dir=static,
         port=int(os.getenv("PORT", "8010")),
     )

@@ -20,7 +20,7 @@
       document.body.classList.add("auth-ready");
       if (login) login.hidden = true;
       if (logout) logout.hidden = false;
-      if (toolLink) toolLink.hidden = false;
+      if (toolLink && toolLink.hasAttribute("hidden")) toolLink.hidden = false;
       if (user) {
         var label = me.name || me.email || me.phone || "已登录";
         user.hidden = false;
@@ -33,7 +33,7 @@
     document.body.classList.remove("auth-ready");
     if (login) login.hidden = false;
     if (logout) logout.hidden = true;
-    if (toolLink) toolLink.hidden = true;
+    if (toolLink && toolLink.hasAttribute("hidden")) toolLink.hidden = true;
     if (user) user.hidden = true;
   }
 

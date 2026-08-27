@@ -7,7 +7,7 @@ import os
 from datetime import datetime, timezone
 from typing import Union
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from logto import LogtoClient, LogtoConfig, Storage, UserInfoScope
@@ -15,6 +15,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from .config import get_settings
 from .db import get_state, ping_db, put_state, upsert_user
+from . import audio_proxy
 
 PUBLIC_PREFIXES = (
     "/health",
@@ -29,7 +30,7 @@ PUBLIC_PREFIXES = (
     "/cloud-ui.css",
 )
 
-PUBLIC_PATHS = {"/", "/index.html", "/api/me", "/__backup"}
+PUBLIC_PATHS = {"/", "/index.html", "/api/me", "/__backup", "/api/audio/config"}
 
 BACKUP_NAME = "lixing-autobackup.json"
 
@@ -119,6 +120,21 @@ async def health():
     except Exception as exc:  # noqa: BLE001
         body["db_error"] = str(exc)
     return body
+
+
+@app.get("/api/audio/config")
+async def audio_config():
+    return {"available": audio_proxy.token_configured()}
+
+
+@app.post("/api/audio/transcribe")
+async def audio_transcribe(audio_file: UploadFile = File(...)):
+    raw = await audio_file.read()
+    name = audio_file.filename or "voice.webm"
+    result = audio_proxy.transcribe_blob(raw, filename=name)
+    if not result.get("ok"):
+        return JSONResponse(result, status_code=502)
+    return result
 
 
 @app.get("/sign-in")
