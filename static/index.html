@@ -7,12 +7,28 @@
   <link rel="icon" href="/brand/app-logo-mark.svg" type="image/svg+xml" />
   <style>
     @font-face {
+      font-family: "LiFix";
+      src: url("assets/fonts/LixingFix.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "GuoWen ZhengKai";
+      src: url("assets/fonts/LixingFix.ttf") format("truetype");
+      unicode-range: U+783A-783B;
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
       font-family: "GuoWen ZhengKai";
       src: url("assets/fonts/KaiOldstyle.ttf") format("truetype");
       font-weight: normal;
       font-style: normal;
       font-display: swap;
     }
+    .char-li { font-family: "LiFix", "KaiTi", "STKaiti", serif; }
 
     html, body, button, input, textarea, select {
       font-family: var(--font);
@@ -282,7 +298,7 @@
     .poster-cols {
       flex: 1;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       direction: rtl;
       min-height: 0;
       gap: 0;
@@ -298,6 +314,26 @@
       transform: translateY(18px);
       transition: opacity .8s cubic-bezier(.25,.1,.25,1), transform .8s cubic-bezier(.25,.1,.25,1), filter .6s;
     }
+    .poster-col.is-wait {
+      opacity: 0.22 !important;
+      filter: blur(2px);
+      pointer-events: none;
+    }
+    .poster-meta {
+      font-size: 0.82rem;
+      letter-spacing: 0.35em;
+      color: #6a5c4c;
+      margin: 0;
+      flex-shrink: 0;
+    }
+    .open-hero.is-in .poster-col { opacity: 1; transform: none; }
+    .open-hero.is-in .poster-col:nth-child(1) { transition-delay: .08s; }
+    .open-hero.is-in .poster-col:nth-child(2) { transition-delay: .18s; }
+    .open-hero.is-in .poster-col:nth-child(3) { transition-delay: .28s; }
+    .open-hero.is-in .poster-col:nth-child(4) { transition-delay: .38s; }
+    .open-hero.is-in .poster-col:nth-child(5) { transition-delay: .48s; }
+    .poster-col--wish .poster-meta { color: #7a5c28; }
+    .poster-col--feel .poster-meta { color: #8b4513; }
     .poster-col-inner {
       writing-mode: vertical-rl;
       text-orientation: upright;
@@ -310,22 +346,136 @@
       justify-content: flex-start;
       gap: 0.35em;
       padding: 0.2em 0 0.4em;
+      position: relative;
     }
-    .open-hero.is-in .poster-col { opacity: 1; transform: none; }
-    .open-hero.is-in .poster-col:nth-child(1) { transition-delay: .1s; }
-    .open-hero.is-in .poster-col:nth-child(2) { transition-delay: .24s; }
-    .open-hero.is-in .poster-col:nth-child(3) { transition-delay: .38s; }
-    .poster-col.is-wait {
-      opacity: 0.22 !important;
-      filter: blur(2px);
+    .poster-col textarea,
+    .poster-col .poster-feel {
+      flex: 1 1 auto;
+      width: 10em;
+      min-height: 4em;
+      max-height: 100%;
+      height: auto;
+      border: none;
+      background: transparent;
+      resize: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: 0.92rem;
+      line-height: 1.55;
+      letter-spacing: 0.14em;
+      color: #1a1a1a;
+      padding: 0.15em 0;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+    }
+    .poster-col .poster-feel::placeholder,
+    .poster-col textarea::placeholder { color: #9a8f82; }
+    .review-circle {
+      position: absolute;
+      left: -0.15em;
+      top: 38%;
+      width: 2.4em;
+      height: 2.4em;
       pointer-events: none;
+      opacity: 0;
+      background: center/contain no-repeat;
+      transition: opacity .35s ease;
     }
-    .poster-meta {
-      font-size: 0.82rem;
-      letter-spacing: 0.35em;
-      color: #6a5c4c;
-      margin: 0;
+    .review-circle.is-yes {
+      opacity: 1;
+      background-image: url("assets/notebook/red-circle.png");
+    }
+    .review-circle.is-no {
+      opacity: 1;
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #b91c1c;
+      font-size: 1.15rem;
+      letter-spacing: 0.1em;
+    }
+    .review-circle.is-no::before { content: "批"; }
+    .review-btns {
+      display: none;
+      flex-direction: column;
+      gap: 0.25em;
       flex-shrink: 0;
+    }
+    .open-hero.is-review .poster-col--task .review-btns { display: flex; }
+    .review-btns button {
+      font-family: var(--font);
+      background: transparent;
+      border: 1px solid rgba(185, 28, 28, 0.55);
+      color: #b91c1c;
+      padding: 0.12em 0.3em;
+      cursor: pointer;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+    }
+    .review-btns button.is-active {
+      background: rgba(185, 28, 28, 0.12);
+      border-color: #b91c1c;
+    }
+    .review-strip {
+      flex-shrink: 0;
+      margin-top: 4px;
+      padding: 6px 2% 0;
+      border-top: 1px dashed rgba(185, 28, 28, 0.35);
+      display: none;
+    }
+    .open-hero.is-review .review-strip { display: block; }
+    .review-hint {
+      margin: 0 0 6px;
+      font-size: 0.76rem;
+      letter-spacing: 0.18em;
+      color: #b91c1c;
+    }
+    .review-note {
+      width: 100%;
+      min-height: 2.4em;
+      border: none;
+      border-bottom: 1px solid rgba(185, 28, 28, 0.45);
+      background: transparent;
+      outline: none;
+      font-family: var(--font);
+      font-size: 0.88rem;
+      color: #b91c1c;
+      letter-spacing: 0.12em;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      resize: none;
+      padding: 0.2em 0;
+    }
+    .review-note::placeholder { color: rgba(185, 28, 28, 0.45); }
+    .feeling-nudge {
+      display: none;
+      margin: 0;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      color: #b91c1c;
+      flex-shrink: 0;
+    }
+    .feeling-nudge.is-show { display: block; }
+    .open-hero.is-review .poster-col--feel:not(.has-feel) .poster-col-inner {
+      outline: 1px dashed rgba(185, 28, 28, 0.45);
+      outline-offset: 2px;
+    }
+    .notebook-foot .btn-review {
+      font-family: var(--font);
+      font-size: 0.88rem;
+      letter-spacing: 0.28em;
+      background: transparent;
+      border: 1px solid #c4b08a;
+      color: #e8dcc4;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .notebook-foot .btn-review:hover,
+    .notebook-foot .btn-review.is-active {
+      background: rgba(185, 28, 28, 0.15);
+      border-color: #b91c1c;
+      color: #f5d0d0;
     }
     .poster-kw {
       font-family: var(--display);
@@ -350,26 +500,6 @@
       filter: none;
       opacity: 1;
     }
-    .poster-col textarea {
-      flex: 1 1 auto;
-      width: 10em;
-      min-height: 4em;
-      max-height: 100%;
-      height: auto;
-      border: none;
-      background: transparent;
-      resize: none;
-      outline: none;
-      font-family: var(--font);
-      font-size: 0.92rem;
-      line-height: 1.55;
-      letter-spacing: 0.14em;
-      color: #1a1a1a;
-      padding: 0.15em 0;
-      writing-mode: vertical-rl;
-      text-orientation: upright;
-    }
-    .poster-col textarea::placeholder { color: #9a8f82; }
     .poster-foot {
       font-size: 0.72rem;
       letter-spacing: 0.22em;
@@ -396,9 +526,10 @@
         width: 90%;
         height: 80%;
       }
-      .poster-cols { grid-template-columns: repeat(3, 1fr); }
-      .poster-col-inner { max-width: 2.6em; }
-      .poster-col textarea { width: 8em; font-size: 0.82rem; }
+      .poster-cols { grid-template-columns: repeat(5, 1fr); }
+      .poster-col-inner { max-width: 2em; }
+      .poster-col textarea,
+      .poster-col .poster-feel { width: 6.5em; font-size: 0.75rem; }
       .cover-title-text { font-size: clamp(1.1rem, 4.5vw, 1.45rem); }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -1263,7 +1394,7 @@
   <nav class="topnav" aria-label="主导航">
     <a class="brand" href="#top">
       <span class="brand-text">
-        <span class="brand-mark">砺行</span>
+        <span class="brand-mark"><span class="char-li">砺</span>行</span>
         <span class="brand-sub">日省</span>
       </span>
     </a>
@@ -1284,17 +1415,17 @@
           <img class="cover-img" src="assets/notebook/book-cover.jpg" alt="线装书封面" width="1728" height="2304" decoding="async" />
           <div class="cover-title" aria-hidden="true">
             <p class="cover-title-text">
-              <span class="cover-title-line">砺行</span>
+              <span class="cover-title-line"><span class="char-li">砺</span>行</span>
               <span class="cover-title-line">日省</span>
             </p>
           </div>
           <span class="cover-smoke" aria-hidden="true"></span>
         </div>
         <div class="ask-copy">
-          <p class="ask-kicker">砺行 · 日省</p>
-          <p class="ask-line" data-ask>如果可以</p>
-          <p class="ask-line" data-ask>今天工作外</p>
-          <p class="ask-line ask-line--q" data-ask>你最想多做的三件事是什么？</p>
+          <p class="ask-kicker"><span class="char-li">砺</span>行 · 日省</p>
+          <p class="ask-line" data-ask>今日先许一愿</p>
+          <p class="ask-line" data-ask>再写三件工作外小事</p>
+          <p class="ask-line ask-line--q" data-ask>夜里复盘 · 圈点成否</p>
           <button type="button" class="ask-begin" id="askBegin">写下</button>
         </div>
       </section>
@@ -1303,34 +1434,68 @@
           <img class="open-img" src="assets/notebook/book-spread.jpg" alt="线装书内页" width="2560" height="1440" decoding="async" />
           <div class="page-overlay">
             <header class="poster-head">
-              <p class="poster-brand">砺行</p>
+              <p class="poster-brand"><span class="char-li">砺</span>行</p>
               <p class="poster-date" id="notebookDateDisplay"></p>
             </header>
             <div class="poster-cols">
-              <article class="poster-col" data-col="1">
+              <article class="poster-col poster-col--wish" data-col="wish">
                 <div class="poster-col-inner">
+                  <p class="poster-meta">今日许愿</p>
+                  <textarea id="dailyWish" class="poster-wish" placeholder="先写今日之愿…" aria-label="今日许愿"></textarea>
+                  <p class="poster-foot" id="footWish">未许</p>
+                </div>
+              </article>
+              <article class="poster-col poster-col--task is-wait" data-col="1">
+                <div class="poster-col-inner">
+                  <span class="review-circle" id="reviewCircle1" aria-hidden="true"></span>
                   <p class="poster-meta">其一</p>
                   <p class="poster-kw" id="kw1" contenteditable="true" spellcheck="false" data-placeholder="··" aria-label="关键词其一"></p>
                   <textarea id="three1" placeholder="写下第一件…" aria-label="其一"></textarea>
+                  <div class="review-btns" aria-label="复盘其一">
+                    <button type="button" data-review="1" data-v="yes">成</button>
+                    <button type="button" data-review="1" data-v="no">否</button>
+                  </div>
                   <p class="poster-foot" id="foot1">未写</p>
                 </div>
               </article>
-              <article class="poster-col is-wait" data-col="2">
+              <article class="poster-col poster-col--task is-wait" data-col="2">
                 <div class="poster-col-inner">
+                  <span class="review-circle" id="reviewCircle2" aria-hidden="true"></span>
                   <p class="poster-meta">其二</p>
                   <p class="poster-kw" id="kw2" contenteditable="true" spellcheck="false" data-placeholder="··" aria-label="关键词其二"></p>
                   <textarea id="three2" placeholder="写下第二件…" aria-label="其二"></textarea>
+                  <div class="review-btns" aria-label="复盘其二">
+                    <button type="button" data-review="2" data-v="yes">成</button>
+                    <button type="button" data-review="2" data-v="no">否</button>
+                  </div>
                   <p class="poster-foot" id="foot2">未写</p>
                 </div>
               </article>
-              <article class="poster-col is-wait" data-col="3">
+              <article class="poster-col poster-col--task is-wait" data-col="3">
                 <div class="poster-col-inner">
+                  <span class="review-circle" id="reviewCircle3" aria-hidden="true"></span>
                   <p class="poster-meta">其三</p>
                   <p class="poster-kw" id="kw3" contenteditable="true" spellcheck="false" data-placeholder="··" aria-label="关键词其三"></p>
                   <textarea id="three3" placeholder="写下第三件…" aria-label="其三"></textarea>
+                  <div class="review-btns" aria-label="复盘其三">
+                    <button type="button" data-review="3" data-v="yes">成</button>
+                    <button type="button" data-review="3" data-v="no">否</button>
+                  </div>
                   <p class="poster-foot" id="foot3">未写</p>
                 </div>
               </article>
+              <article class="poster-col poster-col--feel" data-col="feel">
+                <div class="poster-col-inner">
+                  <p class="poster-meta">重要感受</p>
+                  <p class="feeling-nudge" id="feelingNudge">感受尚空 · 复盘时请补一句</p>
+                  <textarea id="dailyFeeling" class="poster-feel" placeholder="随时写下今日最重要的一种感受…" aria-label="重要感受"></textarea>
+                  <p class="poster-foot" id="footFeel">未写</p>
+                </div>
+              </article>
+            </div>
+            <div class="review-strip" id="reviewStrip">
+              <p class="review-hint">朱批复盘 · 圈点三件小事成否；感受可随时补写</p>
+              <textarea id="reviewNote" class="review-note" rows="2" placeholder="批改一句（可选）…" aria-label="复盘批改"></textarea>
             </div>
           </div>
         </div>
@@ -1338,6 +1503,7 @@
     </div>
     <footer class="notebook-foot">
       <input type="date" id="date" aria-label="日期" />
+      <button type="button" class="btn-review" id="openReviewBtn">复盘</button>
       <button type="button" class="btn-save" id="saveNotebookBtn">存今日</button>
       <span class="saved-toast" id="savedNotebookToast">已保存</span>
       <a class="tool-link" href="#workspace" data-need-auth id="notebookToolLink">登录后 · 工具台</a>
@@ -2368,7 +2534,7 @@
   </div>
 
   <script src="assets/lixing-cloud-auth.js"></script>
-  <script src="assets/lixing-v1.js?v=20260828a"></script>
+  <script src="assets/lixing-v1.js?v=20260828b"></script>
   <script src="assets/cognitive-bias/biases-data.js"></script>
   <script src="assets/leon-playbook/wheel-of-life.js"></script>
   <script src="assets/leon-playbook/leon-cards.js"></script>
@@ -2781,11 +2947,20 @@
       const state = loadState();
       state.entries = state.entries || {};
       const prev = state.entries[date] || {};
-      const three = window.LixingV1
-        ? window.LixingV1.getDailyFields().three
-        : [1, 2, 3].map((i) => (document.getElementById("three" + i) || {}).value?.trim() || "");
-      const threeKw = window.LixingV1 ? window.LixingV1.getDailyFields().threeKw : ["", "", ""];
-      state.entries[date] = Object.assign({}, prev, { three, threeKw });
+      const fields = window.LixingV1 ? window.LixingV1.getDailyFields() : {};
+      const three = fields.three || [1, 2, 3].map((i) => (document.getElementById("three" + i) || {}).value?.trim() || "");
+      const threeKw = fields.threeKw || ["", "", ""];
+      const reviewed = (fields.reviewDone || []).some((v) => v === "yes" || v === "no");
+      state.entries[date] = Object.assign({}, prev, {
+        dailyWish: fields.dailyWish || "",
+        three,
+        threeKw,
+        feeling: fields.feeling || "",
+        reviewDone: fields.reviewDone || [null, null, null],
+        reviewNote: fields.reviewNote || "",
+        reviewedAt: reviewed ? new Date().toISOString() : prev.reviewedAt || "",
+        harvest: fields.feeling || prev.harvest || "",
+      });
       saveState(state);
       showToast("savedNotebookToast");
       if (window.LixingV1) window.LixingV1.renderKeywords();
@@ -2804,11 +2979,15 @@
         passiveIncome: parseFloat(document.getElementById("passiveIncome").value) || 0,
         three: window.LixingV1 ? window.LixingV1.getDailyFields().three : ["", "", ""],
         threeKw: window.LixingV1 ? window.LixingV1.getDailyFields().threeKw : ["", "", ""],
-        harvest: window.LixingV1 ? window.LixingV1.getDailyFields().harvest : "",
+        dailyWish: window.LixingV1 ? window.LixingV1.getDailyFields().dailyWish : "",
+        feeling: window.LixingV1 ? window.LixingV1.getDailyFields().feeling : "",
+        reviewDone: window.LixingV1 ? window.LixingV1.getDailyFields().reviewDone : [null, null, null],
+        reviewNote: window.LixingV1 ? window.LixingV1.getDailyFields().reviewNote : "",
+        harvest: window.LixingV1 ? window.LixingV1.getDailyFields().feeling : "",
         thickness: window.LixingV1 ? window.LixingV1.getDailyFields().thickness : "",
         note: (function () {
-          const d = window.LixingV1 ? window.LixingV1.getDailyFields() : { harvest: "", thickness: "" };
-          const parts = [d.harvest, d.thickness ? "完成：" + d.thickness : ""].filter(Boolean);
+          const d = window.LixingV1 ? window.LixingV1.getDailyFields() : { feeling: "", harvest: "", thickness: "" };
+          const parts = [d.feeling || d.harvest, d.thickness ? "完成：" + d.thickness : ""].filter(Boolean);
           return parts.join(" · ");
         })(),
       };

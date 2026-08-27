@@ -91,7 +91,9 @@
       if (date < cutoffStr) return;
       const e = entries[date];
       const blob = [
+        e.dailyWish,
         ...(e.three || []),
+        e.feeling,
         e.harvest,
         e.thickness,
         e.note,
@@ -140,8 +142,29 @@
     return raw.replace(/[^A-Za-z0-9\u4e00-\u9fff]/g, "").slice(0, 2);
   }
 
+  function normalizeDailyEntry(e) {
+    const base = {
+      dailyWish: "",
+      three: ["", "", ""],
+      threeKw: ["", "", ""],
+      feeling: "",
+      reviewDone: [null, null, null],
+      reviewNote: "",
+      reviewedAt: "",
+    };
+    if (!e || typeof e !== "object") return base;
+    const three = Array.isArray(e.three) ? e.three.slice(0, 3) : ["", "", ""];
+    while (three.length < 3) three.push("");
+    const threeKw = Array.isArray(e.threeKw) ? e.threeKw.slice(0, 3) : ["", "", ""];
+    while (threeKw.length < 3) threeKw.push("");
+    const reviewDone = Array.isArray(e.reviewDone) ? e.reviewDone.slice(0, 3) : [null, null, null];
+    while (reviewDone.length < 3) reviewDone.push(null);
+    return Object.assign(base, e, { three, threeKw, reviewDone });
+  }
+
   function getDailyFields() {
     return {
+      dailyWish: (document.getElementById("dailyWish") || {}).value?.trim() || "",
       three: [1, 2, 3].map((i) => {
         const el = document.getElementById("three" + i);
         return el ? el.value.trim() : "";
@@ -150,9 +173,52 @@
         const el = document.getElementById("kw" + i);
         return el ? el.textContent.trim() : "";
       }),
+      feeling: (document.getElementById("dailyFeeling") || {}).value?.trim() || "",
+      reviewDone: [1, 2, 3].map((i) => {
+        const circle = document.getElementById("reviewCircle" + i);
+        if (!circle) return null;
+        if (circle.classList.contains("is-yes")) return "yes";
+        if (circle.classList.contains("is-no")) return "no";
+        return null;
+      }),
+      reviewNote: (document.getElementById("reviewNote") || {}).value?.trim() || "",
       harvest: (document.getElementById("harvest") || {}).value?.trim() || "",
       thickness: (document.getElementById("thickness") || {}).value?.trim() || "",
     };
+  }
+
+  function paintReviewMark(i, state) {
+    const circle = document.getElementById("reviewCircle" + i);
+    const btns = document.querySelectorAll('.review-btns button[data-review="' + i + '"]');
+    if (!circle) return;
+    circle.classList.remove("is-yes", "is-no");
+    if (state === "yes") circle.classList.add("is-yes");
+    else if (state === "no") circle.classList.add("is-no");
+    btns.forEach((btn) => {
+      btn.classList.toggle("is-active", btn.dataset.v === state);
+    });
+    const foot = document.getElementById("foot" + i);
+    if (!foot) return;
+    if (state === "yes") foot.textContent = "已成";
+    else if (state === "no") foot.textContent = "未成";
+  }
+
+  function paintWishFeeling(wish, feeling) {
+    const footWish = document.getElementById("footWish");
+    const footFeel = document.getElementById("footFeel");
+    const feelCol = document.querySelector('.poster-col[data-col="feel"]');
+    if (footWish) footWish.textContent = wish && wish.trim() ? "已许" : "未许";
+    if (footFeel) footFeel.textContent = feeling && feeling.trim() ? "已写" : "未写";
+    if (feelCol) feelCol.classList.toggle("has-feel", !!(feeling && feeling.trim()));
+  }
+
+  function updateFeelingNudge() {
+    const nudge = document.getElementById("feelingNudge");
+    const poster = document.getElementById("threePoster");
+    const feeling = (document.getElementById("dailyFeeling") || {}).value || "";
+    if (!nudge) return;
+    const show = poster && poster.classList.contains("is-review") && !feeling.trim();
+    nudge.classList.toggle("is-show", show);
   }
 
   function paintCol(i, text, kw, manual) {
@@ -168,19 +234,26 @@
     }
     if (col) {
       col.classList.toggle("has-kw", !!word);
-      if (filled || i === 1) col.classList.remove("is-wait");
     }
-    if (foot) foot.textContent = filled ? "已写" : "未写";
+    if (foot && !document.getElementById("threePoster")?.classList.contains("is-review")) {
+      foot.textContent = filled ? "已写" : "未写";
+    }
   }
 
   function unlockCols() {
+    const wish = ((document.getElementById("dailyWish") || {}).value || "").trim();
     const texts = [1, 2, 3].map((i) => (document.getElementById("three" + i) || {}).value || "");
     [1, 2, 3].forEach((i) => {
       const col = document.querySelector('.poster-col[data-col="' + i + '"]');
       if (!col) return;
-      const prevFilled = i === 1 || !!(texts[i - 2] && texts[i - 2].trim());
-      if (prevFilled || (texts[i - 1] && texts[i - 1].trim())) col.classList.remove("is-wait");
-      else if (i > 1) col.classList.add("is-wait");
+      if (i === 1) {
+        if (wish) col.classList.remove("is-wait");
+        else col.classList.add("is-wait");
+        return;
+      }
+      const prevFilled = !!(texts[i - 2] && texts[i - 2].trim());
+      if (wish && (prevFilled || (texts[i - 1] && texts[i - 1].trim()))) col.classList.remove("is-wait");
+      else col.classList.add("is-wait");
     });
   }
 
@@ -194,30 +267,37 @@
   }
 
   function setDailyFields(e) {
-    const entry = e || {};
-    const three = entry.three || ["", "", ""];
-    const kws = entry.threeKw || ["", "", ""];
+    const entry = normalizeDailyEntry(e);
+    const wishEl = document.getElementById("dailyWish");
+    const feelEl = document.getElementById("dailyFeeling");
+    const reviewNoteEl = document.getElementById("reviewNote");
+    if (wishEl) wishEl.value = entry.dailyWish || "";
+    if (feelEl) feelEl.value = entry.feeling || "";
+    if (reviewNoteEl) reviewNoteEl.value = entry.reviewNote || "";
+    paintWishFeeling(entry.dailyWish, entry.feeling);
     [1, 2, 3].forEach((i) => {
       const el = document.getElementById("three" + i);
-      if (el) el.value = three[i - 1] || "";
+      if (el) el.value = entry.three[i - 1] || "";
       const kwEl = document.getElementById("kw" + i);
-      const savedKw = (kws[i - 1] || "").trim();
+      const savedKw = (entry.threeKw[i - 1] || "").trim();
       if (kwEl) {
         if (savedKw) {
           kwEl.textContent = savedKw;
           kwEl.dataset.manual = "1";
         } else {
           delete kwEl.dataset.manual;
-          kwEl.textContent = extractKeyword(three[i - 1] || "");
+          kwEl.textContent = extractKeyword(entry.three[i - 1] || "");
         }
       }
-      paintCol(i, three[i - 1] || "", savedKw || extractKeyword(three[i - 1] || ""), !!savedKw);
+      paintCol(i, entry.three[i - 1] || "", savedKw || extractKeyword(entry.three[i - 1] || ""), !!savedKw);
+      paintReviewMark(i, entry.reviewDone[i - 1] || null);
     });
     unlockCols();
+    updateFeelingNudge();
     const harvestEl = document.getElementById("harvest");
     const thickEl = document.getElementById("thickness");
     const noteEl = document.getElementById("note");
-    const harvest = entry.harvest || entry.note || "";
+    const harvest = entry.feeling || entry.harvest || entry.note || "";
     if (harvestEl) harvestEl.value = harvest;
     if (thickEl) thickEl.value = entry.thickness || "";
     if (noteEl && !entry.harvest) noteEl.value = entry.note || "";
@@ -251,10 +331,12 @@
     const poster = document.getElementById("threePoster");
     const begin = document.getElementById("askBegin");
     if (!ask || !poster) return;
-    const already = [1, 2, 3].some((i) => {
-      const el = document.getElementById("three" + i);
-      return el && el.value.trim();
-    });
+    const already =
+      ((document.getElementById("dailyWish") || {}).value || "").trim() ||
+      [1, 2, 3].some((i) => {
+        const el = document.getElementById("three" + i);
+        return el && el.value.trim();
+      });
     if (already) {
       ask.hidden = true;
       showPoster(true);
@@ -271,8 +353,41 @@
     begin?.addEventListener("click", function () {
       showPoster(false);
       setTimeout(function () {
-        document.getElementById("three1")?.focus();
+        const wish = document.getElementById("dailyWish");
+        if (wish && !wish.value.trim()) wish.focus();
+        else document.getElementById("three1")?.focus();
       }, 720);
+    });
+    document.getElementById("dailyWish")?.addEventListener("input", function () {
+      paintWishFeeling(this.value, (document.getElementById("dailyFeeling") || {}).value || "");
+      unlockCols();
+    });
+    document.getElementById("dailyFeeling")?.addEventListener("input", function () {
+      paintWishFeeling((document.getElementById("dailyWish") || {}).value || "", this.value);
+      updateFeelingNudge();
+    });
+    document.querySelectorAll(".review-btns button").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const i = parseInt(btn.dataset.review, 10);
+        const v = btn.dataset.v;
+        const circle = document.getElementById("reviewCircle" + i);
+        const cur = circle && circle.classList.contains("is-yes") ? "yes" : circle && circle.classList.contains("is-no") ? "no" : null;
+        paintReviewMark(i, cur === v ? null : v);
+        updateFeelingNudge();
+      });
+    });
+    document.getElementById("openReviewBtn")?.addEventListener("click", function () {
+      const poster = document.getElementById("threePoster");
+      const btn = document.getElementById("openReviewBtn");
+      if (!poster) return;
+      const on = !poster.classList.contains("is-review");
+      poster.classList.toggle("is-review", on);
+      btn?.classList.toggle("is-active", on);
+      updateFeelingNudge();
+      if (on) {
+        const feel = document.getElementById("dailyFeeling");
+        if (feel && !feel.value.trim()) feel.focus();
+      }
     });
     [1, 2, 3].forEach((i) => {
       document.getElementById("three" + i)?.addEventListener("input", function () {
@@ -494,12 +609,18 @@
   window.LixingV1 = {
     normalizeLifeWishes,
     defaultLifeWishes,
+    normalizeDailyEntry,
     extractKeyword,
     setDailyFields,
     getDailyFields,
     refreshHome() {
+      paintWishFeeling(
+        (document.getElementById("dailyWish") || {}).value || "",
+        (document.getElementById("dailyFeeling") || {}).value || ""
+      );
       [1, 2, 3].forEach((i) => syncHomeFromText(i));
       unlockCols();
+      updateFeelingNudge();
     },
     renderKeywords,
     renderWishSummary,

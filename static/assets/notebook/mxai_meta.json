@@ -2,9 +2,30 @@
   "generated_at": "2026-08-27",
   "model": "即梦5.0标准版",
   "jobs": [
-    {"file": "book-open.jpg", "serial_no": "2092994148440215552", "role": "3/4 摊开线装书（备用）"},
-    {"file": "book-cover.jpg", "serial_no": "2092994153360134144", "role": "提问幕立式封面"},
-    {"file": "table-scene.jpg", "serial_no": "2092994154870083584", "role": "木案锦缎香炉背景"},
-    {"file": "book-spread.jpg", "serial_no": "2092994699265576960", "role": "俯视空白乌丝栏内页（填写叠层）"}
+    {
+      "file": "book-open.jpg",
+      "serial_no": "2092994148440215552",
+      "role": "3/4 摊开线装书（备用）"
+    },
+    {
+      "file": "book-cover.jpg",
+      "serial_no": "2092994153360134144",
+      "role": "提问幕立式封面"
+    },
+    {
+      "file": "table-scene.jpg",
+      "serial_no": "2092994154870083584",
+      "role": "木案锦缎香炉背景"
+    },
+    {
+      "file": "book-spread.jpg",
+      "serial_no": "2092994699265576960",
+      "role": "俯视空白乌丝栏内页（填写叠层）"
+    },
+    {
+      "file": "red-circle.png",
+      "serial_no": "2093009269967294464",
+      "role": "朱批圈点"
+    }
   ]
 }
