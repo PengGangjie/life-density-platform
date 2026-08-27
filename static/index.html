@@ -258,59 +258,61 @@
     }
     .open-frame {
       position: relative;
-      width: min(1120px, 96vw);
-      filter: drop-shadow(0 32px 48px rgba(0,0,0,0.55));
+      width: min(960px, 94vw);
+      min-height: min(70vh, 680px);
+      background: #080808;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 28px 56px rgba(0, 0, 0, 0.65);
+      display: flex;
+      flex-direction: column;
     }
-    .open-img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
+    .open-img { display: none; }
     .page-overlay {
-      position: absolute;
-      left: 51.6%;
-      top: 14.2%;
-      width: 42.8%;
-      height: 71%;
-      color: #1a1a1a;
-      pointer-events: none;
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      padding: 20px 24px 16px;
+      color: #f0e8dc;
+      pointer-events: auto;
     }
-    .page-overlay > * { pointer-events: auto; }
 
     .poster-date-box {
       position: absolute;
-      top: 0.8%;
-      right: 3.2%;
-      width: 36%;
-      height: 9.5%;
-      border: 1px solid rgba(185, 28, 28, 0.72);
-      background: rgba(255, 250, 242, 0.42);
+      top: 16px;
+      right: 20px;
+      width: auto;
+      max-width: 42%;
+      min-width: 9.5em;
+      min-height: 2.8em;
+      border: 1px solid rgba(185, 28, 28, 0.78);
+      background: rgba(0, 0, 0, 0.45);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2px 5px;
+      padding: 6px 10px;
       z-index: 3;
       box-sizing: border-box;
     }
     .poster-date {
       margin: 0;
       font-family: var(--font);
-      font-size: clamp(0.52rem, 0.95vw, 0.68rem);
-      letter-spacing: 0.04em;
+      font-size: clamp(0.58rem, 1vw, 0.72rem);
+      letter-spacing: 0.06em;
       line-height: 1.45;
       text-align: center;
-      color: #3a3228;
+      color: #e8dcc4;
       writing-mode: horizontal-tb;
     }
     .poster-body {
-      position: absolute;
-      left: 6.2%;
-      right: 5.4%;
-      top: 12.5%;
-      bottom: 4.8%;
+      position: relative;
+      flex: 1;
       display: flex;
       flex-direction: column;
       min-height: 0;
+      margin-top: 12px;
+      padding-top: 36px;
       overflow: hidden;
     }
     .poster-head { display: none; }
@@ -322,6 +324,8 @@
       min-height: 0;
       gap: 0;
       align-items: stretch;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     }
     .poster-col {
       height: 100%;
@@ -331,6 +335,7 @@
       justify-content: center;
       align-items: stretch;
       padding: 0;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
       opacity: 0;
       transform: translateY(18px);
       transition: opacity .8s cubic-bezier(.25,.1,.25,1), transform .8s cubic-bezier(.25,.1,.25,1), filter .6s;
@@ -341,9 +346,9 @@
       pointer-events: none;
     }
     .poster-meta {
-      font-size: clamp(0.58rem, 0.92vw, 0.72rem);
-      letter-spacing: 0.18em;
-      color: #6a5c4c;
+      font-size: clamp(0.62rem, 1vw, 0.76rem);
+      letter-spacing: 0.22em;
+      color: #c4b08a;
       margin: 0;
       flex-shrink: 0;
     }
@@ -353,20 +358,20 @@
     .open-hero.is-in .poster-col:nth-child(3) { transition-delay: .28s; }
     .open-hero.is-in .poster-col:nth-child(4) { transition-delay: .38s; }
     .open-hero.is-in .poster-col:nth-child(5) { transition-delay: .48s; }
-    .poster-col--wish .poster-meta { color: #7a5c28; }
-    .poster-col--feel .poster-meta { color: #8b4513; }
+    .poster-col--wish .poster-meta { color: #d4bc82; }
+    .poster-col--feel .poster-meta { color: #d4a574; }
     .poster-col-inner {
       writing-mode: vertical-rl;
       text-orientation: upright;
       height: 100%;
       width: 100%;
-      max-width: 1.15em;
+      max-width: 2.6em;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      gap: 0.22em;
-      padding: 0.1em 0 0.25em;
+      gap: 0.35em;
+      padding: 0.6em 0 0.4em;
       position: relative;
       box-sizing: border-box;
     }
@@ -374,9 +379,9 @@
     .poster-col .poster-feel,
     .poster-col .poster-wish {
       flex: 1 1 auto;
-      width: 1.05em;
+      width: 2em;
       min-width: 0;
-      min-height: 3em;
+      min-height: 4em;
       max-height: 100%;
       height: auto;
       border: none;
@@ -384,17 +389,17 @@
       resize: none;
       outline: none;
       font-family: var(--font);
-      font-size: clamp(0.62rem, 1vw, 0.76rem);
-      line-height: 1.45;
-      letter-spacing: 0.06em;
-      color: #1a1a1a;
-      padding: 0.08em 0;
+      font-size: clamp(0.72rem, 1.15vw, 0.88rem);
+      line-height: 1.5;
+      letter-spacing: 0.1em;
+      color: #f2ebe0;
+      padding: 0.12em 0;
       writing-mode: vertical-rl;
       text-orientation: upright;
       overflow: hidden;
     }
     .poster-col .poster-feel::placeholder,
-    .poster-col textarea::placeholder { color: #9a8f82; }
+    .poster-col textarea::placeholder { color: rgba(196, 176, 138, 0.55); }
     .review-circle {
       position: absolute;
       left: -0.05em;
@@ -504,14 +509,14 @@
     }
     .poster-kw {
       font-family: var(--display);
-      font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+      font-size: clamp(1.1rem, 2vw, 1.55rem);
       line-height: 1.05;
-      letter-spacing: 0.12em;
-      min-height: 1.6em;
-      max-width: 1.1em;
+      letter-spacing: 0.14em;
+      min-height: 1.8em;
+      max-width: 1.4em;
       margin: 0;
       outline: none;
-      color: #1a1a1a;
+      color: #faf6ee;
       filter: blur(6px);
       opacity: 0.35;
       transition: filter .7s cubic-bezier(.25,.1,.25,1), opacity .7s;
@@ -520,21 +525,21 @@
     }
     .poster-kw:empty::before {
       content: attr(data-placeholder);
-      color: #bbb;
+      color: rgba(196, 176, 138, 0.45);
     }
     .poster-col.has-kw .poster-kw {
       filter: none;
       opacity: 1;
     }
     .poster-foot {
-      font-size: clamp(0.52rem, 0.85vw, 0.64rem);
-      letter-spacing: 0.12em;
-      color: #6a5c4c;
+      font-size: clamp(0.56rem, 0.9vw, 0.68rem);
+      letter-spacing: 0.14em;
+      color: rgba(196, 176, 138, 0.75);
       margin: 0;
       flex-shrink: 0;
     }
     .poster-col.has-kw .poster-foot {
-      color: #8b1e1e;
+      color: #e8a0a0;
     }
     @media (max-width: 860px) {
       .ask-stage {
@@ -546,23 +551,14 @@
       }
       .ask-copy { text-align: center; }
       .cover-hero { max-width: min(280px, 70vw); }
-      .page-overlay {
-        left: 50.5%;
-        top: 13.5%;
-        width: 44%;
-        height: 72%;
-      }
-      .poster-date-box { width: 40%; height: 10%; }
-      .poster-body {
-        left: 5.5%;
-        right: 4.5%;
-        top: 13%;
-        bottom: 4%;
-      }
-      .poster-col-inner { max-width: 1em; }
+      .open-frame { min-height: min(62vh, 560px); width: min(96vw, 960px); }
+      .page-overlay { padding: 14px 12px 12px; }
+      .poster-date-box { top: 10px; right: 10px; max-width: 48%; }
+      .poster-body { padding-top: 32px; }
+      .poster-col-inner { max-width: 2em; }
       .poster-col textarea,
       .poster-col .poster-feel,
-      .poster-col .poster-wish { width: 0.95em; font-size: 0.58rem; }
+      .poster-col .poster-wish { width: 1.65em; font-size: 0.68rem; }
       .cover-title-text { font-size: clamp(1.1rem, 4.5vw, 1.45rem); }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -1464,7 +1460,6 @@
       </section>
       <div class="open-hero" id="threePoster" hidden>
         <div class="open-frame">
-          <img class="open-img" src="assets/notebook/book-spread.jpg" alt="线装书内页" width="2560" height="1440" decoding="async" />
           <div class="page-overlay">
             <div class="poster-date-box" aria-label="日期">
               <p class="poster-date" id="notebookDateDisplay"></p>
@@ -2568,7 +2563,7 @@
   </div>
 
   <script src="assets/lixing-cloud-auth.js"></script>
-  <script src="assets/lixing-v1.js?v=20260828b"></script>
+  <script src="assets/lixing-v1.js?v=20260828c"></script>
   <script src="assets/cognitive-bias/biases-data.js"></script>
   <script src="assets/leon-playbook/wheel-of-life.js"></script>
   <script src="assets/leon-playbook/leon-cards.js"></script>
