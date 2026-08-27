@@ -1,4 +1,10 @@
 {
-  "front": "https://cdn.qihuiai.com/attachment/seedream/outputs/41563036/202608/20930666313988218880402521.png?auth_key=1787861304-eacd182dee944f409b7dadd9a2e54ca3-0-efcf0edf43337814065c38ca1639d5d5",
-  "back": "https://cdn.qihuiai.com/attachment/seedream/outputs/41563036/202608/20930666318224465920403021.png?auth_key=1787861304-9b1e5ca347214e51ab849c2fcfe8c321-0-4b58025142ceb5be793325f32fb70e06"
+  "source": "user_reference_side_by_side",
+  "reference": "山鬼钱正反面参考图",
+  "files": {
+    "front": "shangui-front.png",
+    "back": "shangui-back.png"
+  },
+  "size": "512x512",
+  "processed": "2026-08-28"
 }
