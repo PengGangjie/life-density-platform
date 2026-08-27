@@ -1,15 +1,16 @@
 /* 砺行 · 日省 云端轻量样式 */
 :root {
-  --lixing-warm: #c41e3a;
-  --lixing-bg: #faf7f0;
+  --lixing-warm: #c93756;
+  --lixing-bg: #e8e0d0;
 }
 body {
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
+  font-family: "GuoWen ZhengKai", "KaiTi", "STKaiti", serif;
 }
 .topnav {
-  background: rgba(250, 247, 240, 0.94) !important;
-  border-bottom: 1px solid rgba(196, 30, 58, 0.12) !important;
+  background: rgba(232, 224, 208, 0.94) !important;
+  border-bottom: 1px solid rgba(201, 55, 86, 0.15) !important;
 }
 .topnav-auth {
   display: flex;
@@ -19,7 +20,7 @@ body {
 .topnav-login,
 .topnav-logout,
 .tool-link {
-  font-family: "GuoFeng Song", "Songti SC", serif;
+  font-family: "GuoWen ZhengKai", "KaiTi", "STKaiti", serif;
   font-size: 0.82rem;
   letter-spacing: 0.08em;
   text-decoration: none;
