@@ -268,48 +268,69 @@
     }
     .page-overlay {
       position: absolute;
-      left: 8.2%;
-      top: 11%;
-      width: 83.6%;
-      height: 76%;
-      display: flex;
-      flex-direction: column;
+      left: 51.6%;
+      top: 14.2%;
+      width: 42.8%;
+      height: 71%;
       color: #1a1a1a;
+      pointer-events: none;
     }
+    .page-overlay > * { pointer-events: auto; }
 
-    .poster-head {
+    .poster-date-box {
+      position: absolute;
+      top: 0.8%;
+      right: 3.2%;
+      width: 36%;
+      height: 9.5%;
+      border: 1px solid rgba(185, 28, 28, 0.72);
+      background: rgba(255, 250, 242, 0.42);
       display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 0 1.5% 6px;
-      flex-shrink: 0;
-    }
-    .poster-brand {
-      font-size: 0.95rem;
-      letter-spacing: 0.45em;
-      margin: 0;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 5px;
+      z-index: 3;
+      box-sizing: border-box;
     }
     .poster-date {
-      font-size: 0.78rem;
-      letter-spacing: 0.12em;
-      color: #4a4036;
       margin: 0;
+      font-family: var(--font);
+      font-size: clamp(0.52rem, 0.95vw, 0.68rem);
+      letter-spacing: 0.04em;
+      line-height: 1.45;
+      text-align: center;
+      color: #3a3228;
+      writing-mode: horizontal-tb;
     }
+    .poster-body {
+      position: absolute;
+      left: 6.2%;
+      right: 5.4%;
+      top: 12.5%;
+      bottom: 4.8%;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .poster-head { display: none; }
     .poster-cols {
       flex: 1;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       direction: rtl;
       min-height: 0;
       gap: 0;
+      align-items: stretch;
     }
     .poster-col {
       height: 100%;
       min-height: 0;
+      min-width: 0;
       display: flex;
       justify-content: center;
       align-items: stretch;
-      padding: 0 2%;
+      padding: 0;
       opacity: 0;
       transform: translateY(18px);
       transition: opacity .8s cubic-bezier(.25,.1,.25,1), transform .8s cubic-bezier(.25,.1,.25,1), filter .6s;
@@ -320,8 +341,8 @@
       pointer-events: none;
     }
     .poster-meta {
-      font-size: 0.82rem;
-      letter-spacing: 0.35em;
+      font-size: clamp(0.58rem, 0.92vw, 0.72rem);
+      letter-spacing: 0.18em;
       color: #6a5c4c;
       margin: 0;
       flex-shrink: 0;
@@ -339,20 +360,23 @@
       text-orientation: upright;
       height: 100%;
       width: 100%;
-      max-width: 3.2em;
+      max-width: 1.15em;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      gap: 0.35em;
-      padding: 0.2em 0 0.4em;
+      gap: 0.22em;
+      padding: 0.1em 0 0.25em;
       position: relative;
+      box-sizing: border-box;
     }
     .poster-col textarea,
-    .poster-col .poster-feel {
+    .poster-col .poster-feel,
+    .poster-col .poster-wish {
       flex: 1 1 auto;
-      width: 10em;
-      min-height: 4em;
+      width: 1.05em;
+      min-width: 0;
+      min-height: 3em;
       max-height: 100%;
       height: auto;
       border: none;
@@ -360,22 +384,23 @@
       resize: none;
       outline: none;
       font-family: var(--font);
-      font-size: 0.92rem;
-      line-height: 1.55;
-      letter-spacing: 0.14em;
+      font-size: clamp(0.62rem, 1vw, 0.76rem);
+      line-height: 1.45;
+      letter-spacing: 0.06em;
       color: #1a1a1a;
-      padding: 0.15em 0;
+      padding: 0.08em 0;
       writing-mode: vertical-rl;
       text-orientation: upright;
+      overflow: hidden;
     }
     .poster-col .poster-feel::placeholder,
     .poster-col textarea::placeholder { color: #9a8f82; }
     .review-circle {
       position: absolute;
-      left: -0.15em;
-      top: 38%;
-      width: 2.4em;
-      height: 2.4em;
+      left: -0.05em;
+      top: 36%;
+      width: 1.65em;
+      height: 1.65em;
       pointer-events: none;
       opacity: 0;
       background: center/contain no-repeat;
@@ -419,8 +444,8 @@
     }
     .review-strip {
       flex-shrink: 0;
-      margin-top: 4px;
-      padding: 6px 2% 0;
+      margin-top: 2px;
+      padding: 4px 0 0;
       border-top: 1px dashed rgba(185, 28, 28, 0.35);
       display: none;
     }
@@ -479,10 +504,11 @@
     }
     .poster-kw {
       font-family: var(--display);
-      font-size: clamp(1.35rem, 2.6vw, 1.85rem);
-      line-height: 1.1;
-      letter-spacing: 0.2em;
-      min-height: 2.2em;
+      font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+      line-height: 1.05;
+      letter-spacing: 0.12em;
+      min-height: 1.6em;
+      max-width: 1.1em;
       margin: 0;
       outline: none;
       color: #1a1a1a;
@@ -501,8 +527,8 @@
       opacity: 1;
     }
     .poster-foot {
-      font-size: 0.72rem;
-      letter-spacing: 0.22em;
+      font-size: clamp(0.52rem, 0.85vw, 0.64rem);
+      letter-spacing: 0.12em;
       color: #6a5c4c;
       margin: 0;
       flex-shrink: 0;
@@ -521,15 +547,22 @@
       .ask-copy { text-align: center; }
       .cover-hero { max-width: min(280px, 70vw); }
       .page-overlay {
-        left: 5%;
-        top: 9%;
-        width: 90%;
-        height: 80%;
+        left: 50.5%;
+        top: 13.5%;
+        width: 44%;
+        height: 72%;
       }
-      .poster-cols { grid-template-columns: repeat(5, 1fr); }
-      .poster-col-inner { max-width: 2em; }
+      .poster-date-box { width: 40%; height: 10%; }
+      .poster-body {
+        left: 5.5%;
+        right: 4.5%;
+        top: 13%;
+        bottom: 4%;
+      }
+      .poster-col-inner { max-width: 1em; }
       .poster-col textarea,
-      .poster-col .poster-feel { width: 6.5em; font-size: 0.75rem; }
+      .poster-col .poster-feel,
+      .poster-col .poster-wish { width: 0.95em; font-size: 0.58rem; }
       .cover-title-text { font-size: clamp(1.1rem, 4.5vw, 1.45rem); }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -1433,10 +1466,10 @@
         <div class="open-frame">
           <img class="open-img" src="assets/notebook/book-spread.jpg" alt="线装书内页" width="2560" height="1440" decoding="async" />
           <div class="page-overlay">
-            <header class="poster-head">
-              <p class="poster-brand"><span class="char-li">砺</span>行</p>
+            <div class="poster-date-box" aria-label="日期">
               <p class="poster-date" id="notebookDateDisplay"></p>
-            </header>
+            </div>
+            <div class="poster-body">
             <div class="poster-cols">
               <article class="poster-col poster-col--wish" data-col="wish">
                 <div class="poster-col-inner">
@@ -1496,6 +1529,7 @@
             <div class="review-strip" id="reviewStrip">
               <p class="review-hint">朱批复盘 · 圈点三件小事成否；感受可随时补写</p>
               <textarea id="reviewNote" class="review-note" rows="2" placeholder="批改一句（可选）…" aria-label="复盘批改"></textarea>
+            </div>
             </div>
           </div>
         </div>
@@ -2933,12 +2967,17 @@
       const el = document.getElementById("notebookDateDisplay");
       const label = document.getElementById("dateWorkspaceLabel");
       let pretty = date;
+      let shortDate = date;
+      let weekday = "";
       try {
-        pretty = new Date(date + "T12:00:00").toLocaleDateString("zh-CN", {
+        const d = new Date(date + "T12:00:00");
+        pretty = d.toLocaleDateString("zh-CN", {
           year: "numeric", month: "long", day: "numeric", weekday: "long",
         });
+        shortDate = d.toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" });
+        weekday = d.toLocaleDateString("zh-CN", { weekday: "long" });
       } catch (_) {}
-      if (el) el.textContent = pretty;
+      if (el) el.innerHTML = shortDate + (weekday ? "<br>" + weekday : "");
       if (label) label.textContent = pretty;
     }
 
