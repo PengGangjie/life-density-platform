@@ -8,6 +8,14 @@
   <style>
     @font-face {
       font-family: "GuoWen ZhengKai";
+      src: url("assets/fonts/LixingFix.ttf") format("truetype");
+      unicode-range: U+783A-783B;
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "GuoWen ZhengKai";
       src: url("assets/fonts/KaiOldstyle.ttf") format("truetype");
       font-weight: normal;
       font-style: normal;
@@ -121,10 +129,14 @@
     }
     .cover-title {
       position: absolute;
-      left: 31.5%;
-      top: 19%;
-      height: 44%;
+      left: 29.1%;
+      top: 20.1%;
+      height: 66%;
       width: auto;
+      max-width: 12%;
+      transform: translateX(-50%);
+      object-fit: contain;
+      object-position: center center;
       pointer-events: none;
       filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25));
     }
