@@ -234,6 +234,7 @@
         ask.hidden = true;
         ask.classList.remove("is-out");
       }
+      document.getElementById("studyScene")?.classList.add("is-open");
       poster.hidden = false;
       requestAnimationFrame(function () {
         poster.classList.add("is-in");
