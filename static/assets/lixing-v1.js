@@ -126,24 +126,96 @@
       <div class="kw-col"><div class="kw-label">近 365 天</div><div class="kw-tags">${renderKeywordTags(year)}</div></div>`;
   }
 
+  function extractKeyword(text) {
+    const raw = String(text || "").trim();
+    if (!raw) return "";
+    const tokens = tokenize(raw)
+      .map((w) => w.replace(/[^\u4e00-\u9fff]/g, ""))
+      .filter((w) => w.length === 2);
+    if (tokens.length) return tokens[tokens.length - 1];
+    const cjk = raw.replace(/[^\u4e00-\u9fff]/g, "");
+    if (cjk.length >= 4 && cjk.charAt(1) === "一") return cjk.charAt(0) + cjk.charAt(cjk.length - 1);
+    if (cjk.length >= 2) return cjk.slice(-2);
+    if (cjk.length === 1) return cjk;
+    return raw.replace(/[^A-Za-z0-9\u4e00-\u9fff]/g, "").slice(0, 2);
+  }
+
   function getDailyFields() {
     return {
       three: [1, 2, 3].map((i) => {
         const el = document.getElementById("three" + i);
         return el ? el.value.trim() : "";
       }),
+      threeKw: [1, 2, 3].map((i) => {
+        const el = document.getElementById("kw" + i);
+        return el ? el.textContent.trim() : "";
+      }),
       harvest: (document.getElementById("harvest") || {}).value?.trim() || "",
       thickness: (document.getElementById("thickness") || {}).value?.trim() || "",
     };
   }
 
+  function paintCol(i, text, kw, manual) {
+    const col = document.querySelector('.poster-col[data-col="' + i + '"]');
+    const kwEl = document.getElementById("kw" + i);
+    const sub = document.getElementById("sub" + i);
+    const foot = document.getElementById("foot" + i);
+    const filled = !!(text && text.trim());
+    const word = (kw && kw.trim()) || extractKeyword(text);
+    if (kwEl) {
+      if (!manual) kwEl.textContent = word;
+      if (manual) kwEl.dataset.manual = "1";
+      else delete kwEl.dataset.manual;
+    }
+    if (col) {
+      col.classList.toggle("has-kw", !!word);
+      if (filled || i === 1) col.classList.remove("is-wait");
+    }
+    if (sub) sub.textContent = filled ? (word ? "工作外 · " + word : "工作外 · 小事") : "工作外 · 小事";
+    if (foot) foot.textContent = filled ? "已写" : "未写";
+  }
+
+  function unlockCols() {
+    const texts = [1, 2, 3].map((i) => (document.getElementById("three" + i) || {}).value || "");
+    [1, 2, 3].forEach((i) => {
+      const col = document.querySelector('.poster-col[data-col="' + i + '"]');
+      if (!col) return;
+      const prevFilled = i === 1 || !!(texts[i - 2] && texts[i - 2].trim());
+      if (prevFilled || (texts[i - 1] && texts[i - 1].trim())) col.classList.remove("is-wait");
+      else if (i > 1) col.classList.add("is-wait");
+    });
+  }
+
+  function syncHomeFromText(i) {
+    const ta = document.getElementById("three" + i);
+    const kwEl = document.getElementById("kw" + i);
+    const text = ta ? ta.value : "";
+    const manual = kwEl && kwEl.dataset.manual === "1";
+    paintCol(i, text, manual ? kwEl.textContent : "", manual);
+    unlockCols();
+  }
+
   function setDailyFields(e) {
     const entry = e || {};
     const three = entry.three || ["", "", ""];
+    const kws = entry.threeKw || ["", "", ""];
     [1, 2, 3].forEach((i) => {
       const el = document.getElementById("three" + i);
       if (el) el.value = three[i - 1] || "";
+      const kwEl = document.getElementById("kw" + i);
+      const savedKw = (kws[i - 1] || "").trim();
+      if (kwEl) {
+        if (savedKw) {
+          kwEl.textContent = savedKw;
+          kwEl.dataset.manual = "1";
+        } else {
+          delete kwEl.dataset.manual;
+          kwEl.textContent = extractKeyword(three[i - 1] || "");
+        }
+      }
+      paintCol(i, three[i - 1] || "", savedKw || extractKeyword(three[i - 1] || ""), !!savedKw);
     });
+    unlockCols();
     const harvestEl = document.getElementById("harvest");
     const thickEl = document.getElementById("thickness");
     const noteEl = document.getElementById("note");
@@ -151,6 +223,76 @@
     if (harvestEl) harvestEl.value = harvest;
     if (thickEl) thickEl.value = entry.thickness || "";
     if (noteEl && !entry.harvest) noteEl.value = entry.note || "";
+  }
+
+  function showPoster(skipAnim) {
+    const ask = document.getElementById("askStage");
+    const poster = document.getElementById("threePoster");
+    if (!poster) return;
+    const reveal = function () {
+      if (ask) {
+        ask.hidden = true;
+        ask.classList.remove("is-out");
+      }
+      poster.hidden = false;
+      requestAnimationFrame(function () {
+        poster.classList.add("is-in");
+      });
+    };
+    if (skipAnim || !ask || ask.hidden) {
+      reveal();
+      return;
+    }
+    ask.classList.add("is-out");
+    setTimeout(reveal, 640);
+  }
+
+  function initAskFlow() {
+    const ask = document.getElementById("askStage");
+    const poster = document.getElementById("threePoster");
+    const begin = document.getElementById("askBegin");
+    if (!ask || !poster) return;
+    const already = [1, 2, 3].some((i) => {
+      const el = document.getElementById("three" + i);
+      return el && el.value.trim();
+    });
+    if (already) {
+      ask.hidden = true;
+      showPoster(true);
+    } else {
+      poster.hidden = true;
+      poster.classList.remove("is-in");
+      requestAnimationFrame(function () {
+        ask.classList.add("is-ready");
+      });
+      setTimeout(function () {
+        ask.classList.add("is-clear");
+      }, 900);
+    }
+    begin?.addEventListener("click", function () {
+      showPoster(false);
+      setTimeout(function () {
+        document.getElementById("three1")?.focus();
+      }, 720);
+    });
+    [1, 2, 3].forEach((i) => {
+      document.getElementById("three" + i)?.addEventListener("input", function () {
+        const kwEl = document.getElementById("kw" + i);
+        if (kwEl) delete kwEl.dataset.manual;
+        syncHomeFromText(i);
+      });
+      document.getElementById("kw" + i)?.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter") ev.preventDefault();
+      });
+      document.getElementById("kw" + i)?.addEventListener("input", function () {
+        const el = this;
+        el.dataset.manual = "1";
+        let t = el.textContent.replace(/\s/g, "").slice(0, 2);
+        if (el.textContent !== t) el.textContent = t;
+        const col = document.querySelector('.poster-col[data-col="' + i + '"]');
+        if (col) col.classList.toggle("has-kw", !!t);
+      });
+    });
   }
 
   function renderWishSummary() {
@@ -353,8 +495,13 @@
   window.LixingV1 = {
     normalizeLifeWishes,
     defaultLifeWishes,
+    extractKeyword,
     setDailyFields,
     getDailyFields,
+    refreshHome() {
+      [1, 2, 3].forEach((i) => syncHomeFromText(i));
+      unlockCols();
+    },
     renderKeywords,
     renderWishSummary,
     renderWishesPanel,
@@ -367,6 +514,7 @@
       renderKeywords();
       renderWishSummary();
       renderWishesPanel();
+      initAskFlow();
     },
   };
 })();
