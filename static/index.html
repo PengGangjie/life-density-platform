@@ -1361,13 +1361,13 @@
     </header>
 
     <nav class="home-modules" role="tablist" aria-label="主页模块">
-      <button type="button" class="home-module-btn" data-module="decide" role="tab">抉择</button>
-      <button type="button" class="home-module-btn is-active" data-module="action" role="tab">行动</button>
+      <button type="button" class="home-module-btn is-active" data-module="decide" role="tab">抉择</button>
+      <button type="button" class="home-module-btn" data-module="action" role="tab">行动</button>
       <button type="button" class="home-module-btn" data-module="wish" role="tab">愿想</button>
     </nav>
 
     <!-- 抉择 -->
-    <section class="home-panel" id="module-decide" role="tabpanel" hidden aria-label="抉择">
+    <section class="home-panel" id="module-decide" role="tabpanel" aria-label="抉择">
       <p class="module-lead">犹豫不决时，交给随机 · 摇一摇手机或点击落位</p>
       <div class="field decide-field">
         <label for="decideQuestion">可选：你在纠结什么？</label>
@@ -1388,7 +1388,7 @@
     </section>
 
     <!-- 行动 -->
-    <section class="home-panel" id="module-action" role="tabpanel" aria-label="行动">
+    <section class="home-panel" id="module-action" role="tabpanel" hidden aria-label="行动">
       <header class="journal-date-bar" id="journalDateBar" aria-label="当天日期">
         <label class="journal-date-picker">
           <span class="journal-date-text">
@@ -1496,7 +1496,7 @@
   <script src="assets/lixing-voice.js?v=20260828p"></script>
   <script src="assets/lixing-write-dialog.js?v=20260828y"></script>
   <script src="assets/lixing-decide.js?v=20260828z"></script>
-  <script src="assets/lixing-home.js?v=20260828aa"></script>
+  <script src="assets/lixing-home.js?v=20260828ab"></script>
   <script>
     const STORAGE_KEY = "life-density-v3";
     const OLD_KEYS = ["life-density-v2", "life-density-v1"];

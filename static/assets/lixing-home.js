@@ -130,10 +130,9 @@
   }
 
   function initDefaults() {
-    var mod = "action";
+    var mod = "decide";
     var tab = "record";
     try {
-      mod = localStorage.getItem(MODULE_KEY) || "action";
       tab = localStorage.getItem(ACTION_TAB_KEY) || "record";
     } catch (_e) {}
     var dateEl = document.getElementById("date");
