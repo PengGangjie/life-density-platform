@@ -408,9 +408,15 @@
     const manual = kwEl && kwEl.dataset.manual === "1";
     paintCol(i, text, manual ? kwEl.textContent : "", manual);
     unlockCols();
-    if (window.LixingWriteDialog && window.LixingWriteDialog.syncPreviews) {
-      window.LixingWriteDialog.syncPreviews();
-    }
+    syncKwFromText(i);
+  }
+
+  function syncKwFromText(i) {
+    const ta = document.getElementById("three" + i);
+    const kwEl = document.getElementById("kw" + i);
+    if (!ta || !kwEl) return;
+    if (kwEl.dataset.manual === "1") return;
+    kwEl.textContent = extractKeyword(ta.value || "");
   }
 
   function setDailyFields(e) {

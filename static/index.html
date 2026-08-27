@@ -1326,7 +1326,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260828x" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260828aa" />
 
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0e0c0a" />
@@ -1366,16 +1366,6 @@
       <button type="button" class="home-module-btn" data-module="wish" role="tab">愿想</button>
     </nav>
 
-    <header class="journal-date-bar" id="journalDateBar" aria-label="当天日期">
-      <label class="journal-date-picker">
-        <span class="journal-date-text">
-          <span class="journal-date-greg" id="journalDateGreg">—</span>
-          <span class="journal-date-lunar" id="journalDateLunar"></span>
-        </span>
-        <input type="date" id="date" aria-label="日期" />
-      </label>
-    </header>
-
     <!-- 抉择 -->
     <section class="home-panel" id="module-decide" role="tabpanel" hidden aria-label="抉择">
       <p class="module-lead">犹豫不决时，交给随机 · 摇一摇手机或点击落位</p>
@@ -1399,6 +1389,16 @@
 
     <!-- 行动 -->
     <section class="home-panel" id="module-action" role="tabpanel" aria-label="行动">
+      <header class="journal-date-bar" id="journalDateBar" aria-label="当天日期">
+        <label class="journal-date-picker">
+          <span class="journal-date-text">
+            <span class="journal-date-greg" id="journalDateGreg">—</span>
+            <span class="journal-date-lunar" id="journalDateLunar"></span>
+          </span>
+          <input type="date" id="date" aria-label="日期" />
+        </label>
+      </header>
+
       <nav class="action-tabs" aria-label="行动子页">
         <button type="button" class="action-tab-btn is-active" data-action-tab="record">记录</button>
         <button type="button" class="action-tab-btn" data-action-tab="review">复盘</button>
@@ -1409,131 +1409,73 @@
         <button type="button" id="yesterdayReviewBtn">去复盘昨天</button>
       </div>
 
-      <div class="action-pane" id="action-record">
-        <p class="module-lead store-section-lead">工作之外 · 三件小事 · 可不写满</p>
+      <div class="action-pane action-pane--compact" id="action-record">
         <input type="hidden" id="dailyWish" value="" aria-hidden="true" />
         <span id="footWish" hidden></span>
-        <div class="store-list action-store-list is-in" id="threePoster">
-          <article class="store-item store-item--goal" data-col="1">
-            <div class="store-item-body">
-              <header class="store-item-head">
-                <span class="store-item-index">01</span>
-                <span class="store-item-label">第一件小事</span>
-                <button type="button" class="voice-btn" data-voice-for="1" aria-label="语音输入第一件">语音</button>
-              </header>
-              <p class="card-preview store-preview is-empty" id="previewThree1" data-placeholder="写下今天工作之外想完成的一件小事…"></p>
-              <textarea id="three1" class="field-hidden" rows="3" placeholder="写下今天工作之外想完成的一件小事…" aria-label="小目标一"></textarea>
-              <p class="store-item-foot" id="foot1">未写</p>
-            </div>
-          </article>
-          <article class="store-item store-item--goal" data-col="2">
-            <div class="store-item-body">
-              <header class="store-item-head">
-                <span class="store-item-index">02</span>
-                <span class="store-item-label">第二件（可空）</span>
-                <button type="button" class="voice-btn" data-voice-for="2" aria-label="语音输入第二件">语音</button>
-              </header>
-              <p class="card-preview store-preview is-empty" id="previewThree2" data-placeholder="第二件，也可以留空…"></p>
-              <textarea id="three2" class="field-hidden" rows="3" placeholder="第二件，也可以留空…" aria-label="小目标二"></textarea>
-              <p class="store-item-foot" id="foot2">未写</p>
-            </div>
-          </article>
-          <article class="store-item store-item--goal" data-col="3">
-            <div class="store-item-body">
-              <header class="store-item-head">
-                <span class="store-item-index">03</span>
-                <span class="store-item-label">第三件（可空）</span>
-                <button type="button" class="voice-btn" data-voice-for="3" aria-label="语音输入第三件">语音</button>
-              </header>
-              <p class="card-preview store-preview is-empty" id="previewThree3" data-placeholder="第三件，也可以留空…"></p>
-              <textarea id="three3" class="field-hidden" rows="3" placeholder="第三件，也可以留空…" aria-label="小目标三"></textarea>
-              <p class="store-item-foot" id="foot3">未写</p>
-            </div>
-          </article>
+        <div class="action-three-list" id="threePoster">
+          <div class="store-item store-item--goal action-three-item" data-col="1">
+            <textarea id="three1" class="store-input action-three-input" rows="2" placeholder="① 工作外第一件…" aria-label="第一件小事"></textarea>
+            <p class="store-item-foot" id="foot1" hidden aria-hidden="true"></p>
+          </div>
+          <div class="store-item store-item--goal action-three-item" data-col="2">
+            <textarea id="three2" class="store-input action-three-input" rows="2" placeholder="② 第二件（可空）" aria-label="第二件小事"></textarea>
+            <p class="store-item-foot" id="foot2" hidden aria-hidden="true"></p>
+          </div>
+          <div class="store-item store-item--goal action-three-item" data-col="3">
+            <textarea id="three3" class="store-input action-three-input" rows="2" placeholder="③ 第三件（可空）" aria-label="第三件小事"></textarea>
+            <p class="store-item-foot" id="foot3" hidden aria-hidden="true"></p>
+          </div>
         </div>
         <div class="action-save-bar">
-          <button type="button" class="btn-store-save" id="saveRecordBtn">确认 · 存今日</button>
+          <button type="button" class="btn-store-save" id="saveRecordBtn">保存</button>
           <span class="saved-toast saved-toast--inline" id="savedRecordToast" aria-live="polite">已保存</span>
         </div>
       </div>
 
-      <div class="action-pane review-scene" id="action-review" hidden>
-        <div class="review-magazine">
-          <header class="review-masthead">
-            <div class="review-masthead-rule"></div>
-            <p class="review-issue">
-              <span class="review-issue-en">SCS · REVIEW</span>
-              <span class="review-issue-date" id="reviewCoverDate">—</span>
-            </p>
-            <h2 class="review-cover-title">圈点成否</h2>
-            <p class="review-cover-lead">据今日三件小事 · 朱批成否</p>
-            <div class="review-masthead-rule review-masthead-rule--bottom"></div>
-          </header>
-
-          <div class="review-sheet" id="reviewSheet">
-            <article class="review-row" data-col="1">
-              <div class="review-row-head">
-                <span class="review-row-num">壹</span>
-                <span class="review-circle" id="reviewCircle1" aria-hidden="true"></span>
-              </div>
-              <p class="review-row-text" id="reviewText1">—</p>
-              <p class="write-kw review-row-kw" id="kw1" contenteditable="true" spellcheck="false" data-placeholder="关键词" aria-label="关键词其一"></p>
-              <div class="review-btns review-row-btns" aria-label="复盘其一">
-                <button type="button" data-review="1" data-v="yes">成</button>
-                <button type="button" data-review="1" data-v="no">否</button>
-              </div>
-            </article>
-            <article class="review-row" data-col="2">
-              <div class="review-row-head">
-                <span class="review-row-num">贰</span>
-                <span class="review-circle" id="reviewCircle2" aria-hidden="true"></span>
-              </div>
-              <p class="review-row-text" id="reviewText2">—</p>
-              <p class="write-kw review-row-kw" id="kw2" contenteditable="true" spellcheck="false" data-placeholder="关键词" aria-label="关键词其二"></p>
-              <div class="review-btns review-row-btns" aria-label="复盘其二">
-                <button type="button" data-review="2" data-v="yes">成</button>
-                <button type="button" data-review="2" data-v="no">否</button>
-              </div>
-            </article>
-            <article class="review-row" data-col="3">
-              <div class="review-row-head">
-                <span class="review-row-num">叁</span>
-                <span class="review-circle" id="reviewCircle3" aria-hidden="true"></span>
-              </div>
-              <p class="review-row-text" id="reviewText3">—</p>
-              <p class="write-kw review-row-kw" id="kw3" contenteditable="true" spellcheck="false" data-placeholder="关键词" aria-label="关键词其三"></p>
-              <div class="review-btns review-row-btns" aria-label="复盘其三">
-                <button type="button" data-review="3" data-v="yes">成</button>
-                <button type="button" data-review="3" data-v="no">否</button>
-              </div>
-            </article>
-          </div>
-
-          <section class="review-feel-panel">
-            <h3 class="review-feel-title">成长密度</h3>
-            <div class="density-fields density-fields--magazine">
-              <div class="field">
-                <label for="dailyFeeling">感受</label>
-                <textarea id="dailyFeeling" rows="2" placeholder="今日最重要的一种感受…" aria-label="感受"></textarea>
-              </div>
-              <div class="field">
-                <label for="harvest">收获 · 密度</label>
-                <textarea id="harvest" rows="2" placeholder="具体、可感知的收获…" aria-label="收获密度"></textarea>
-              </div>
-              <div class="field">
-                <label for="thickness">完成 · 厚度</label>
-                <textarea id="thickness" rows="2" placeholder="完成了什么、沉积下来…" aria-label="完成厚度"></textarea>
-              </div>
-              <textarea id="reviewNote" class="review-note" rows="2" placeholder="复盘一句（可选）…" aria-label="复盘批改"></textarea>
+      <div class="action-pane review-scene review-scene--simple" id="action-review" hidden>
+        <div class="review-sheet review-sheet--simple" id="reviewSheet">
+          <article class="review-row review-row--simple review-row--compact" data-col="1">
+            <p class="review-row-text" id="reviewText1">—</p>
+            <div class="review-btns review-row-btns" aria-label="复盘其一">
+              <button type="button" data-review="1" data-v="yes">成</button>
+              <button type="button" data-review="1" data-v="no">否</button>
             </div>
-            <p class="feeling-nudge" id="feelingNudge">感受尚空 · 建议补一句</p>
-          </section>
-
-          <div class="action-save-bar action-save-bar--review">
-            <button type="button" class="btn-store-save btn-store-save--magazine" id="saveReviewBtn">确认 · 存复盘</button>
-            <span class="saved-toast saved-toast--inline saved-toast--magazine" id="savedReviewToast" aria-live="polite">已保存</span>
-          </div>
+            <span class="review-circle" id="reviewCircle1" hidden aria-hidden="true"></span>
+            <span class="write-kw review-row-kw" id="kw1" hidden aria-hidden="true"></span>
+          </article>
+          <article class="review-row review-row--simple review-row--compact" data-col="2">
+            <p class="review-row-text" id="reviewText2">—</p>
+            <div class="review-btns review-row-btns" aria-label="复盘其二">
+              <button type="button" data-review="2" data-v="yes">成</button>
+              <button type="button" data-review="2" data-v="no">否</button>
+            </div>
+            <span class="review-circle" id="reviewCircle2" hidden aria-hidden="true"></span>
+            <span class="write-kw review-row-kw" id="kw2" hidden aria-hidden="true"></span>
+          </article>
+          <article class="review-row review-row--simple review-row--compact" data-col="3">
+            <p class="review-row-text" id="reviewText3">—</p>
+            <div class="review-btns review-row-btns" aria-label="复盘其三">
+              <button type="button" data-review="3" data-v="yes">成</button>
+              <button type="button" data-review="3" data-v="no">否</button>
+            </div>
+            <span class="review-circle" id="reviewCircle3" hidden aria-hidden="true"></span>
+            <span class="write-kw review-row-kw" id="kw3" hidden aria-hidden="true"></span>
+          </article>
         </div>
+
+        <div class="density-fields density-fields--simple density-fields--minimal">
+          <textarea id="dailyFeeling" rows="2" placeholder="感受（可选）" aria-label="感受"></textarea>
+          <textarea id="harvest" rows="2" placeholder="收获（可选）" aria-label="收获"></textarea>
+          <textarea id="thickness" hidden aria-hidden="true"></textarea>
+          <textarea id="reviewNote" hidden aria-hidden="true"></textarea>
+        </div>
+        <p class="feeling-nudge" id="feelingNudge" hidden aria-hidden="true"></p>
+
+        <div class="action-save-bar action-save-bar--review">
+          <button type="button" class="btn-store-save" id="saveReviewBtn">保存复盘</button>
+          <span class="saved-toast saved-toast--inline" id="savedReviewToast" aria-live="polite">已保存</span>
+        </div>
+        <span id="reviewCoverDate" hidden aria-hidden="true">—</span>
       </div>
     </section>
 
@@ -1543,8 +1485,6 @@
     </section>
 
     <footer class="notebook-foot notebook-foot--minimal">
-      <button type="button" class="btn-save" id="saveNotebookBtn">存今日</button>
-      <span class="saved-toast" id="savedNotebookToast">已保存</span>
       <a class="tool-link-foot" href="workspace.html" id="notebookToolLink">工具台 →</a>
     </footer>
     </div>
@@ -1552,11 +1492,11 @@
 
   <script src="assets/lixing-cloud-auth.js"></script>
   <script src="assets/lixing-lunar.js?v=20260828x"></script>
-  <script src="assets/lixing-v1.js?v=20260828x"></script>
+  <script src="assets/lixing-v1.js?v=20260828y"></script>
   <script src="assets/lixing-voice.js?v=20260828p"></script>
-  <script src="assets/lixing-write-dialog.js?v=20260828x"></script>
-  <script src="assets/lixing-decide.js?v=20260828x"></script>
-  <script src="assets/lixing-home.js?v=20260828q"></script>
+  <script src="assets/lixing-write-dialog.js?v=20260828y"></script>
+  <script src="assets/lixing-decide.js?v=20260828z"></script>
+  <script src="assets/lixing-home.js?v=20260828aa"></script>
   <script>
     const STORAGE_KEY = "life-density-v3";
     const OLD_KEYS = ["life-density-v2", "life-density-v1"];
@@ -1589,7 +1529,16 @@
       };
     }
 
-    function todayStr() { return new Date().toISOString().slice(0, 10); }
+    function todayStr() {
+      const d = new Date();
+      return (
+        d.getFullYear() +
+        "-" +
+        String(d.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(d.getDate()).padStart(2, "0")
+      );
+    }
     function nowIso() { return new Date().toISOString(); }
     function esc(s) { const d = document.createElement("div"); d.textContent = s ?? ""; return d.innerHTML; }
 
@@ -2035,7 +1984,7 @@
         const textEl = document.getElementById("reviewText" + i);
         const empty = !text;
         if (textEl) {
-          textEl.textContent = empty ? "（今日未写，可回记录页补充）" : text;
+          textEl.textContent = empty ? "（未写）" : text;
           textEl.classList.toggle("is-empty", empty);
         }
         if (row) row.classList.toggle("is-empty", empty);
@@ -2074,7 +2023,7 @@
       const state = loadState();
       const dateEl = document.getElementById("date");
       const date = (dateEl && dateEl.value) || todayStr();
-      if (dateEl) dateEl.value = date;
+      if (dateEl) dateEl.value = date || todayStr();
       updateNotebookDateDisplay();
       const wageEl = document.getElementById("hourlyWage");
       const advEl = document.getElementById("advancedPassive");
@@ -2680,7 +2629,6 @@
     /* ===== 初始化 ===== */
     document.getElementById("date").value = todayStr();
     updateNotebookDateDisplay();
-    document.getElementById("saveNotebookBtn")?.addEventListener("click", saveNotebookThree);
     document.getElementById("saveRecordBtn")?.addEventListener("click", saveNotebookThree);
     document.getElementById("saveReviewBtn")?.addEventListener("click", saveNotebookThree);
     document.getElementById("refDate").value = todayStr();

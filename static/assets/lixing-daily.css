@@ -1234,8 +1234,12 @@ body.home-three .daily-shell.home-shell {
 /* 紧凑日期条 */
 .journal-date-bar {
   max-width: min(440px, 92vw);
-  margin: 0 auto 14px;
-  padding: 0 16px;
+  margin: 0 auto 10px;
+  padding: 0;
+}
+
+body.home-three #module-action .journal-date-bar {
+  padding: 0;
 }
 
 .journal-date-picker {
@@ -1504,7 +1508,7 @@ body.home-three .daily-shell.home-shell {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .decide-history {
@@ -1794,27 +1798,42 @@ body.home-three #module-action {
 
 body.home-three #module-action .action-tabs,
 body.home-three #module-action .yesterday-banner,
-body.home-three .module-lead,
 body.home-three .action-save-bar {
   max-width: min(440px, 92vw);
   margin-left: auto;
   margin-right: auto;
 }
 
-body.home-three .store-section-lead {
-  padding: 0 16px;
-  margin-bottom: 8px;
-}
-
-body.home-three .action-store-list {
+/* —— 行动 · 极简记录 —— */
+body.home-three .action-three-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin: 0;
-  padding: 0 16px;
+  gap: 8px;
   max-width: min(440px, 92vw);
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
+  padding: 0;
+}
+
+body.home-three .action-three-item {
+  background: transparent;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+body.home-three .action-three-input {
+  margin-top: 0;
+  min-height: 2.8em;
+}
+
+body.home-three .action-pane--compact .action-save-bar {
+  padding: 14px 0 8px;
+}
+
+body.home-three .action-save-bar {
+  padding: 14px 0 20px;
+  text-align: center;
 }
 
 body.home-three .store-item--goal {
@@ -1846,31 +1865,153 @@ body.home-three .store-item-label {
   color: #f3ead8;
 }
 
-body.home-three .store-preview {
-  min-height: 56px;
-  margin: 10px 0 0;
-  padding: 0;
-  font-family: var(--font);
+body.home-three .store-input {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(26, 26, 26, 0.12);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.96) !important;
+  color: #1a1a1a !important;
+  -webkit-text-fill-color: #1a1a1a;
+  caret-color: #1a1a1a;
   font-size: 0.92rem;
-  line-height: 1.75;
-  letter-spacing: 0.04em;
-  color: #f6f0e4;
-  cursor: pointer;
-  white-space: pre-wrap;
-  word-break: break-word;
+  line-height: 1.65;
+  resize: vertical;
+  box-sizing: border-box;
 }
 
-body.home-three .store-preview.is-empty {
-  color: transparent;
-}
-
-body.home-three .store-preview.is-empty::before {
-  content: attr(data-placeholder);
-  color: rgba(196, 176, 138, 0.45);
+body.home-three .store-input::placeholder {
+  color: rgba(26, 26, 26, 0.42);
+  -webkit-text-fill-color: rgba(26, 26, 26, 0.42);
+  opacity: 1;
 }
 
 body.home-three .store-item-body {
+  cursor: default;
+}
+
+/* —— 复盘 · 简洁模式 —— */
+.review-scene--simple {
+  max-width: min(440px, 92vw);
+  margin: 0 auto;
+  padding: 0;
+}
+
+.review-sheet--simple {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.review-row--compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.review-row--compact .review-row-text {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.review-row--compact .review-row-btns {
+  flex-shrink: 0;
+}
+
+.density-fields--minimal {
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.density-fields--minimal textarea {
+  min-height: 2.6em;
+}
+
+.review-row--simple {
+  padding: 12px 14px;
+  border: 1px solid rgba(243, 234, 216, 0.14);
+  background: rgba(12, 10, 8, 0.48);
+  backdrop-filter: blur(6px);
+}
+
+.review-row--simple .review-row-text {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: #f3ead8;
+}
+
+.review-row--simple .review-row-text.is-empty {
+  color: rgba(196, 176, 138, 0.55);
+  font-style: italic;
+}
+
+.review-scene--simple .review-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.review-scene--simple .review-btns button {
+  border: 1px solid rgba(243, 234, 216, 0.28);
+  color: rgba(196, 176, 138, 0.9);
+  background: transparent;
+  padding: 4px 16px;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
   cursor: pointer;
+}
+
+.review-feel-panel--simple {
+  margin-bottom: 12px;
+}
+
+.review-feel-panel--simple .review-hint {
+  display: block;
+  margin: 0 0 10px;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: rgba(196, 176, 138, 0.7);
+}
+
+.density-fields--simple {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.density-fields--simple textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(243, 234, 216, 0.14);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #1a1a1a;
+  font-family: var(--font);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.density-fields--simple textarea::placeholder {
+  color: rgba(26, 26, 26, 0.4);
+}
+
+.density-fields--simple .review-note {
+  border-style: dashed;
+  background: rgba(12, 10, 8, 0.35);
+  color: #f3ead8;
+}
+
+.density-fields--simple .review-note::placeholder {
+  color: rgba(196, 176, 138, 0.45);
 }
 
 body.home-three .write-dialog-form {
@@ -1885,27 +2026,6 @@ body.home-three .write-dialog-form textarea {
 
 body.home-three .write-dialog-form textarea::placeholder {
   color: rgba(26, 26, 26, 0.42);
-}
-
-body.home-three .store-input {
-  width: 100%;
-  margin-top: 8px;
-  padding: 10px 12px;
-  border: 1px solid rgba(26, 26, 26, 0.12);
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.96) !important;
-  color: #1a1a1a !important;
-  -webkit-text-fill-color: #1a1a1a;
-  caret-color: #1a1a1a;
-  font-size: 0.92rem;
-  line-height: 1.65;
-  resize: vertical;
-}
-
-body.home-three .store-input::placeholder {
-  color: rgba(26, 26, 26, 0.42);
-  -webkit-text-fill-color: rgba(26, 26, 26, 0.42);
-  opacity: 1;
 }
 
 body.home-three .store-item-foot {
@@ -1968,12 +2088,18 @@ body.home-three .action-save-bar {
 body.home-three .btn-store-save {
   display: block;
   width: 100%;
-  max-width: 320px;
+  max-width: 280px;
   margin: 0 auto;
-  padding: 12px 20px;
-  font-size: 0.76rem;
-  letter-spacing: 0.26em;
+  padding: 10px 16px;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
   border-radius: 0;
+}
+
+body.home-three .notebook-foot--minimal {
+  justify-content: center;
+  padding: 12px 16px 20px;
+  border-top: none;
 }
 
 body.home-three .saved-toast--inline {

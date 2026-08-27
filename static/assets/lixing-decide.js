@@ -28,6 +28,14 @@
     else if (text === "？" || text === "?") face.classList.remove("is-show");
   }
 
+  /** 山鬼钱图像：front=正面（山鬼符文），back=背面（八卦） */
+  function setCoinSide(side) {
+    var coin = document.getElementById("decideCoin");
+    if (!coin) return;
+    if (side === "back") coin.classList.add("is-back");
+    else coin.classList.remove("is-back");
+  }
+
   function animateResult(result) {
     var coin = document.getElementById("decideCoin");
     var hint = document.getElementById("decideHint");
@@ -37,7 +45,9 @@
     if (hint) hint.textContent = "正在落位…";
 
     setTimeout(function () {
-      coin.classList.remove("is-spinning", "is-back");
+      coin.classList.remove("is-spinning");
+      // 「是」必为正面；「否」为背面
+      setCoinSide(result === "yes" ? "front" : "back");
       setCoinFace(resultLabel(result), result);
       coin.setAttribute("aria-label", "抉择结果：" + resultLabel(result) + "，点击再掷");
       if (hint) hint.textContent = "信则行，疑则再想想。";
@@ -144,6 +154,7 @@
   }
 
   function init() {
+    setCoinSide("front");
     setCoinFace("？");
     document.getElementById("decideBtn")?.addEventListener("click", function () {
       requestMotionThenRun();
