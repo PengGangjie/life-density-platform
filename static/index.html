@@ -7,6 +7,13 @@
   <link rel="icon" href="/brand/app-logo-mark.svg" type="image/svg+xml" />
   <style>
     @font-face {
+      font-family: "GuoFeng Song";
+      src: url("assets/fonts/GuoFengSong-Regular.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
       font-family: "GuoWen ZhengKai";
       src: url("assets/fonts/KaiOldstyle.ttf") format("truetype");
       font-weight: normal;
@@ -20,22 +27,25 @@
 
 
     :root {
-      --ink: #2c2419;
-      --ink-soft: #4a4034;
-      --muted: #7a6f62;
-      --line: #e8dfd0;
-      --bg: #f7f2e8;
-      --bg-deep: #efe6d6;
-      --surface: #fffcf7;
-      --accent: #3d3428;
-      --accent-warm: #c67a2e;
-      --accent-soft: #fff4e6;
+      --ink: #1a1a1a;
+      --ink-soft: #333;
+      --muted: #666;
+      --line: #c41e3a;
+      --line-soft: rgba(196, 30, 58, 0.25);
+      --bg: #f5f0e6;
+      --bg-deep: #ebe4d6;
+      --surface: #faf7f0;
+      --paper: #faf7f0;
+      --accent: #1a1a1a;
+      --accent-warm: #c41e3a;
+      --accent-soft: #fff8f5;
       --good: #0f766e;
       --mid: #b45309;
       --bad: #b91c1c;
-      --nav-h: 58px;
-      --font: "GuoWen ZhengKai", "KaiTi", "STKaiti", serif;
+      --nav-h: 52px;
+      --font: "GuoFeng Song", "Songti SC", "STSong", serif;
       --display: "GuoWen ZhengKai", "KaiTi", "STKaiti", serif;
+      --song: "GuoFeng Song", "Songti SC", serif;
     }
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
@@ -47,13 +57,92 @@
       color: var(--ink);
       line-height: 1.65;
       font-size: 15px;
-      background-image:
-        radial-gradient(ellipse 90% 55% at 15% -5%, rgba(198, 122, 46, 0.18), transparent 58%),
-        radial-gradient(ellipse 50% 45% at 95% 5%, rgba(139, 90, 43, 0.12), transparent 50%),
-        radial-gradient(ellipse 70% 40% at 50% 100%, rgba(255, 244, 230, 0.8), transparent 55%),
-        linear-gradient(180deg, #faf6ee 0%, var(--bg) 38%, var(--bg-deep) 100%);
+      background: var(--paper);
+      background-image: none;
       min-height: 100vh;
     }
+    body.auth-pending .auth-gated { display: none !important; }
+
+    /* —— 笔记本主界面 —— */
+    .notebook-page {
+      max-width: 980px; margin: 0 auto;
+      padding: 28px 20px 48px;
+      min-height: calc(100vh - var(--nav-h) - 40px);
+    }
+    .notebook-head {
+      text-align: center; margin-bottom: 20px;
+    }
+    .notebook-head .mark {
+      font-family: var(--display); font-size: 1.5rem; letter-spacing: 0.35em;
+      margin: 0 0 6px; font-weight: 400;
+    }
+    .notebook-head .slogan {
+      font-family: var(--song); font-size: 0.82rem; color: var(--muted);
+      letter-spacing: 0.28em; margin: 0 0 14px;
+    }
+    .notebook-head .today-line {
+      font-family: var(--song); font-size: 0.88rem; color: var(--ink-soft);
+      letter-spacing: 0.12em; margin: 0;
+    }
+    .notebook-sheet {
+      background: var(--paper);
+      border-top: 3px solid var(--line);
+      border-bottom: 3px solid var(--line);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+    }
+    .notebook-cols {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      min-height: min(52vh, 480px);
+    }
+    .notebook-col {
+      border-right: 1px solid var(--line);
+      padding: 20px 18px 24px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .notebook-col:last-child { border-right: none; }
+    .notebook-col .col-idx {
+      font-family: var(--song); font-size: 0.95rem; color: var(--accent-warm);
+      letter-spacing: 0.4em; margin: 0;
+    }
+    .notebook-col textarea {
+      flex: 1; width: 100%; min-height: 200px;
+      border: none; background: transparent; resize: none;
+      font-family: var(--font); font-size: 1.02rem; line-height: 1.85;
+      color: var(--ink); padding: 0; outline: none;
+    }
+    .notebook-col textarea::placeholder { color: #aaa; font-weight: 400; }
+    .notebook-foot {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 16px; margin-top: 22px;
+    }
+    .notebook-foot .btn-save {
+      font-family: var(--song); font-size: 0.88rem; letter-spacing: 0.2em;
+      background: transparent; border: 1px solid var(--ink); color: var(--ink);
+      padding: 8px 22px; cursor: pointer; border-radius: 0;
+    }
+    .notebook-foot .btn-save:hover { background: var(--ink); color: var(--paper); }
+    .notebook-foot .saved-toast { font-size: 0.82rem; color: var(--muted); }
+    .notebook-foot .tool-link {
+      font-family: var(--song); font-size: 0.82rem; color: var(--muted);
+      text-decoration: none; border-bottom: 1px solid var(--line-soft);
+    }
+    .notebook-foot .tool-link:hover { color: var(--ink); }
+    .notebook-foot input[type="date"] {
+      border: none; background: transparent; font-family: var(--song);
+      font-size: 0.82rem; color: var(--muted);
+    }
+    @media (max-width: 720px) {
+      .notebook-cols { grid-template-columns: 1fr; min-height: auto; }
+      .notebook-col { border-right: none; border-bottom: 1px solid var(--line); min-height: 140px; }
+      .notebook-col:last-child { border-bottom: none; }
+    }
+
+    .topnav-auth { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .topnav-login, .topnav-logout, #navUser {
+      font-family: var(--song); font-size: 0.78rem; color: var(--muted);
+      text-decoration: none; letter-spacing: 0.06em;
+    }
+    .topnav-login { border: 1px solid var(--line-soft); padding: 6px 12px; }
     a { color: inherit; }
 
     .topnav {
@@ -837,91 +926,61 @@
   </style>
 
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#c67a2e" />
+  <meta name="theme-color" content="#faf7f0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="砺行" />
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-  <link rel="stylesheet" href="/cloud-ui.css?v=20260827" />
+  <link rel="stylesheet" href="/cloud-ui.css?v=20260827b" />
 </head>
 
-<body>
+<body class="auth-pending">
   <nav class="topnav" aria-label="主导航">
     <a class="brand" href="#top">
-      <svg class="brand-logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-        <path d="M25.96 16.87A10 10 0 1 1 20.7 7.17" fill="none" stroke="#111111" stroke-width="3.2" stroke-linecap="round"/>
-        <circle cx="16" cy="16" r="3.2" fill="#0F766E"/>
-        <circle cx="24.66" cy="11" r="2.15" fill="#D97706"/>
-      </svg>
       <span class="brand-text">
         <span class="brand-mark">砺行</span>
         <span class="brand-sub">日省</span>
       </span>
     </a>
-    <div class="topnav-links">
-      <a href="#pillars">主线</a>
-      <a href="#workspace" data-panel="density">今日</a>
-      <a href="#workspace">工具台</a>
-      <a href="#faq">常见问题</a>
+    <div class="topnav-auth">
+      <a class="tool-link auth-gated" id="navToolLink" href="#workspace" data-need-auth hidden>工具台</a>
+      <a class="topnav-login" id="navLogin" href="/sign-in">登录</a>
+      <span id="navUser" hidden></span>
+      <a class="topnav-logout" id="navLogout" href="/sign-out" hidden>退出</a>
     </div>
-    <a class="topnav-cta" href="#workspace" data-panel="density">写今日三件事 →</a>
   </nav>
 
-  <header class="hero" id="top">
-    <svg class="hero-lamp" viewBox="0 0 64 80" aria-hidden="true" focusable="false">
-      <ellipse cx="32" cy="72" rx="26" ry="5" fill="#d4c4a8" opacity="0.5"/>
-      <path d="M18 30 Q32 6 46 30 L42 54 Q32 62 22 54 Z" fill="#c67a2e" stroke="#8b5a2b" stroke-width="1.2"/>
-      <path d="M24 32 Q32 18 40 32 L37 50 Q32 55 27 50 Z" fill="#ffd875" opacity="0.45"/>
-      <ellipse cx="32" cy="30" rx="11" ry="7" fill="#fff8eb"/>
-      <circle cx="32" cy="24" r="7" fill="#ffe08a" opacity="0.95"/>
-      <circle cx="28" cy="10" r="1.8" fill="#c67a2e" opacity="0.8"/>
-      <circle cx="34" cy="6" r="2.2" fill="#d97706"/>
-      <circle cx="40" cy="12" r="1.4" fill="#c67a2e" opacity="0.7"/>
-    </svg>
-    <p class="eyebrow">砺行 · 日省 · 神灯三愿</p>
-    <h1>砥砺日省，知行合一。</h1>
-    <p class="hero-lead">如果人生只能许三个愿望，你会选哪三个？落点到每一天——工作之外最想做的三件事；收获了什么，是密度；完成了什么，是厚度。完成比完美重要。</p>
-    <div class="hero-actions">
-      <a class="btn" href="#workspace" data-panel="density">开始今日日省</a>
-      <a class="btn btn-ghost" href="#workspace" data-panel="wishes">许下人生三愿</a>
+  <main class="notebook-page" id="top" aria-label="今日三件事">
+    <header class="notebook-head">
+      <p class="mark">砺行</p>
+      <p class="slogan">砥砺日省 · 知行合一</p>
+      <p class="today-line" id="notebookDateDisplay"></p>
+    </header>
+    <div class="notebook-sheet">
+      <div class="notebook-cols">
+        <div class="notebook-col">
+          <p class="col-idx">其一</p>
+          <textarea id="three1" placeholder="工作外 · 今天最想多做的一件小事" rows="6"></textarea>
+        </div>
+        <div class="notebook-col">
+          <p class="col-idx">其二</p>
+          <textarea id="three2" placeholder="第二件" rows="6"></textarea>
+        </div>
+        <div class="notebook-col">
+          <p class="col-idx">其三</p>
+          <textarea id="three3" placeholder="第三件" rows="6"></textarea>
+        </div>
+      </div>
     </div>
-  </header>
+    <footer class="notebook-foot">
+      <input type="date" id="date" aria-label="日期" />
+      <button type="button" class="btn-save" id="saveNotebookBtn">存今日</button>
+      <span class="saved-toast" id="savedNotebookToast"></span>
+      <a class="tool-link" href="#workspace" data-need-auth id="notebookToolLink">登录后 · 工具台</a>
+    </footer>
+  </main>
 
-  <div class="hero-glow"><div class="hero-glow-inner" id="wishSummaryHero" aria-live="polite"></div></div>
-
-  <section class="philosophy" aria-label="产品理念">
-    <div class="philosophy-inner">
-      <p><strong>面对焦虑的方式，是具体。</strong> 具体落到很小的事：今天收获了什么，决定密度；完成了什么，沉积为厚度。理想与进步需要被看见、被记录——完成比完美重要，不必精美时间表，用最简单的方式肯定自己，比 TODO 清单更有用。</p>
-      <p>记录一段时间，会形成周 / 月 / 年的关键词，逐步反馈到你许下的人生三愿——看见自己走到了哪里，或许会走出不一样的路。（人生三愿与六个月愿望 · 后续版本）</p>
-    </div>
-  </section>
-
-  <section class="path-section" id="pillars">
-    <p class="section-kicker">个人成长 · 三主线</p>
-    <h2 class="section-title">今日 · 决策 · 成长</h2>
-    <p class="section-desc">如果可以，每天工作外你最想多做的三件事是什么？先答这个，再按需打开决策与成长模块。</p>
-    <div class="pillar-grid">
-      <button type="button" class="pillar-card is-primary" data-panel="density">
-        <div class="pillar-tag">今日 · 日省</div>
-        <h3>三件事 · 密度 · 厚度</h3>
-        <p>工作外最先想做的三件小事；今天收获了什么（密度），完成了什么（厚度）。两分钟，给自己正反馈。</p>
-        <span class="pillar-go">进入今日记录 →</span>
-      </button>
-      <button type="button" class="pillar-card" data-panel="rational">
-        <div class="pillar-tag">决策</div>
-        <h3>困局与理性工具</h3>
-        <p>做还是不做？穿透包装话术与亲朋干扰。理性、采样、调研、反思、意见权重——把判断写具体。</p>
-        <span class="pillar-go">进入决策工具 →</span>
-      </button>
-      <button type="button" class="pillar-card" data-panel="leon">
-        <div class="pillar-tag">成长</div>
-        <h3>整盘 · 思维 · 被看见</h3>
-        <p>生命之轮、认知偏差环、双卡协作、个人影响力——记录进步，对照人生三愿的方向。（教练模块 · 后期）</p>
-        <span class="pillar-go">进入成长模块 →</span>
-      </button>
-    </div>
-  </section>
-
-  <details class="modules-more" id="paths">
+  <div class="auth-gated">
+    <details class="modules-more">
     <summary>展开全部模块（十一 Tab · 与 1.0 工具箱同源）</summary>
     <div class="path-grid">
       <button type="button" class="path-card" data-panel="density">
@@ -1110,22 +1169,14 @@
       </div>
 
       <div class="card">
-        <p class="card-title">今日日省</p>
-        <p class="card-desc">如果可以，今天<strong>工作外</strong>你最想多做的三件事是什么？<strong>收获了什么</strong>，决定密度；<strong>完成了什么</strong>，慢慢变成厚度。</p>
-        <div class="daily-three">
-          <label>工作外 · 今天最想多做的三件事</label>
-          <div class="daily-three-grid">
-            <input type="text" id="three1" placeholder="第一件小事" />
-            <input type="text" id="three2" placeholder="第二件小事" />
-            <input type="text" id="three3" placeholder="第三件小事" />
-          </div>
-        </div>
+        <p class="card-title">今日日省 · 密度与厚度</p>
+        <p class="card-desc">首页已写<strong>工作外三件小事</strong>；此处补劳动时长、C/L/P 与<strong>收获 / 完成</strong>，算今日密度。</p>
         <div class="density-hero">
           <div class="value na" id="densityHero">—</div>
           <div class="label">今日密度 D</div>
         </div>
         <div class="row-date">
-          <div class="field"><label for="date">日期</label><input type="date" id="date" /></div>
+          <div class="field"><label>日期</label><span id="dateWorkspaceLabel" class="card-desc" style="margin:0"></span></div>
           <div class="field"><label for="hours">H · 劳动时长（小时）</label><input type="number" id="hours" min="0" max="24" step="0.5" placeholder="如 8" /></div>
         </div>
         <div class="metrics">
@@ -1946,10 +1997,12 @@
           <p>Daniel Priestley 的 Key Person of Influence（蔡蔡笔记）：在一个利基里把 Pitch / Publish / Product / Profile / Partnership 做成 90 天战役。路径 06，工具台 11。数据写入 <code>kpi</code> 与 <code>kpiSnaps</code>。</p>
         </details>
       </div>
-      <p class="footer-note">砺行 · 日省 · 数据保存在本机浏览器</p>
+      <p class="footer-note">砺行 · 日省 · 首页写三事 · 登录后用工具台</p>
     </div>
   </footer>
+  </div>
 
+  <script src="assets/lixing-cloud-auth.js"></script>
   <script src="assets/lixing-v1.js"></script>
   <script src="assets/cognitive-bias/biases-data.js"></script>
   <script src="assets/leon-playbook/wheel-of-life.js"></script>
@@ -2344,6 +2397,34 @@
       hero.className = "value " + densityTier(d);
     }
 
+    function updateNotebookDateDisplay() {
+      const date = document.getElementById("date").value || todayStr();
+      const el = document.getElementById("notebookDateDisplay");
+      const label = document.getElementById("dateWorkspaceLabel");
+      let pretty = date;
+      try {
+        pretty = new Date(date + "T12:00:00").toLocaleDateString("zh-CN", {
+          year: "numeric", month: "long", day: "numeric", weekday: "long",
+        });
+      } catch (_) {}
+      if (el) el.textContent = pretty;
+      if (label) label.textContent = pretty;
+    }
+
+    function saveNotebookThree() {
+      const date = document.getElementById("date").value || todayStr();
+      const state = loadState();
+      state.entries = state.entries || {};
+      const prev = state.entries[date] || {};
+      const three = window.LixingV1
+        ? window.LixingV1.getDailyFields().three
+        : [1, 2, 3].map((i) => (document.getElementById("three" + i) || {}).value?.trim() || "");
+      state.entries[date] = Object.assign({}, prev, { three });
+      saveState(state);
+      showToast("savedNotebookToast");
+      if (window.LixingV1) window.LixingV1.renderKeywords();
+    }
+
     function saveToday() {
       const date = document.getElementById("date").value || todayStr();
       const state = loadState();
@@ -2371,6 +2452,7 @@
       const state = loadState();
       const date = document.getElementById("date").value || todayStr();
       document.getElementById("date").value = date;
+      updateNotebookDateDisplay();
       if (state.settings) {
         document.getElementById("hourlyWage").value = state.settings.hourlyWage ?? 200;
         document.getElementById("advancedPassive").checked = !!state.settings.advancedPassive;
@@ -2969,13 +3051,15 @@
 
     /* ===== 初始化 ===== */
     document.getElementById("date").value = todayStr();
+    updateNotebookDateDisplay();
+    document.getElementById("saveNotebookBtn")?.addEventListener("click", saveNotebookThree);
     document.getElementById("refDate").value = todayStr();
     document.getElementById("penDate").value = todayStr();
     ["hours","conn","learn","passive","passiveIncome","hourlyWage","advancedPassive","autoPassive"].forEach((id) => {
       document.getElementById(id).addEventListener("input", updatePreview);
       document.getElementById(id).addEventListener("change", updatePreview);
     });
-    document.getElementById("date").addEventListener("change", loadTodayForm);
+    document.getElementById("date").addEventListener("change", () => { updateNotebookDateDisplay(); loadTodayForm(); });
     document.getElementById("saveBtn").addEventListener("click", saveToday);
     document.getElementById("exportBtn").addEventListener("click", exportCsv);
     document.getElementById("importBtn").addEventListener("click", () => document.getElementById("importFile").click());
