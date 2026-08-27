@@ -3,27 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>人生量化工具箱</title>
+  <title>砺行 · 砥砺日省，知行合一</title>
   <link rel="icon" href="/brand/app-logo-mark.svg" type="image/svg+xml" />
   <style>
+    @font-face {
+      font-family: "GuoWen ZhengKai";
+      src: url("assets/fonts/KaiOldstyle.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    html, body, button, input, textarea, select {
+      font-family: var(--font);
+    }
+
 
     :root {
-      --ink: #111111;
-      --ink-soft: #2a2a2a;
-      --muted: #6b6b6b;
-      --line: #e6e2db;
-      --bg: #f3f0ea;
-      --bg-deep: #ebe6dc;
-      --surface: #ffffff;
-      --accent: #111111;
-      --accent-warm: #d97706;
-      --accent-soft: #fff7ed;
+      --ink: #2c2419;
+      --ink-soft: #4a4034;
+      --muted: #7a6f62;
+      --line: #e8dfd0;
+      --bg: #f7f2e8;
+      --bg-deep: #efe6d6;
+      --surface: #fffcf7;
+      --accent: #3d3428;
+      --accent-warm: #c67a2e;
+      --accent-soft: #fff4e6;
       --good: #0f766e;
       --mid: #b45309;
       --bad: #b91c1c;
       --nav-h: 58px;
-      --font: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      --display: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", Georgia, serif;
+      --font: "GuoWen ZhengKai", "KaiTi", "STKaiti", serif;
+      --display: "GuoWen ZhengKai", "KaiTi", "STKaiti", serif;
     }
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
@@ -36,9 +48,10 @@
       line-height: 1.65;
       font-size: 15px;
       background-image:
-        radial-gradient(ellipse 80% 50% at 10% -10%, rgba(217, 119, 6, 0.12), transparent 55%),
-        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(15, 118, 110, 0.08), transparent 50%),
-        linear-gradient(180deg, #f7f4ee 0%, var(--bg) 32%, var(--bg) 100%);
+        radial-gradient(ellipse 90% 55% at 15% -5%, rgba(198, 122, 46, 0.18), transparent 58%),
+        radial-gradient(ellipse 50% 45% at 95% 5%, rgba(139, 90, 43, 0.12), transparent 50%),
+        radial-gradient(ellipse 70% 40% at 50% 100%, rgba(255, 244, 230, 0.8), transparent 55%),
+        linear-gradient(180deg, #faf6ee 0%, var(--bg) 38%, var(--bg-deep) 100%);
       min-height: 100vh;
     }
     a { color: inherit; }
@@ -139,6 +152,121 @@
       margin: 0 0 8px; font-weight: 700;
     }
     .section-desc { color: var(--muted); margin: 0 0 22px; max-width: 40em; font-size: 0.95rem; }
+
+    .philosophy {
+      max-width: 920px; margin: 0 auto 8px;
+      padding: 0 24px 32px;
+    }
+    .philosophy-inner {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 22px 24px;
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+      line-height: 1.75;
+    }
+    .philosophy-inner strong { color: var(--ink); font-weight: 650; }
+    .philosophy-inner p { margin: 0 0 12px; }
+    .philosophy-inner p:last-child { margin-bottom: 0; }
+
+    .pillar-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    }
+    @media (max-width: 820px) { .pillar-grid { grid-template-columns: 1fr; } }
+    .pillar-card {
+      text-align: left;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 24px 20px 20px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+      font: inherit; color: inherit; width: 100%;
+    }
+    .pillar-card:hover {
+      transform: translateY(-2px);
+      border-color: #d4cfc4;
+      box-shadow: 0 12px 32px rgba(44, 36, 25, 0.08);
+    }
+    .pillar-card.is-primary {
+      border-color: rgba(198, 122, 46, 0.35);
+      background: linear-gradient(180deg, #fffaf3 0%, var(--surface) 100%);
+    }
+    .pillar-tag {
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent-warm); font-weight: 650; margin-bottom: 10px;
+    }
+    .pillar-card h3 { font-size: 1.15rem; margin: 0 0 10px; font-weight: 700; }
+    .pillar-card p { font-size: 0.86rem; color: var(--muted); margin: 0 0 14px; min-height: 4.2em; }
+    .pillar-go { font-size: 0.82rem; font-weight: 600; }
+
+    .hero-lamp {
+      width: 56px; height: 70px; display: block; margin: 0 0 18px;
+      filter: drop-shadow(0 8px 16px rgba(198, 122, 46, 0.25));
+    }
+    .hero-glow {
+      max-width: 920px; margin: -12px auto 0; padding: 0 24px 28px;
+    }
+    .hero-glow-inner {
+      border-radius: 16px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(255, 244, 230, 0.95), rgba(255, 252, 247, 0.9));
+      border: 1px solid rgba(198, 122, 46, 0.22);
+    }
+    .wish-summary-label { font-size: 0.72rem; letter-spacing: 0.1em; color: var(--muted); margin: 0 0 8px; }
+    .wish-summary-list { margin: 0; padding-left: 1.2em; color: var(--ink-soft); font-size: 0.92rem; }
+    .wish-summary-empty { margin: 0; font-size: 0.88rem; color: var(--muted); }
+    .wish-summary-empty a { color: var(--accent-warm); }
+
+    .daily-three { margin-bottom: 18px; }
+    .daily-three > label {
+      display: block; font-size: 0.82rem; font-weight: 650; margin-bottom: 10px; color: var(--ink-soft);
+    }
+    .daily-three-grid { display: grid; gap: 10px; }
+    .daily-three-grid input {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px;
+      background: #fffcf7; font: inherit; font-size: 0.92rem;
+    }
+    .split-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px) { .split-fields { grid-template-columns: 1fr; } }
+
+    .keywords-wrap {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;
+    }
+    @media (max-width: 820px) { .keywords-wrap { grid-template-columns: 1fr; } }
+    .kw-col {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px;
+    }
+    .kw-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+    .kw-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .kw-tag {
+      font-size: 0.78rem; padding: 4px 10px; border-radius: 999px;
+      background: var(--accent-soft); color: var(--ink-soft); border: 1px solid rgba(198,122,46,0.2);
+    }
+    .kw-tag em { font-style: normal; opacity: 0.55; margin-left: 4px; font-size: 0.72rem; }
+    .kw-empty { font-size: 0.78rem; color: var(--muted); }
+
+    .quiz-progress { font-size: 0.75rem; color: var(--accent-warm); margin: 0 0 8px; letter-spacing: 0.08em; }
+    .quiz-q { font-size: 1.05rem; font-weight: 650; margin: 0 0 6px; line-height: 1.5; }
+    .quiz-hint { font-size: 0.82rem; color: var(--muted); margin: 0 0 14px; }
+    .lock-badge {
+      display: inline-block; font-size: 0.78rem; padding: 6px 12px; border-radius: 8px;
+      background: var(--accent-soft); color: var(--accent-warm); margin-bottom: 12px;
+    }
+    .six-month-readonly { margin: 0; padding-left: 1.2em; color: var(--ink-soft); }
+
+    .path-grid {
+      max-width: 920px; margin: 0 auto;
+      padding: 0 24px 48px;
+    }
+    .modules-more summary {
+      cursor: pointer; font-size: 0.88rem; color: var(--muted);
+      padding: 12px 0; list-style: none;
+    }
+    .modules-more summary::-webkit-details-marker { display: none; }
+    .modules-more[open] summary { margin-bottom: 14px; color: var(--ink); }
+
     .path-grid {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
     }
@@ -472,6 +600,20 @@
     }
     .dual-form { display: none; }
     .dual-form.active { display: block; }
+    .kpi-p-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 12px 0 4px;
+    }
+    @media (max-width: 820px) { .kpi-p-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .kpi-p-grid { grid-template-columns: 1fr; } }
+    .kpi-p {
+      background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px 10px;
+    }
+    .kpi-p .kpi-en { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-warm); font-weight: 700; }
+    .kpi-p h3 { font-size: 0.92rem; margin: 4px 0 6px; }
+    .kpi-p p { font-size: 0.78rem; color: var(--muted); margin: 0; min-height: 3.2em; }
+    .kpi-score-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .kpi-score-row input[type="range"] { flex: 1; }
+    .kpi-score-row .kpi-n { min-width: 1.6em; font-weight: 700; font-family: var(--display); }
     .prompt-out {
       font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
       font-size: 0.78rem; white-space: pre-wrap; background: #111; color: #f2f2f2;
@@ -695,19 +837,14 @@
   </style>
 
   <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#111111" />
+  <meta name="theme-color" content="#c67a2e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="人生量化" />
+  <meta name="apple-mobile-web-app-title" content="砺行" />
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-  <link rel="stylesheet" href="/cloud-ui.css?v=20260825b" />
-  <style>
-    [hidden] { display: none !important; }
-    body.auth-pending .auth-gated,
-    body.auth-pending .guest-gate { display: none !important; }
-  </style>
+  <link rel="stylesheet" href="/cloud-ui.css?v=20260827" />
 </head>
 
-<body class="auth-pending">
+<body>
   <nav class="topnav" aria-label="主导航">
     <a class="brand" href="#top">
       <svg class="brand-logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
@@ -716,63 +853,76 @@
         <circle cx="24.66" cy="11" r="2.15" fill="#D97706"/>
       </svg>
       <span class="brand-text">
-        <span class="brand-mark">人生量化工具箱</span>
-        <span class="brand-sub">Life OS</span>
+        <span class="brand-mark">砺行</span>
+        <span class="brand-sub">日省</span>
       </span>
     </a>
     <div class="topnav-links">
-      <a href="#paths">路径</a>
+      <a href="#pillars">主线</a>
+      <a href="#workspace" data-panel="density">今日</a>
       <a href="#workspace">工具台</a>
       <a href="#faq">常见问题</a>
     </div>
-    <div class="topnav-auth" id="topnavAuth">
-      <a class="topnav-cta" href="#workspace" data-panel="density">从密度开始 →</a>
-      <a class="topnav-login" id="navLogin" href="/sign-in">登录 / 注册</a>
-      <span id="navUser" hidden></span>
-      <a id="navLogout" href="/sign-out" hidden>退出</a>
-      <button type="button" id="navInstall" hidden>安装到手机</button>
-    </div>
+    <a class="topnav-cta" href="#workspace" data-panel="density">写今日三件事 →</a>
   </nav>
 
   <header class="hero" id="top">
-    <svg class="hero-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      <path d="M25.96 16.87A10 10 0 1 1 20.7 7.17" fill="none" stroke="#111111" stroke-width="3.2" stroke-linecap="round"/>
-      <circle cx="16" cy="16" r="3.2" fill="#0F766E"/>
-      <circle cx="24.66" cy="11" r="2.15" fill="#D97706"/>
+    <svg class="hero-lamp" viewBox="0 0 64 80" aria-hidden="true" focusable="false">
+      <ellipse cx="32" cy="72" rx="26" ry="5" fill="#d4c4a8" opacity="0.5"/>
+      <path d="M18 30 Q32 6 46 30 L42 54 Q32 62 22 54 Z" fill="#c67a2e" stroke="#8b5a2b" stroke-width="1.2"/>
+      <path d="M24 32 Q32 18 40 32 L37 50 Q32 55 27 50 Z" fill="#ffd875" opacity="0.45"/>
+      <ellipse cx="32" cy="30" rx="11" ry="7" fill="#fff8eb"/>
+      <circle cx="32" cy="24" r="7" fill="#ffe08a" opacity="0.95"/>
+      <circle cx="28" cy="10" r="1.8" fill="#c67a2e" opacity="0.8"/>
+      <circle cx="34" cy="6" r="2.2" fill="#d97706"/>
+      <circle cx="40" cy="12" r="1.4" fill="#c67a2e" opacity="0.7"/>
     </svg>
-    <p class="eyebrow">Life Quant Toolkit · 困局 × 能力 × AI 协作</p>
-    <h1>把模糊的人生判断，变成可填写、可复盘的工具。</h1>
-    <p class="hero-lead">先选你现在卡住的那一类问题，再进入对应工具。日常执行看密度，决策看六大困局，与 AI 协作掏双卡；复盘思维用偏差环；整盘人生用生命之轮。</p>
-    <p class="cloud-sync-hint" id="cloudSyncHint"></p>
+    <p class="eyebrow">砺行 · 日省 · 神灯三愿</p>
+    <h1>砥砺日省，知行合一。</h1>
+    <p class="hero-lead">如果人生只能许三个愿望，你会选哪三个？落点到每一天——工作之外最想做的三件事；收获了什么，是密度；完成了什么，是厚度。完成比完美重要。</p>
     <div class="hero-actions">
-      <a class="btn" href="#workspace" data-panel="density">打开工具台</a>
-      <a class="btn btn-ghost" href="#paths">先看三条路径</a>
-      <a class="btn guest-only" href="/sign-in">登录后使用工具台</a>
-      <a class="btn btn-ghost guest-only" href="#faq">先看常见问题</a>
+      <a class="btn" href="#workspace" data-panel="density">开始今日日省</a>
+      <a class="btn btn-ghost" href="#workspace" data-panel="wishes">许下人生三愿</a>
     </div>
   </header>
 
-  
-  <section class="guest-gate" id="guestGate" hidden>
-    <div class="guest-gate-card">
-      <svg class="guest-gate-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-        <path d="M25.96 16.87A10 10 0 1 1 20.7 7.17" fill="none" stroke="#111111" stroke-width="3.2" stroke-linecap="round"/>
-        <circle cx="16" cy="16" r="3.2" fill="#0F766E"/>
-        <circle cx="24.66" cy="11" r="2.15" fill="#D97706"/>
-      </svg>
-      <h2>登录后进入工具台</h2>
-      <p>路径选择、十个模块与写入操作仅对登录用户开放。登录后可跨设备同步你的人生量化记录。</p>
-      <div class="guest-gate-actions">
-        <a class="btn" href="/sign-in">登录 / 注册</a>
-        <a class="btn btn-ghost" href="#faq">先看常见问题</a>
-      </div>
+  <div class="hero-glow"><div class="hero-glow-inner" id="wishSummaryHero" aria-live="polite"></div></div>
+
+  <section class="philosophy" aria-label="产品理念">
+    <div class="philosophy-inner">
+      <p><strong>面对焦虑的方式，是具体。</strong> 具体落到很小的事：今天收获了什么，决定密度；完成了什么，沉积为厚度。理想与进步需要被看见、被记录——完成比完美重要，不必精美时间表，用最简单的方式肯定自己，比 TODO 清单更有用。</p>
+      <p>记录一段时间，会形成周 / 月 / 年的关键词，逐步反馈到你许下的人生三愿——看见自己走到了哪里，或许会走出不一样的路。（人生三愿与六个月愿望 · 后续版本）</p>
     </div>
   </section>
 
-  <section class="path-section auth-gated" id="paths">
-    <p class="section-kicker">从你最关心的地方开始</p>
-    <h2 class="section-title">想先量化日常、理清决策、练 AI 协作、校准思维，还是看生命之轮？</h2>
-    <p class="section-desc">五选一进入。工具都在同一套数据里，随时切换。</p>
+  <section class="path-section" id="pillars">
+    <p class="section-kicker">个人成长 · 三主线</p>
+    <h2 class="section-title">今日 · 决策 · 成长</h2>
+    <p class="section-desc">如果可以，每天工作外你最想多做的三件事是什么？先答这个，再按需打开决策与成长模块。</p>
+    <div class="pillar-grid">
+      <button type="button" class="pillar-card is-primary" data-panel="density">
+        <div class="pillar-tag">今日 · 日省</div>
+        <h3>三件事 · 密度 · 厚度</h3>
+        <p>工作外最先想做的三件小事；今天收获了什么（密度），完成了什么（厚度）。两分钟，给自己正反馈。</p>
+        <span class="pillar-go">进入今日记录 →</span>
+      </button>
+      <button type="button" class="pillar-card" data-panel="rational">
+        <div class="pillar-tag">决策</div>
+        <h3>困局与理性工具</h3>
+        <p>做还是不做？穿透包装话术与亲朋干扰。理性、采样、调研、反思、意见权重——把判断写具体。</p>
+        <span class="pillar-go">进入决策工具 →</span>
+      </button>
+      <button type="button" class="pillar-card" data-panel="leon">
+        <div class="pillar-tag">成长</div>
+        <h3>整盘 · 思维 · 被看见</h3>
+        <p>生命之轮、认知偏差环、双卡协作、个人影响力——记录进步，对照人生三愿的方向。（教练模块 · 后期）</p>
+        <span class="pillar-go">进入成长模块 →</span>
+      </button>
+    </div>
+  </section>
+
+  <details class="modules-more" id="paths">
+    <summary>展开全部模块（十一 Tab · 与 1.0 工具箱同源）</summary>
     <div class="path-grid">
       <button type="button" class="path-card" data-panel="density">
         <div class="path-num">01 · 日常执行</div>
@@ -804,19 +954,26 @@
         <p>Leon 的九维雷达：身体/精神/心灵，现金/资产/时间，体验/家庭/社会。拖动打分，缺口一眼能看见。</p>
         <span class="path-go">打开生命之轮 →</span>
       </button>
+      <button type="button" class="path-card" data-panel="kpi">
+        <div class="path-num">06 · 个人影响力</div>
+        <h3>Key Person of Influence</h3>
+        <p>在一个利基里把 5P 做成可填写的战役：Pitch / Publish / Product / Profile / Partnership。</p>
+        <span class="path-go">打开影响力表 →</span>
+      </button>
     </div>
-  </section>
+  </details>
 
-  <main class="workspace auth-gated" id="workspace">
+  <main class="workspace" id="workspace">
     <div class="workspace-shell">
       <div class="workspace-head">
-        <p class="section-kicker">工具台 · Workspace</p>
-        <h2>十个模块，按需切换</h2>
-        <p>编号对齐使用路径：困局①–⑥ → 穿透力 → AI 协作双卡 → 认知偏差环 → 生命之轮。</p>
+        <p class="section-kicker">工具台</p>
+        <h2>十一模块，收在同一工作台</h2>
+        <p>主线：今日（密度）· 决策（困局①–⑥）· 成长（生命之轮、偏差环、双卡、影响力）。数据都在本机。</p>
       </div>
       <nav class="nav-tabs" id="navTabs" aria-label="工具模块">
+        <button type="button" data-panel="wishes"><span class="n">愿</span>三愿</button>
         <button type="button" data-panel="rational"><span class="n">01</span>理性</button>
-        <button type="button" class="active" data-panel="density"><span class="n">02</span>密度</button>
+        <button type="button" class="active" data-panel="density"><span class="n">02</span>日省</button>
         <button type="button" data-panel="sampling"><span class="n">03</span>采样</button>
         <button type="button" data-panel="industry"><span class="n">04</span>调研</button>
         <button type="button" data-panel="reflect"><span class="n">05</span>反思</button>
@@ -825,8 +982,36 @@
         <button type="button" data-panel="dualcard"><span class="n">08</span>双卡</button>
         <button type="button" data-panel="bias"><span class="n">09</span>偏差环</button>
         <button type="button" data-panel="leon"><span class="n">10</span>生命之轮</button>
+        <button type="button" data-panel="kpi"><span class="n">11</span>影响力</button>
       </nav>
       <div class="workspace-body">
+<!-- ========== 人生三愿 ========== -->
+    <div class="panel" id="panel-wishes">
+      <details class="guide" open>
+        <summary>人生三愿 · 神灯隐喻</summary>
+        <div class="guide-body">
+          <p>若人生只能许 <strong>三个愿望</strong>，你会选什么？先完成下方三问，收成三条愿望；再可选锁定 <strong>六个月</strong> 方向（183 天内不可改，不设提醒）。</p>
+        </div>
+      </details>
+      <p class="card-desc" id="wishMeta"></p>
+      <div class="card">
+        <p class="card-title">三问引导</p>
+        <div id="wishQuizHost"></div>
+        <div class="actions" style="margin-top:12px">
+          <button type="button" class="btn btn-ghost" id="wishQuizPrev">上一问</button>
+          <button type="button" class="btn" id="wishQuizNext">下一问</button>
+        </div>
+      </div>
+      <div class="card">
+        <p class="card-title">人生三愿（可随时微调）</p>
+        <div id="lifeWishList"></div>
+        <div class="actions"><button type="button" class="btn" id="saveWishesBtn">保存三愿</button><span class="saved-toast" id="savedWishToast">已保存</span></div>
+      </div>
+      <div class="card">
+        <p class="card-title">六个月愿望</p>
+        <div id="sixMonthBlock"></div>
+      </div>
+    </div>
 <!-- ========== ① 理性工具 ========== -->
     <div class="panel" id="panel-rational">
       <details class="guide">
@@ -919,7 +1104,22 @@
       <div class="stats" id="stats"></div>
 
       <div class="card">
-        <p class="card-title">今日记录</p>
+        <p class="card-title">周 · 月 · 年关键词</p>
+        <p class="card-desc">从日省记录中自动提炼（工作外三事、收获、完成），看见自己走到了哪里。</p>
+        <div class="keywords-wrap" id="keywordsPanel"></div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">今日日省</p>
+        <p class="card-desc">如果可以，今天<strong>工作外</strong>你最想多做的三件事是什么？<strong>收获了什么</strong>，决定密度；<strong>完成了什么</strong>，慢慢变成厚度。</p>
+        <div class="daily-three">
+          <label>工作外 · 今天最想多做的三件事</label>
+          <div class="daily-three-grid">
+            <input type="text" id="three1" placeholder="第一件小事" />
+            <input type="text" id="three2" placeholder="第二件小事" />
+            <input type="text" id="three3" placeholder="第三件小事" />
+          </div>
+        </div>
         <div class="density-hero">
           <div class="value na" id="densityHero">—</div>
           <div class="label">今日密度 D</div>
@@ -935,7 +1135,10 @@
         </div>
         <div class="inline-row"><input type="checkbox" id="autoPassive" checked /><label for="autoPassive" style="margin:0;font-weight:400">根据金额自动算 P</label></div>
         <div class="field"><label for="passiveIncome">当日被动收入（元）</label><input type="number" id="passiveIncome" min="0" step="0.01" placeholder="不含工资" /></div>
-        <div class="field"><label for="note">复盘 · 密度最高的一小时</label><textarea id="note" placeholder="一句即可"></textarea></div>
+        <div class="split-fields">
+          <div class="field"><label for="harvest">收获 · 密度</label><textarea id="harvest" rows="2" placeholder="今天具体收获了什么？"></textarea></div>
+          <div class="field"><label for="thickness">完成 · 厚度</label><textarea id="thickness" rows="2" placeholder="今天完成了什么小事？"></textarea></div>
+        </div>
         <div class="actions"><button type="button" class="btn" id="saveBtn">保存</button><span class="saved-toast" id="savedToast">已保存</span></div>
       </div>
 
@@ -960,7 +1163,7 @@
             <button type="button" class="btn btn-ghost" id="importBtn">导入密度 CSV</button>
             <input type="file" id="importFile" accept=".csv" hidden />
           </div>
-          <p class="card-desc" style="margin:10px 0 0">推荐用本目录 <code>打开人生量化工具箱.bat</code> 打开：保存时自动覆盖写入同目录 <code>life-density-autobackup.json</code>，不会进浏览器下载列表。直接双击 HTML（file://）时仅保存在浏览器内。</p>
+          <p class="card-desc" style="margin:10px 0 0">推荐用本目录 <code>打开砺行.bat</code> 打开：保存时自动覆盖写入同目录 <code>lixing-autobackup.json</code>，不会进浏览器下载列表。直接双击 HTML（file://）时仅保存在浏览器内。</p>
         </div>
       </details>
 
@@ -1626,6 +1829,81 @@
       </details>
     </div>
 
+    <!-- ========== ⑪ 个人影响力 KPI ========== -->
+    <div class="panel" id="panel-kpi">
+      <details class="guide" open>
+        <summary>个人影响力 · 使用说明<span class="trap-tag">Key Person of Influence</span></summary>
+        <div class="guide-body">
+          <div class="formula-box">
+            真源：Daniel Priestley《Key Person of Influence》· 蔡蔡方法论笔记。
+            <strong>不仅要做得好，还要让别人知道你做得好。</strong>
+          </div>
+          <p>你已经站在一座价值之山上。KPI 不是网红，是在一个利基里被看见、被需要、被转介的人。「让别人知道」本身要经营。先钉死利基，再把 5P 做成 90 天战役。</p>
+          <ul>
+            <li><strong>Pitch</strong> 推销/提案：先卖观点再卖产品；完整稿按 CAPSTONE；在市场里练</li>
+            <li><strong>Publish</strong> 内容输出：7-11-4；做成即使你不在也能工作的影响力资产</li>
+            <li><strong>Product</strong> 产品化：Gift → P4P → Core → P4C；客户买的是 Outcome</li>
+            <li><strong>Profile</strong> 公众形象：You are what Google says you are · S.A.L.T.</li>
+            <li><strong>Partnership</strong> 合作：相乘不是相加；Brand × Distribution × Product</li>
+          </ul>
+        </div>
+      </details>
+
+      <div class="kpi-p-grid">
+        <div class="kpi-p"><div class="kpi-en">Pitch</div><h3>推销 / 提案</h3><p>先创造 Lightbulb Moment。Belief drives behavior。你一直都在 Pitch。</p></div>
+        <div class="kpi-p"><div class="kpi-en">Publish</div><h3>内容输出</h3><p>7 小时接触、11 次互动、4 个场景。建立即使你不在也能工作的资产。</p></div>
+        <div class="kpi-p"><div class="kpi-en">Product</div><h3>产品化</h3><p>Gift / P4P / Core / P4C 组成生态。客户买的是 Outcome，不是功能清单。</p></div>
+        <div class="kpi-p"><div class="kpi-en">Profile</div><h3>公众形象</h3><p>S.A.L.T.：社交、奖项背书、线下活动、第三方媒体。搜索结果即你。</p></div>
+        <div class="kpi-p"><div class="kpi-en">Partnership</div><h3>合作</h3><p>10×10×10 相乘。Brand · Distribution · Product 互补。With or without you。</p></div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">利基：你在哪一块被需要</p>
+        <p class="card-desc">KPI 先缩范围。服务所有人 = 谁也记不住你。</p>
+        <div class="field"><label for="kpiNiche">我的利基 / 战场</label><input type="text" id="kpiNiche" placeholder="如：高职实训室数字化、存量住宅更新、个人密度复盘" /></div>
+        <div class="field"><label for="kpiAudience">我服务谁（具体到角色）</label><textarea id="kpiAudience" placeholder="如：教务处实训科老师；想把课改做成可交付工具的高职教师"></textarea></div>
+        <div class="field"><label for="kpiWhy">别人为什么找我，而不是找别人</label><textarea id="kpiWhy" placeholder="如：我能把公文、系统、现场三件事做成同一套可重复产线"></textarea></div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">5P 自检（0–10）</p>
+        <p class="card-desc">0 = 这一柱几乎空着 · 10 = 利基里的人已经在用 / 在转介。圆不圆比均分更重要。</p>
+        <div class="stats" id="kpiStats"></div>
+        <div id="kpiSliders"></div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">Pitch 三档（Social → Scheduled → Sales）</p>
+        <p class="card-desc">兴趣 → 参与 → 行动。完整稿可按 CAPSTONE：Clarity / Authority / Problem / Solution / The Why / Opportunity / Next Steps / Essence。先卖观点，再卖产品。</p>
+        <div class="field"><label for="kpiPitch30">Social Pitch · 30 秒</label><textarea id="kpiPitch30" placeholder="第一次见面：你是谁、帮谁、对方为什么要继续听"></textarea></div>
+        <div class="field"><label for="kpiPitch3">Scheduled Pitch · 3 分钟</label><textarea id="kpiPitch3" placeholder="对方已预期你会讲：痛点代价 → 方法 → 一个证据 → 下一步"></textarea></div>
+        <div class="field"><label for="kpiPitch12">Sales Pitch · 12 分钟 / CAPSTONE</label><textarea id="kpiPitch12" placeholder="C 清晰 · A 权威 · P 问题 · S 方案 · T 初衷 · O 机会 · N 下一步 · E 离开时的感觉"></textarea></div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">本季 90 天战役</p>
+        <p class="card-desc">每个 P 只写一件本季能完成的动作。五件同时开工等于一件都不做。</p>
+        <div class="field"><label for="kpiActPitch">Pitch · 本季动作</label><input type="text" id="kpiActPitch" placeholder="如：把 30 秒稿对着 5 个陌生人说完并改一版" /></div>
+        <div class="field"><label for="kpiActPublish">Publish · 本季动作</label><input type="text" id="kpiActPublish" placeholder="如：发 1 篇可转载的方法文，而不是动态" /></div>
+        <div class="field"><label for="kpiActProduct">Product · 本季动作</label><input type="text" id="kpiActProduct" placeholder="如：把工具箱做成可给别人用的 1.0，而不是只自用" /></div>
+        <div class="field"><label for="kpiActProfile">Profile · 本季动作</label><input type="text" id="kpiActProfile" placeholder="如：GitHub / 主页上用一句话写清利基" /></div>
+        <div class="field"><label for="kpiActPartner">Partnership · 本季动作</label><input type="text" id="kpiActPartner" placeholder="如：约 1 个已有流量的节点，交换一次联合分享" /></div>
+        <div class="field"><label for="kpiNote">备注</label><textarea id="kpiNote" placeholder="最低的两根柱子，本季先补哪一根？"></textarea></div>
+        <div class="actions">
+          <button type="button" class="btn" id="saveKpiBtn">保存当前</button>
+          <button type="button" class="btn btn-ghost" id="snapKpiBtn">存一版快照</button>
+          <button type="button" class="btn btn-ghost" id="clearKpiBtn">清空表单</button>
+          <span class="saved-toast" id="savedKpiToast">已保存</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-title">历史快照</p>
+        <p class="card-desc">看 5P 有没有在变圆。数据随整库 JSON 备份。</p>
+        <div class="record-list" id="kpiHistory"><div class="empty-table">还没有快照。打完分后点「存一版快照」。</div></div>
+      </div>
+    </div>
+
       </div>
     </div>
   </main>
@@ -1633,19 +1911,27 @@
   <footer class="site-footer" id="faq">
     <div class="footer-inner">
       <h3>使用前你会问的事</h3>
-      <p class="lead">数据存在本机浏览器；推荐用「打开人生量化工具箱.bat」以便备份写入同目录。</p>
+      <p class="lead">数据存在本机浏览器；推荐用「打开砺行.bat」以便备份写入同目录。</p>
       <div class="faq">
         <details>
           <summary>数据存在哪里？会不会丢？</summary>
-          <p>默认写入浏览器 localStorage。用 bat / 本地服务打开时，保存会覆盖同目录 <code>life-density-autobackup.json</code>。设置里也可手动导出整库 JSON。</p>
+          <p>默认写入浏览器 localStorage。用 bat / 本地服务打开时，保存会覆盖同目录 <code>lixing-autobackup.json</code>。设置里也可手动导出整库 JSON。</p>
         </details>
         <details>
-          <summary>十个模块要按顺序做完吗？</summary>
-          <p>不必。日常用密度；遇到决策用困局工具；跟 AI 协作时用双卡与穿透力；复盘思维时用认知偏差环；整盘人生对照生命之轮。需要时再切换即可。</p>
+          <summary>十一个模块要按顺序做完吗？</summary>
+          <p>不必。主线是 <strong>今日 · 决策 · 成长</strong>：日常用密度（工作外三事、收获与完成）；遇到选择用困局工具；整盘对照生命之轮、偏差环、影响力等。完成比完美重要，按需切换即可。</p>
         </details>
         <details>
-          <summary>路径和模块怎么配合？</summary>
-          <p>路径是入口：密度管日常，困局工具管决策，双卡管 AI 协作，偏差环管思维校准，生命之轮管九维平衡。模块可随时切换，数据在同一套本地库里。</p>
+          <summary>「人生三愿」和六个月愿望是什么？</summary>
+          <p>若人生只能许三个愿望，你会选哪三个？六个月愿望设定后不可改、也不推送提醒——它是方向，不是待办。这一层将在后续版本加入；当前先用日省记录与关键词回顾打底。</p>
+        </details>
+        <details>
+          <summary>密度和厚度分别指什么？</summary>
+          <p><strong>密度</strong>：今天收获了什么（具体、可感知）。<strong>厚度</strong>：完成了什么（随时间沉积）。决定成长的，往往是工作时间以外的事——对抗焦虑的方式，是把愿望落到每天不超过三件的小事上。</p>
+        </details>
+        <details>
+          <summary>三主线和十一模块怎么配合？</summary>
+          <p>今日 → 密度；决策 → 理性 / 采样 / 调研 / 反思 / 意见；成长 → 穿透力、双卡、偏差环、生命之轮、影响力。数据在同一套本地库里。</p>
         </details>
         <details>
           <summary>认知偏差环的数据从哪来？</summary>
@@ -1655,11 +1941,16 @@
           <summary>生命之轮是什么？</summary>
           <p>Leon 的 Wheel of Life：健康 / 财富 / 幸福各三维，0–10 打分。真源腾讯文档 <code>DQkZ1RERNbEZOdmd0</code>。分数写入 <code>wheel</code>，快照写入 <code>wheelSnaps</code>。下方仍可检索三课卡片（<code>leonMarks</code>）。</p>
         </details>
+        <details>
+          <summary>个人影响力是什么？</summary>
+          <p>Daniel Priestley 的 Key Person of Influence（蔡蔡笔记）：在一个利基里把 Pitch / Publish / Product / Profile / Partnership 做成 90 天战役。路径 06，工具台 11。数据写入 <code>kpi</code> 与 <code>kpiSnaps</code>。</p>
+        </details>
       </div>
-      <p class="footer-note">人生量化工具箱 · 登录后使用工具台 · 跨设备同步</p>
+      <p class="footer-note">砺行 · 日省 · 数据保存在本机浏览器</p>
     </div>
   </footer>
 
+  <script src="assets/lixing-v1.js"></script>
   <script src="assets/cognitive-bias/biases-data.js"></script>
   <script src="assets/leon-playbook/wheel-of-life.js"></script>
   <script src="assets/leon-playbook/leon-cards.js"></script>
@@ -1669,7 +1960,7 @@
     const BACKUP_KEY = "life-density-v3-autobackup";
     const HISTORY_KEY = "life-density-v3-history";
     const PREF_KEY = "life-density-prefs";
-    const AUTO_FILE_NAME = "life-density-autobackup.json";
+    const AUTO_FILE_NAME = "lixing-autobackup.json";
     const IDB_NAME = "life-density-fs";
     const IDB_STORE = "handles";
 
@@ -1682,6 +1973,13 @@
         entries: {}, opinions: [], industries: [], rationals: [], samplings: [],
         reflections: [], penetrations: [], dualCards: [], biasSpots: {}, leonMarks: {},
         wheel: { scores: {}, note: "" }, wheelSnaps: [],
+        kpi: { scores: {}, niche: "", audience: "", whyMe: "", pitch30: "", pitch3: "", pitch12: "",
+          actPitch: "", actPublish: "", actProduct: "", actProfile: "", actPartner: "", note: "" },
+        kpiSnaps: [],
+        lifeWishes: {
+          wishes: ["", "", ""], quizAnswers: ["", "", ""], completedAt: "",
+          sixMonth: { lines: ["", "", ""], lockedAt: "" },
+        },
         indSteps: {}, settings: {},
       };
     }
@@ -1725,6 +2023,11 @@
         leonMarks: s.leonMarks && typeof s.leonMarks === "object" ? s.leonMarks : {},
         wheel: s.wheel && typeof s.wheel === "object" ? s.wheel : { scores: {}, note: "" },
         wheelSnaps: Array.isArray(s.wheelSnaps) ? s.wheelSnaps : [],
+        kpi: s.kpi && typeof s.kpi === "object" ? s.kpi : emptyState().kpi,
+        kpiSnaps: Array.isArray(s.kpiSnaps) ? s.kpiSnaps : [],
+        lifeWishes: window.LixingV1
+          ? window.LixingV1.normalizeLifeWishes(s.lifeWishes)
+          : (s.lifeWishes && typeof s.lifeWishes === "object" ? s.lifeWishes : emptyState().lifeWishes),
         indSteps: s.indSteps && typeof s.indSteps === "object" ? s.indSteps : {},
         settings: s.settings && typeof s.settings === "object" ? s.settings : {},
       };
@@ -1737,13 +2040,16 @@
         + n.samplings.length + n.reflections.length + n.penetrations.length
         + n.dualCards.length + Object.keys(n.biasSpots).length
         + Object.keys(n.leonMarks).length + (n.wheelSnaps || []).length
-        + Object.values((n.wheel && n.wheel.scores) || {}).filter((v) => Number(v) > 0).length > 0;
+        + (n.kpiSnaps || []).length
+        + Object.values((n.wheel && n.wheel.scores) || {}).filter((v) => Number(v) > 0).length
+        + Object.values((n.kpi && n.kpi.scores) || {}).filter((v) => Number(v) > 0).length
+        + [n.kpi && n.kpi.niche, n.kpi && n.kpi.pitch30].filter((x) => x && String(x).trim()).length > 0;
     }
 
     function buildBackupPayload(state) {
       const data = normalizeState(state);
       return {
-        app: "life-density",
+        app: "lixing-rixing",
         version: 3,
         exportedAt: nowIso(),
         storageKey: STORAGE_KEY,
@@ -1852,7 +2158,7 @@
         const j = await res.json();
         return !!(j && j.ok);
       } catch (e) {
-        console.warn("本目录备份失败（请用 打开人生量化工具箱.bat）", e);
+        console.warn("本目录备份失败（请用 打开砺行.bat）", e);
         return false;
       }
     }
@@ -1979,6 +2285,7 @@
       });
       const ws = document.getElementById("workspace");
       if (ws) ws.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (panelId === "wishes" && window.LixingV1) window.LixingV1.renderWishesPanel();
     }
     document.getElementById("navTabs").addEventListener("click", (e) => {
       const btn = e.target.closest("button[data-panel]");
@@ -2048,7 +2355,14 @@
         l: parseInt(document.getElementById("learn").value, 10) || 0,
         p: parseInt(document.getElementById("passive").value, 10) || 0,
         passiveIncome: parseFloat(document.getElementById("passiveIncome").value) || 0,
-        note: document.getElementById("note").value.trim(),
+        three: window.LixingV1 ? window.LixingV1.getDailyFields().three : ["", "", ""],
+        harvest: window.LixingV1 ? window.LixingV1.getDailyFields().harvest : "",
+        thickness: window.LixingV1 ? window.LixingV1.getDailyFields().thickness : "",
+        note: (function () {
+          const d = window.LixingV1 ? window.LixingV1.getDailyFields() : { harvest: "", thickness: "" };
+          const parts = [d.harvest, d.thickness ? "完成：" + d.thickness : ""].filter(Boolean);
+          return parts.join(" · ");
+        })(),
       };
       saveState(state); renderDensity(); showToast("savedToast");
     }
@@ -2067,7 +2381,7 @@
       document.getElementById("learn").value = e?.l ?? 0;
       document.getElementById("passive").value = e?.p ?? 0;
       document.getElementById("passiveIncome").value = e?.passiveIncome ?? "";
-      document.getElementById("note").value = e?.note ?? "";
+      if (window.LixingV1) window.LixingV1.setDailyFields(e);
       updatePreview();
     }
 
@@ -2120,6 +2434,7 @@
     function renderDensity() {
       const entries = loadState().entries || {};
       renderStats(entries); renderTable(entries);
+      if (window.LixingV1) window.LixingV1.renderKeywords();
     }
 
     function exportCsv() {
@@ -2179,6 +2494,8 @@
       if (data.leonMarks && typeof data.leonMarks === "object") next.leonMarks = data.leonMarks;
       if (data.wheel && typeof data.wheel === "object") next.wheel = data.wheel;
       if (Array.isArray(data.wheelSnaps)) next.wheelSnaps = data.wheelSnaps;
+      if (data.kpi && typeof data.kpi === "object") next.kpi = data.kpi;
+      if (Array.isArray(data.kpiSnaps)) next.kpiSnaps = data.kpiSnaps;
       if (data.indSteps && typeof data.indSteps === "object") next.indSteps = data.indSteps;
       if (data.settings && typeof data.settings === "object") next.settings = data.settings;
       const nDays = Object.keys(next.entries).length;
@@ -2186,7 +2503,7 @@
         + next.samplings.length + next.reflections.length
         + next.penetrations.length + next.dualCards.length
         + Object.keys(next.biasSpots).length + Object.keys(next.leonMarks).length
-        + (next.wheelSnaps || []).length;
+        + (next.wheelSnaps || []).length + (next.kpiSnaps || []).length;
       if (nDays === 0 && nOther === 0 && !Object.keys(next.settings).length) {
         throw new Error("备份里没有可恢复的数据");
       }
@@ -2215,7 +2532,7 @@
       renderSamplingList(); renderReflectList();
       updatePenPreview(); renderPenetrateList();
       updateDualPrompt(); renderDualcardList();
-      renderBiasPanel(); renderLeonPanel();
+      renderBiasPanel(); renderLeonPanel(); renderKpiPanel();
       alert("整库已恢复");
     }
 
@@ -3602,6 +3919,210 @@
       renderWheel({ sliders: false });
     });
 
+    /* ===== ⑪ 个人影响力 KPI ===== */
+    const KPI_PS = [
+      { id: "pitch", en: "Pitch", zh: "推销/提案" },
+      { id: "publish", en: "Publish", zh: "内容输出" },
+      { id: "product", en: "Product", zh: "产品化" },
+      { id: "profile", en: "Profile", zh: "公众形象" },
+      { id: "partner", en: "Partnership", zh: "合作" },
+    ];
+    const KPI_TEXT_IDS = [
+      "kpiNiche", "kpiAudience", "kpiWhy",
+      "kpiPitch30", "kpiPitch3", "kpiPitch12",
+      "kpiActPitch", "kpiActPublish", "kpiActProduct", "kpiActProfile", "kpiActPartner", "kpiNote",
+    ];
+    const KPI_TEXT_KEYS = [
+      "niche", "audience", "whyMe",
+      "pitch30", "pitch3", "pitch12",
+      "actPitch", "actPublish", "actProduct", "actProfile", "actPartner", "note",
+    ];
+
+    function defaultKpi() {
+      return emptyState().kpi;
+    }
+
+    function getKpi() {
+      const k = loadState().kpi;
+      return Object.assign(defaultKpi(), k && typeof k === "object" ? k : {}, {
+        scores: Object.assign(
+          { pitch: 0, publish: 0, product: 0, profile: 0, partner: 0 },
+          (k && k.scores) || {}
+        ),
+      });
+    }
+
+    function collectKpiForm() {
+      const cur = getKpi();
+      const scores = { ...cur.scores };
+      KPI_PS.forEach((p) => {
+        const el = document.getElementById("kpiScore-" + p.id);
+        if (el) scores[p.id] = Number(el.value) || 0;
+      });
+      const out = { ...cur, scores };
+      KPI_TEXT_IDS.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el) out[KPI_TEXT_KEYS[i]] = el.value;
+      });
+      return out;
+    }
+
+    function saveKpiCurrent() {
+      const st = loadState();
+      st.kpi = collectKpiForm();
+      saveState(st);
+      renderKpiStats();
+      showToast("savedKpiToast");
+    }
+
+    function snapKpi() {
+      const st = loadState();
+      st.kpi = collectKpiForm();
+      const scores = st.kpi.scores || {};
+      const vals = KPI_PS.map((p) => Number(scores[p.id]) || 0);
+      const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+      const snap = {
+        id: Date.now().toString(36),
+        at: todayStr(),
+        scores: { ...scores },
+        niche: st.kpi.niche || "",
+        avg: Math.round(avg * 10) / 10,
+        note: st.kpi.note || "",
+      };
+      st.kpiSnaps = [snap, ...(st.kpiSnaps || [])].slice(0, 12);
+      saveState(st);
+      renderKpiHistory();
+      renderKpiStats();
+      showToast("savedKpiToast");
+    }
+
+    function clearKpiForm() {
+      const st = loadState();
+      st.kpi = defaultKpi();
+      saveState(st);
+      renderKpiPanel();
+    }
+
+    function fillKpiForm(k) {
+      const data = Object.assign(defaultKpi(), k || {});
+      data.scores = Object.assign(
+        { pitch: 0, publish: 0, product: 0, profile: 0, partner: 0 },
+        data.scores || {}
+      );
+      KPI_TEXT_IDS.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el) el.value = data[KPI_TEXT_KEYS[i]] || "";
+      });
+      KPI_PS.forEach((p) => {
+        const el = document.getElementById("kpiScore-" + p.id);
+        const n = document.getElementById("kpiScoreN-" + p.id);
+        const v = Number(data.scores[p.id]) || 0;
+        if (el) el.value = v;
+        if (n) n.textContent = v;
+      });
+    }
+
+    function renderKpiSliders() {
+      const wrap = document.getElementById("kpiSliders");
+      if (!wrap) return;
+      const scores = getKpi().scores || {};
+      wrap.innerHTML = KPI_PS.map((p) => {
+        const v = Number(scores[p.id]) || 0;
+        return `<div class="cap-item">
+          <div class="cap-head"><span class="cap-name">${p.zh} · ${p.en}</span></div>
+          <div class="kpi-score-row">
+            <input type="range" min="0" max="10" step="1" id="kpiScore-${p.id}" value="${v}" />
+            <span class="kpi-n" id="kpiScoreN-${p.id}">${v}</span>
+          </div>
+        </div>`;
+      }).join("");
+      wrap.querySelectorAll("input[type=range]").forEach((inp) => {
+        inp.addEventListener("input", () => {
+          const id = inp.id.replace("kpiScore-", "");
+          const n = document.getElementById("kpiScoreN-" + id);
+          if (n) n.textContent = inp.value;
+          renderKpiStats();
+        });
+      });
+    }
+
+    function renderKpiStats() {
+      const el = document.getElementById("kpiStats");
+      if (!el) return;
+      const scores = {};
+      KPI_PS.forEach((p) => {
+        const inp = document.getElementById("kpiScore-" + p.id);
+        scores[p.id] = inp ? Number(inp.value) || 0 : Number((getKpi().scores || {})[p.id]) || 0;
+      });
+      const vals = KPI_PS.map((p) => scores[p.id]);
+      const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+      const minV = Math.min(...vals);
+      const maxV = Math.max(...vals);
+      const gap = maxV - minV;
+      const lowest = KPI_PS.filter((p) => scores[p.id] === minV).map((p) => p.zh).join("、");
+      el.innerHTML = `
+        <div class="item"><div class="num">${avg.toFixed(1)}</div><div class="lbl">五维均分</div></div>
+        <div class="item"><div class="num">${gap}</div><div class="lbl">最高−最低</div></div>
+        <div class="item"><div class="num">${minV}</div><div class="lbl">最弱 ${esc(lowest)}</div></div>
+        <div class="item"><div class="num">${(loadState().kpiSnaps || []).length}</div><div class="lbl">快照</div></div>`;
+    }
+
+    function renderKpiHistory() {
+      const el = document.getElementById("kpiHistory");
+      if (!el) return;
+      const list = loadState().kpiSnaps || [];
+      if (!list.length) {
+        el.innerHTML = '<div class="empty-table">还没有快照。打完分后点「存一版快照」。</div>';
+        return;
+      }
+      el.innerHTML = list.map((s) => {
+        const bits = KPI_PS.map((p) => `${p.zh}${(s.scores && s.scores[p.id]) || 0}`).join(" · ");
+        return `<div class="record-item">
+          <div><strong>${esc(s.niche || "未写利基")} · 均 ${s.avg}</strong>
+            <div class="meta">${s.at} · ${esc(bits)}</div>
+            ${s.note ? `<div class="meta">${esc(s.note)}</div>` : ""}
+          </div>
+          <div style="display:flex;gap:6px">
+            <button type="button" class="btn btn-ghost" data-kpi-load="${s.id}">载入</button>
+            <button type="button" class="btn-danger" data-kpi-del="${s.id}">删</button>
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    function renderKpiPanel() {
+      fillKpiForm(getKpi());
+      renderKpiSliders();
+      fillKpiForm(getKpi());
+      renderKpiStats();
+      renderKpiHistory();
+    }
+
+    document.getElementById("saveKpiBtn")?.addEventListener("click", saveKpiCurrent);
+    document.getElementById("snapKpiBtn")?.addEventListener("click", snapKpi);
+    document.getElementById("clearKpiBtn")?.addEventListener("click", () => {
+      if (confirm("清空当前影响力表？（快照仍保留）")) clearKpiForm();
+    });
+    document.getElementById("kpiHistory")?.addEventListener("click", (e) => {
+      const del = e.target.closest("[data-kpi-del]");
+      if (del) {
+        const st = loadState();
+        st.kpiSnaps = (st.kpiSnaps || []).filter((s) => s.id !== del.dataset.kpiDel);
+        saveState(st);
+        renderKpiHistory();
+        renderKpiStats();
+        return;
+      }
+      const load = e.target.closest("[data-kpi-load]");
+      if (!load) return;
+      const snap = (loadState().kpiSnaps || []).find((s) => s.id === load.dataset.kpiLoad);
+      if (!snap) return;
+      const st = loadState();
+      st.kpi = Object.assign(getKpi(), { scores: { ...snap.scores }, niche: snap.niche || st.kpi.niche, note: snap.note || "" });
+      saveState(st);
+      renderKpiPanel();
+    });
+
     (async function boot() {
       migrateStorage();
       const hydrated = await tryHydrateFromDirBackup();
@@ -3615,8 +4136,9 @@
       updateDualPrompt(); renderDualcardList();
       renderBiasPanel();
       renderLeonPanel();
+      renderKpiPanel();
+      if (window.LixingV1) window.LixingV1.init();
     })();
   </script>
-  <script src="/cloud-sync.js?v=20260825b"></script>
 </body>
 </html>
