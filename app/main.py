@@ -30,7 +30,7 @@ PUBLIC_PREFIXES = (
     "/cloud-ui.css",
 )
 
-PUBLIC_PATHS = {"/", "/index.html", "/api/me", "/__backup", "/api/audio/config"}
+PUBLIC_PATHS = {"/", "/index.html", "/workspace.html", "/api/me", "/__backup", "/api/audio/config"}
 
 BACKUP_NAME = "lixing-autobackup.json"
 

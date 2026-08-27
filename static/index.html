@@ -1326,7 +1326,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260828aa" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260828ac" />
 
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0e0c0a" />
@@ -1337,9 +1337,10 @@
 </head>
 
 <body class="auth-pending daily-page focus-layout home-three home-scene-page">
-  <nav class="topnav" aria-label="主导航">
-    <a class="brand" href="#top" aria-label="砺行 · 日省">
+  <nav class="topnav app-banner" aria-label="主导航">
+    <a class="brand brand--banner" href="#top" aria-label="砺行 · 日省">
       <img class="brand-logo" src="assets/brand-logo.png" alt="" width="34" height="34" decoding="async" />
+      <span class="brand-wordmark"><span class="char-li">砺</span>行 · 日省</span>
     </a>
     <div class="topnav-auth">
       <a class="tool-link" id="navToolLink" href="workspace.html">工具台</a>
@@ -1355,11 +1356,6 @@
       <div class="home-scene-vignette"></div>
     </div>
     <div class="home-scene-inner">
-    <header class="home-head">
-      <img class="home-brand-logo" src="assets/brand-logo.png" alt="" width="72" height="72" decoding="async" />
-      <h1 class="goals-primary-title home-brand-title"><span class="char-li">砺</span>行 · 日省</h1>
-    </header>
-
     <nav class="home-modules" role="tablist" aria-label="主页模块">
       <button type="button" class="home-module-btn is-active" data-module="decide" role="tab">抉择</button>
       <button type="button" class="home-module-btn" data-module="action" role="tab">行动</button>
@@ -1393,6 +1389,7 @@
         <label class="journal-date-picker">
           <span class="journal-date-text">
             <span class="journal-date-greg" id="journalDateGreg">—</span>
+            <span class="journal-date-divider" aria-hidden="true"></span>
             <span class="journal-date-lunar" id="journalDateLunar"></span>
           </span>
           <input type="date" id="date" aria-label="日期" />
@@ -1491,7 +1488,7 @@
   </main>
 
   <script src="assets/lixing-cloud-auth.js"></script>
-  <script src="assets/lixing-lunar.js?v=20260828x"></script>
+  <script src="assets/lixing-lunar.js?v=20260828ac"></script>
   <script src="assets/lixing-v1.js?v=20260828y"></script>
   <script src="assets/lixing-voice.js?v=20260828p"></script>
   <script src="assets/lixing-write-dialog.js?v=20260828y"></script>
@@ -1811,6 +1808,10 @@
     }
 
     function saveState(state, opts) {
+      if (window.LixingAuth && !window.LixingAuth.canWrite()) {
+        window.LixingAuth.notifyGuestBlocked();
+        return;
+      }
       const normalized = normalizeState(state);
       const json = JSON.stringify(normalized);
       localStorage.setItem(STORAGE_KEY, json);
@@ -1932,10 +1933,12 @@
         } catch (_) {}
       }
       if (gregEl) gregEl.textContent = gregLine;
+      const lunarDivider = document.querySelector(".journal-date-divider");
       if (lunarEl) {
         lunarEl.textContent = lunarLine;
         lunarEl.hidden = !lunarLine;
       }
+      if (lunarDivider) lunarDivider.hidden = !lunarLine;
       if (reviewDateEl) reviewDateEl.textContent = issueLine;
       if (label) {
         try {

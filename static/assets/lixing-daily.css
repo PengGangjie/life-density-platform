@@ -1086,9 +1086,36 @@ body.home-scene-page.daily-page {
 }
 
 body.home-scene-page .topnav {
-  background: rgba(14, 12, 10, 0.78);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(243, 234, 216, 0.1);
+  background: rgba(14, 12, 10, 0.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(243, 234, 216, 0.12);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.22);
+}
+
+body.home-scene-page .topnav.app-banner {
+  min-height: var(--nav-h, 52px);
+}
+
+.brand--banner {
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-wordmark {
+  font-family: var(--display, serif);
+  font-size: 0.92rem;
+  letter-spacing: 0.28em;
+  color: rgba(243, 234, 216, 0.94);
+  white-space: nowrap;
+}
+
+body.home-scene-page .brand-wordmark {
+  font-size: clamp(0.82rem, 3.2vw, 0.92rem);
+}
+
+.home-modules {
+  margin-top: 6px;
 }
 
 body.home-scene-page .brand-mark,
@@ -1248,38 +1275,49 @@ body.home-three #module-action .journal-date-bar {
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 34px;
-  padding: 6px 14px;
-  border: 1px solid rgba(243, 234, 216, 0.14);
-  background: rgba(12, 10, 8, 0.48);
-  backdrop-filter: blur(6px);
+  min-height: 36px;
+  padding: 8px 16px;
+  border: 1px solid rgba(243, 234, 216, 0.16);
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(18, 15, 12, 0.72) 0%, rgba(12, 10, 8, 0.55) 100%);
+  backdrop-filter: blur(8px);
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s;
 }
 
 .journal-date-picker:hover {
   border-color: rgba(243, 234, 216, 0.32);
+  background: linear-gradient(180deg, rgba(22, 18, 14, 0.78) 0%, rgba(14, 11, 9, 0.62) 100%);
 }
 
 .journal-date-text {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 8px 12px;
   font-family: var(--font);
   pointer-events: none;
 }
 
 .journal-date-greg {
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  color: rgba(196, 176, 138, 0.92);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: rgba(196, 176, 138, 0.88);
+}
+
+.journal-date-divider {
+  width: 1px;
+  height: 12px;
+  background: rgba(243, 234, 216, 0.22);
 }
 
 .journal-date-lunar {
-  font-size: 0.64rem;
-  letter-spacing: 0.12em;
-  color: rgba(196, 176, 138, 0.68);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: rgba(232, 160, 160, 0.82);
+  font-family: var(--display, serif);
 }
 
 .journal-date-picker input[type="date"] {
@@ -2100,6 +2138,74 @@ body.home-three .notebook-foot--minimal {
   justify-content: center;
   padding: 12px 16px 20px;
   border-top: none;
+}
+
+/* 工具台 · 游客阅览 */
+body.workspace-only .brand-wordmark {
+  font-family: var(--display, serif);
+  font-size: 0.88rem;
+  letter-spacing: 0.24em;
+  color: rgba(243, 234, 216, 0.92);
+}
+
+.guest-readonly-hint {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: rgba(196, 176, 138, 0.92);
+  border: 1px dashed rgba(232, 160, 160, 0.35);
+  background: rgba(232, 160, 160, 0.06);
+  border-radius: 2px;
+}
+
+.guest-readonly-hint.is-flash {
+  border-color: rgba(232, 160, 160, 0.65);
+  background: rgba(232, 160, 160, 0.12);
+}
+
+.guest-readonly-hint a {
+  color: rgba(232, 160, 160, 0.95);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.guest-blocked-toast {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.72rem;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.guest-blocked-toast.show {
+  opacity: 1;
+}
+
+body.guest-readonly .workspace-body input:not([type="range"]):not([type="checkbox"]),
+body.guest-readonly .workspace-body textarea,
+body.guest-readonly .workspace-body select {
+  pointer-events: none;
+}
+
+body.guest-readonly .workspace-body .btn:not(.btn-ghost),
+body.guest-readonly .workspace-body .btn-danger,
+body.guest-readonly .workspace-body button[id^="save"],
+body.guest-readonly .workspace-body button[id*="Save"] {
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+body.guest-readonly .workspace-body input[type="range"] {
+  pointer-events: none;
+  opacity: 0.72;
+}
+
+body.guest-readonly .nav-tabs button,
+body.guest-readonly details summary,
+body.guest-readonly .guide summary {
+  pointer-events: auto;
 }
 
 body.home-three .saved-toast--inline {

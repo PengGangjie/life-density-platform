@@ -1343,12 +1343,13 @@
     }
     
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260828v" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260828ac" />
 </head>
 <body class="auth-pending workspace-only">
-  <nav class="topnav" aria-label="主导航">
-    <a class="brand" href="index.html" aria-label="砺行 · 日省">
+  <nav class="topnav app-banner" aria-label="主导航">
+    <a class="brand brand--banner" href="index.html" aria-label="砺行 · 日省">
       <img class="brand-logo" src="assets/brand-logo.png" alt="" width="34" height="34" decoding="async" />
+      <span class="brand-wordmark"><span class="char-li">砺</span>行 · 日省</span>
     </a>
     <div class="topnav-auth">
       <a class="tool-link" href="index.html">← 今日卡片</a>
@@ -1363,7 +1364,9 @@
       <div class="workspace-head">
         <p class="section-kicker">工具台</p>
         <h2>十二模块，收在同一工作台</h2>
-        <p>主线：今日（密度）· 决策（困局①–⑥）· 成长（生命之轮、偏差环、双卡、影响力）。数据都在本机。</p>
+        <p>主线：今日（密度）· 决策（困局①–⑥）· 成长（生命之轮、偏差环、双卡、影响力）。登录后可记录；未登录为阅览模式。</p>
+        <p class="guest-readonly-hint" id="guestReadonlyHint" hidden>阅览模式 · 可查阅各模块，<a href="/sign-in">登录</a> 后可保存数据</p>
+        <span class="saved-toast guest-blocked-toast" id="guestBlockedToast">请登录后再保存</span>
       </div>
       <nav class="nav-tabs" id="navTabs" aria-label="工具模块">
         <button type="button" data-panel="wishes"><span class="n">愿</span>三愿</button>
@@ -2672,6 +2675,10 @@
     }
 
     function saveState(state, opts) {
+      if (window.LixingAuth && !window.LixingAuth.canWrite()) {
+        window.LixingAuth.notifyGuestBlocked();
+        return;
+      }
       const normalized = normalizeState(state);
       const json = JSON.stringify(normalized);
       localStorage.setItem(STORAGE_KEY, json);
