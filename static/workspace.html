@@ -1366,6 +1366,7 @@
         <h2>十二模块，收在同一工作台</h2>
         <p>主线：今日（密度）· 决策（困局①–⑥）· 成长（生命之轮、偏差环、双卡、影响力）。登录后可记录；未登录为阅览模式。</p>
         <p class="guest-readonly-hint" id="guestReadonlyHint" hidden>阅览模式 · 可查阅各模块，<a href="/sign-in">登录</a> 后可保存数据</p>
+        <p class="card-desc" id="cloudSyncHint" hidden></p>
         <span class="saved-toast guest-blocked-toast" id="guestBlockedToast">请登录后再保存</span>
       </div>
       <nav class="nav-tabs" id="navTabs" aria-label="工具模块">
@@ -2866,7 +2867,24 @@
       updatePreview();
     }
 
-    function sortedDates(entries, limit) { return Object.keys(entries).sort().slice(-limit); }
+    function calendarDates(limit, endStr) {
+      const end = endStr || todayStr();
+      const [y, m, d] = end.split("-").map(Number);
+      const anchor = new Date(y, m - 1, d, 12, 0, 0);
+      const out = [];
+      for (let i = limit - 1; i >= 0; i--) {
+        const cur = new Date(anchor);
+        cur.setDate(cur.getDate() - i);
+        out.push(
+          cur.getFullYear() + "-" +
+          String(cur.getMonth() + 1).padStart(2, "0") + "-" +
+          String(cur.getDate()).padStart(2, "0")
+        );
+      }
+      return out;
+    }
+
+    function sortedDates(entries, limit) { return calendarDates(limit); }
 
     function renderStats(entries) {
       const dates = sortedDates(entries, 7);
@@ -2881,8 +2899,8 @@
       });
       const avg = countD ? Math.round(sumD / countD) : "—";
       document.getElementById("stats").innerHTML = `
-        <div class="item"><div class="num">${avg}${avg !== "—" ? "%" : ""}</div><div class="lbl">近7天均密度</div></div>
-        <div class="item"><div class="num">${highDays}</div><div class="lbl">高密度日 ≥40%</div></div>
+        <div class="item"><div class="num">${avg}${avg !== "—" ? "%" : ""}</div><div class="lbl">近7天均自省</div></div>
+        <div class="item"><div class="num">${highDays}</div><div class="lbl">高自省日 ≥40%</div></div>
         <div class="item"><div class="num">${Object.keys(entries).length}</div><div class="lbl">累计记录天</div></div>`;
     }
 
@@ -2895,7 +2913,7 @@
       document.getElementById("dateHeader").innerHTML = "<th>指标</th>" + dates.map((d) => `<th>${d.slice(5)}</th>`).join("");
       const rows = [
         { label: "H 劳动时长", key: "h" }, { label: "C 主动连接", key: "c" },
-        { label: "L 有效学习", key: "l" }, { label: "P 被动收入", key: "p" }, { label: "D 密度", key: "d" },
+        { label: "L 有效学习", key: "l" }, { label: "P 被动收入", key: "p" }, { label: "D 自省", key: "d" },
       ];
       document.getElementById("tableBody").innerHTML = rows.map((row) => {
         const cells = dates.map((d) => {
@@ -4636,5 +4654,6 @@
       }
     })();
   </script>
+  <script src="assets/lixing-cloud-sync.js?v=20260828b"></script>
 </body>
 </html>

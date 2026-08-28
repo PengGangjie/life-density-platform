@@ -1482,6 +1482,7 @@
     </section>
 
     <footer class="notebook-foot notebook-foot--minimal">
+      <a class="tool-link-foot" href="qr.html">扫码打开</a>
       <a class="tool-link-foot" href="workspace.html" id="notebookToolLink">工具台 →</a>
     </footer>
     </div>
@@ -2047,7 +2048,24 @@
       if (typeof updatePreview === "function") updatePreview();
     }
 
-    function sortedDates(entries, limit) { return Object.keys(entries).sort().slice(-limit); }
+    function calendarDates(limit, endStr) {
+      const end = endStr || todayStr();
+      const [y, m, d] = end.split("-").map(Number);
+      const anchor = new Date(y, m - 1, d, 12, 0, 0);
+      const out = [];
+      for (let i = limit - 1; i >= 0; i--) {
+        const cur = new Date(anchor);
+        cur.setDate(cur.getDate() - i);
+        out.push(
+          cur.getFullYear() + "-" +
+          String(cur.getMonth() + 1).padStart(2, "0") + "-" +
+          String(cur.getDate()).padStart(2, "0")
+        );
+      }
+      return out;
+    }
+
+    function sortedDates(entries, limit) { return calendarDates(limit); }
 
     function renderStats(entries) {
       const dates = sortedDates(entries, 7);
@@ -2076,7 +2094,7 @@
       document.getElementById("dateHeader").innerHTML = "<th>指标</th>" + dates.map((d) => `<th>${d.slice(5)}</th>`).join("");
       const rows = [
         { label: "H 劳动时长", key: "h" }, { label: "C 主动连接", key: "c" },
-        { label: "L 有效学习", key: "l" }, { label: "P 被动收入", key: "p" }, { label: "D 密度", key: "d" },
+        { label: "L 有效学习", key: "l" }, { label: "P 被动收入", key: "p" }, { label: "D 自省", key: "d" },
       ];
       document.getElementById("tableBody").innerHTML = rows.map((row) => {
         const cells = dates.map((d) => {
