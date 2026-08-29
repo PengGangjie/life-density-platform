@@ -303,24 +303,30 @@
   function applyReviewRowUI(i, state, animate) {
     const row = document.querySelector('.review-row[data-col="' + i + '"]');
     if (!row) return;
-    row.classList.remove("is-yes-locked", "is-collapsing", "is-dismissed");
+    row.classList.remove("is-yes-locked", "is-collapsing", "is-dismissed", "is-no-kept");
     const btns = row.querySelector(".review-row-btns");
+    const status = document.getElementById("reviewStatus" + i);
+    if (status) {
+      status.hidden = !(state === "yes" || state === "no");
+      status.classList.remove("is-yes", "is-no");
+      if (state === "yes") {
+        status.textContent = "✓ 已完成";
+        status.classList.add("is-yes");
+      } else if (state === "no") {
+        status.textContent = "未完成";
+        status.classList.add("is-no");
+      } else {
+        status.textContent = "";
+      }
+    }
     if (state === "yes") {
       row.classList.add("is-yes-locked");
       if (btns) btns.hidden = true;
       return;
     }
     if (state === "no") {
+      row.classList.add("is-no-kept");
       if (btns) btns.hidden = true;
-      if (animate) {
-        row.classList.add("is-collapsing");
-        window.setTimeout(function () {
-          row.classList.add("is-dismissed");
-          row.classList.remove("is-collapsing");
-        }, 420);
-      } else {
-        row.classList.add("is-dismissed");
-      }
       return;
     }
     if (btns) btns.hidden = false;
@@ -342,11 +348,11 @@
       row.classList.remove("is-yes", "is-no");
       if (state === "yes" || state === "no") row.classList.add("is-" + state);
     }
-    applyReviewRowUI(i, state, opts.animate !== false && state === "no");
+    applyReviewRowUI(i, state, opts.animate !== false && state === "yes");
     const foot = document.getElementById("foot" + i);
     if (!foot) return;
-    if (state === "yes") foot.textContent = "已成";
-    else if (state === "no") foot.textContent = "未成";
+    if (state === "yes") foot.textContent = "已完成";
+    else if (state === "no") foot.textContent = "未完成";
   }
 
   function paintWishFeeling(wish, feeling) {
@@ -484,7 +490,7 @@
         const v = btn.dataset.v;
         const circle = document.getElementById("reviewCircle" + i);
         const row = document.querySelector('.review-row[data-col="' + i + '"]');
-        if (row && (row.classList.contains("is-yes-locked") || row.classList.contains("is-dismissed"))) return;
+        if (row && (row.classList.contains("is-yes-locked") || row.classList.contains("is-no-kept"))) return;
         const cur =
           circle && circle.classList.contains("is-yes")
             ? "yes"
@@ -492,9 +498,10 @@
               ? "no"
               : null;
         if (cur === v) return;
-        paintReviewMark(i, v, { animate: v === "no" });
+        paintReviewMark(i, v, { animate: v === "yes" });
         persistReviewMarks();
         updateFeelingNudge();
+        if (window.LixingHome) window.LixingHome.updateYesterdayBanner();
       });
     });
     document.getElementById("openReviewBtn")?.addEventListener("click", function () {

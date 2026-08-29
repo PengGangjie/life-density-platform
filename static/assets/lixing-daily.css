@@ -1602,15 +1602,60 @@ body.home-three #module-action .journal-date-bar {
   color: var(--accent-review);
 }
 
-.yesterday-banner button {
+.yesterday-banner-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.yesterday-banner-skip {
   flex-shrink: 0;
   padding: 6px 14px;
-  border: 1px solid var(--accent-review);
+  border: 1px solid rgba(196, 176, 138, 0.35);
   background: transparent;
-  color: var(--accent-review);
+  color: rgba(196, 176, 138, 0.85);
   font-size: 0.72rem;
   cursor: pointer;
   border-radius: 999px;
+}
+
+.review-status {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.review-status.is-yes {
+  color: #3d6b4f;
+}
+
+.review-status.is-no {
+  color: rgba(166, 93, 85, 0.95);
+}
+
+.review-row.is-yes-locked {
+  border-color: rgba(61, 107, 79, 0.55);
+  background: rgba(61, 107, 79, 0.12);
+  box-shadow: none;
+}
+
+.review-row.is-yes-locked .review-row-text {
+  color: #1a1a1a;
+}
+
+.review-row.is-no-kept {
+  opacity: 0.72;
+  border-color: rgba(166, 93, 85, 0.35);
+}
+
+.review-row.is-yes-locked .review-status {
+  animation: review-check-in 0.28s ease;
+}
+
+@keyframes review-check-in {
+  from { opacity: 0; transform: scale(0.86); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* 复盘 */
@@ -1977,6 +2022,23 @@ body.home-three .store-item-body {
   border: 1px solid rgba(243, 234, 216, 0.14);
   background: rgba(12, 10, 8, 0.48);
   backdrop-filter: blur(6px);
+}
+
+.review-row--simple.is-yes-locked {
+  border-color: rgba(61, 107, 79, 0.45);
+  background: rgba(61, 107, 79, 0.16);
+}
+
+.review-row--simple.is-yes-locked .review-row-text {
+  color: #d8f0e0;
+}
+
+.review-row--simple .review-status.is-yes {
+  color: #9fd4b3;
+}
+
+.review-row--simple .review-status.is-no {
+  color: #e8a0a0;
 }
 
 .review-row--simple .review-row-text {
@@ -2568,19 +2630,17 @@ body.review-mode #module-action .action-tabs {
 }
 
 .review-row.is-yes-locked {
-  border-color: rgba(232, 160, 160, 0.72);
-  background: rgba(28, 18, 16, 0.62);
-  box-shadow:
-    0 0 28px rgba(232, 160, 160, 0.28),
-    inset 0 0 24px rgba(232, 160, 160, 0.1);
+  border-color: rgba(61, 107, 79, 0.55);
+  background: rgba(61, 107, 79, 0.12);
+  box-shadow: none;
 }
 
 .review-row.is-yes-locked .review-row-text {
-  color: #fde8e8;
+  color: inherit;
 }
 
 .review-row.is-yes-locked .review-row-num {
-  color: #e8a0a0;
+  color: #3d6b4f;
 }
 
 .review-row.is-collapsing {

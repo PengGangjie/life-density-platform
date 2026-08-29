@@ -1326,7 +1326,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260828ac" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260829ad" />
 
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0e0c0a" />
@@ -1402,8 +1402,11 @@
       </nav>
 
       <div class="yesterday-banner" id="yesterdayBanner" hidden>
-        <p>昨日三件小事尚待复盘</p>
-        <button type="button" id="yesterdayReviewBtn">去复盘昨天</button>
+        <p id="yesterdayBannerText">昨日还有未完成的小事</p>
+        <div class="yesterday-banner-actions">
+          <button type="button" id="yesterdayReviewBtn">继续写下</button>
+          <button type="button" class="yesterday-banner-skip" id="yesterdaySkipBtn">取消提醒</button>
+        </div>
       </div>
 
       <div class="action-pane action-pane--compact" id="action-record">
@@ -1424,8 +1427,8 @@
           </div>
         </div>
         <div class="action-save-bar">
-          <button type="button" class="btn-store-save" id="saveRecordBtn">保存</button>
-          <span class="saved-toast saved-toast--inline" id="savedRecordToast" aria-live="polite">已保存</span>
+          <button type="button" class="btn-store-save" id="saveRecordBtn">保存并复盘</button>
+          <span class="saved-toast saved-toast--inline" id="savedRecordToast" aria-live="polite">已记下，去核对</span>
         </div>
       </div>
 
@@ -1434,27 +1437,30 @@
           <article class="review-row review-row--simple review-row--compact" data-col="1">
             <p class="review-row-text" id="reviewText1">—</p>
             <div class="review-btns review-row-btns" aria-label="复盘其一">
-              <button type="button" data-review="1" data-v="yes">成</button>
+              <button type="button" data-review="1" data-v="yes">是</button>
               <button type="button" data-review="1" data-v="no">否</button>
             </div>
+            <span class="review-status" id="reviewStatus1" hidden></span>
             <span class="review-circle" id="reviewCircle1" hidden aria-hidden="true"></span>
             <span class="write-kw review-row-kw" id="kw1" hidden aria-hidden="true"></span>
           </article>
           <article class="review-row review-row--simple review-row--compact" data-col="2">
             <p class="review-row-text" id="reviewText2">—</p>
             <div class="review-btns review-row-btns" aria-label="复盘其二">
-              <button type="button" data-review="2" data-v="yes">成</button>
+              <button type="button" data-review="2" data-v="yes">是</button>
               <button type="button" data-review="2" data-v="no">否</button>
             </div>
+            <span class="review-status" id="reviewStatus2" hidden></span>
             <span class="review-circle" id="reviewCircle2" hidden aria-hidden="true"></span>
             <span class="write-kw review-row-kw" id="kw2" hidden aria-hidden="true"></span>
           </article>
           <article class="review-row review-row--simple review-row--compact" data-col="3">
             <p class="review-row-text" id="reviewText3">—</p>
             <div class="review-btns review-row-btns" aria-label="复盘其三">
-              <button type="button" data-review="3" data-v="yes">成</button>
+              <button type="button" data-review="3" data-v="yes">是</button>
               <button type="button" data-review="3" data-v="no">否</button>
             </div>
+            <span class="review-status" id="reviewStatus3" hidden></span>
             <span class="review-circle" id="reviewCircle3" hidden aria-hidden="true"></span>
             <span class="write-kw review-row-kw" id="kw3" hidden aria-hidden="true"></span>
           </article>
@@ -1490,11 +1496,11 @@
 
   <script src="assets/lixing-cloud-auth.js"></script>
   <script src="assets/lixing-lunar.js?v=20260828ac"></script>
-  <script src="assets/lixing-v1.js?v=20260828y"></script>
+  <script src="assets/lixing-v1.js?v=20260829ad"></script>
   <script src="assets/lixing-voice.js?v=20260828p"></script>
   <script src="assets/lixing-write-dialog.js?v=20260828y"></script>
   <script src="assets/lixing-decide.js?v=20260828z"></script>
-  <script src="assets/lixing-home.js?v=20260828ab"></script>
+  <script src="assets/lixing-home.js?v=20260829ad"></script>
   <script>
     const STORAGE_KEY = "life-density-v3";
     const OLD_KEYS = ["life-density-v2", "life-density-v1"];
@@ -1952,7 +1958,7 @@
       }
     }
 
-    function saveNotebookThree() {
+    function saveNotebookThree(opts) {
       const date = document.getElementById("date").value || todayStr();
       const state = loadState();
       state.entries = state.entries || {};
@@ -1961,6 +1967,7 @@
       const three = fields.three || [1, 2, 3].map((i) => (document.getElementById("three" + i) || {}).value?.trim() || "");
       const threeKw = fields.threeKw || ["", "", ""];
       const reviewed = (fields.reviewDone || []).some((v) => v === "yes" || v === "no");
+      const hasThree = three.some((t) => t && String(t).trim());
       state.entries[date] = Object.assign({}, prev, {
         dailyWish: fields.dailyWish || "",
         three,
@@ -1973,11 +1980,16 @@
         thickness: fields.thickness || prev.thickness || "",
       });
       saveState(state);
-      showToast("savedNotebookToast");
+      const toastId = opts && opts.toastId ? opts.toastId : "savedRecordToast";
+      showToast(toastId);
       if (window.LixingV1) window.LixingV1.renderKeywords();
       if (window.LixingV1) window.LixingV1.renderHarvestPanel();
       if (window.LixingHome) window.LixingHome.updateYesterdayBanner();
       renderReviewSummary();
+      if (opts && opts.goReview && hasThree && window.LixingHome) {
+        window.LixingHome.setModule("action");
+        window.LixingHome.setActionTab("review");
+      }
     }
 
     function renderReviewSummary() {
@@ -2650,8 +2662,8 @@
     /* ===== 初始化 ===== */
     document.getElementById("date").value = todayStr();
     updateNotebookDateDisplay();
-    document.getElementById("saveRecordBtn")?.addEventListener("click", saveNotebookThree);
-    document.getElementById("saveReviewBtn")?.addEventListener("click", saveNotebookThree);
+    document.getElementById("saveRecordBtn")?.addEventListener("click", () => saveNotebookThree({ goReview: true, toastId: "savedRecordToast" }));
+    document.getElementById("saveReviewBtn")?.addEventListener("click", () => saveNotebookThree({ toastId: "savedReviewToast" }));
     document.getElementById("refDate").value = todayStr();
     document.getElementById("penDate").value = todayStr();
     ["hours","conn","learn","passive","passiveIncome","hourlyWage","advancedPassive","autoPassive"].forEach((id) => {

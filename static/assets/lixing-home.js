@@ -7,27 +7,40 @@
   var MODULE_KEY = "lixing-home-module";
   var ACTION_TAB_KEY = "lixing-action-tab";
 
+  var SKIP_YESTERDAY_KEY = "lixing-skip-yesterday";
+
   function yesterdayStr() {
     var d = new Date();
     d.setDate(d.getDate() - 1);
     return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
   }
 
+  function skippedYesterday() {
+    try {
+      return localStorage.getItem(SKIP_YESTERDAY_KEY) === yesterdayStr();
+    } catch (_e) {
+      return false;
+    }
+  }
+
+  function skipYesterdayReminder() {
+    try {
+      localStorage.setItem(SKIP_YESTERDAY_KEY, yesterdayStr());
+    } catch (_e) {}
+    updateYesterdayBanner();
+  }
+
   function needsYesterdayReview(entries) {
+    if (skippedYesterday()) return false;
     var y = yesterdayStr();
     var e = entries[y];
     if (!e) return false;
-    var hasContent = (e.three || []).some(function (t) {
-      return t && String(t).trim();
-    });
-    if (!hasContent) return false;
+    var three = e.three || [];
     var marks = e.reviewDone || [];
-    var reviewed =
-      !!e.reviewedAt ||
-      marks.some(function (v) {
-        return v === "yes" || v === "no";
-      });
-    return !reviewed;
+    var pending = [0, 1, 2].some(function (i) {
+      return three[i] && String(three[i]).trim() && marks[i] !== "yes" && marks[i] !== "no";
+    });
+    return pending;
   }
 
   function setModule(name) {
@@ -100,7 +113,10 @@
   function updateYesterdayBanner() {
     var banner = document.getElementById("yesterdayBanner");
     if (!banner || typeof loadState !== "function") return;
-    banner.hidden = !needsYesterdayReview(loadState().entries || {});
+    var show = needsYesterdayReview(loadState().entries || {});
+    banner.hidden = !show;
+    var text = document.getElementById("yesterdayBannerText");
+    if (text && show) text.textContent = "昨日还有未完成的小事，要继续写下，还是取消提醒？";
   }
 
   function goReviewYesterday() {
@@ -127,6 +143,7 @@
       });
     });
     document.getElementById("yesterdayReviewBtn")?.addEventListener("click", goReviewYesterday);
+    document.getElementById("yesterdaySkipBtn")?.addEventListener("click", skipYesterdayReminder);
   }
 
   function initDefaults() {
@@ -159,6 +176,7 @@
     setActionTab: setActionTab,
     updateYesterdayBanner: updateYesterdayBanner,
     goReviewYesterday: goReviewYesterday,
+    skipYesterdayReminder: skipYesterdayReminder,
   };
 
   if (document.readyState === "loading") {
