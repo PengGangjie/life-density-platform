@@ -1,4 +1,4 @@
-/* 人生量化 · 登录态 + 云同步 + PWA 安装 + 工具台门禁 */
+/* 砺行 · 日省 — 登录态 + 云同步 + PWA（旧 overlay，工具台用 assets/lixing-cloud-sync.js） */
 (function () {
   const CLOUD_DEBOUNCE_MS = 800;
   let _me = { authenticated: false, auth_configured: false };

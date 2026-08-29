@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>认知偏差检索 · Explorer</title>
   <style>
+    @font-face {
+      font-family: "GuoWen ZhengKai";
+      src: url("assets/fonts/KaiOldstyle.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    html, body, button, input, textarea, select {
+      font-family: var(--font);
+    }
+
     :root {
       --ink: #10141c;
       --paper: #f4f1ea;
@@ -15,8 +27,8 @@
       --meaning: #1f8f7c;
       --action: #c4473d;
       --memory: #3f6fb8;
-      --font: "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
-      --display: "IBM Plex Serif", "Songti SC", "Noto Serif SC", Georgia, serif;
+      --font: "GuoWen ZhengKai", "KaiTi", "STKaiti", serif;
+      --display: "GuoWen ZhengKai", "KaiTi", "STKaiti", serif;
     }
     * { box-sizing: border-box; }
     body {
@@ -141,7 +153,7 @@
     </div>
     <div class="top-links">
       <a href="cognitive-bias-codex.html">互动海报</a>
-      <a class="primary" href="index.html#workspace">人生量化工具箱</a>
+      <a class="primary" href="index.html#workspace">砺行</a>
     </div>
   </header>
 

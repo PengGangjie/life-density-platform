@@ -1,4 +1,4 @@
-const CACHE = "life-density-v3";
+const CACHE = "lixing-rixing-v1";
 const PRECACHE = ["/", "/manifest.json", "/brand/app-logo-mark.svg", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {

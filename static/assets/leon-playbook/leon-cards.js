@@ -1,5 +1,5 @@
 /* Leon 三课查阅卡：无职权影响力 / 第一桶金 / 根学
- * 供人生量化工具箱 Tab 10 使用。真源：c:\\00CS\\superlinear 学习\\ 对应会议纪要.md
+ * 供砺行 · 日省工具台 Tab 10 使用。真源：c:\\00CS\\superlinear 学习\\ 对应会议纪要.md
  */
 window.LEON_PLAYBOOK = {
   version: 1,
