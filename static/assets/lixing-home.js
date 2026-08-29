@@ -31,16 +31,12 @@
   }
 
   function needsYesterdayReview(entries) {
-    if (skippedYesterday()) return false;
-    var y = yesterdayStr();
-    var e = entries[y];
-    if (!e) return false;
-    var three = e.three || [];
-    var marks = e.reviewDone || [];
-    var pending = [0, 1, 2].some(function (i) {
-      return three[i] && String(three[i]).trim() && marks[i] !== "yes" && marks[i] !== "no";
-    });
-    return pending;
+    return false;
+  }
+
+  function updateYesterdayBanner() {
+    var banner = document.getElementById("yesterdayBanner");
+    if (banner) banner.hidden = true;
   }
 
   function setModule(name) {
@@ -108,15 +104,6 @@
       if (typeof renderReviewSummary === "function") renderReviewSummary();
       if (window.LixingV1) window.LixingV1.updateFeelingNudge();
     }
-  }
-
-  function updateYesterdayBanner() {
-    var banner = document.getElementById("yesterdayBanner");
-    if (!banner || typeof loadState !== "function") return;
-    var show = needsYesterdayReview(loadState().entries || {});
-    banner.hidden = !show;
-    var text = document.getElementById("yesterdayBannerText");
-    if (text && show) text.textContent = "昨日还有未完成的小事，要继续写下，还是取消提醒？";
   }
 
   function goReviewYesterday() {

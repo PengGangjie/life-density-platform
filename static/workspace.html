@@ -814,6 +814,8 @@
       font-size: 1.35rem; margin: 0 0 6px; font-weight: 700;
     }
     .workspace-head p { margin: 0 0 14px; color: var(--muted); font-size: 0.9rem; }
+    .workspace-head .workspace-faq { margin-top: 2px; }
+    .workspace-head .workspace-faq .faq-panel { padding-bottom: 4px; }
 
     .nav-tabs {
       display: flex; gap: 6px; flex-wrap: wrap;
@@ -1343,7 +1345,7 @@
     }
     
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260829ad" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260829ae" />
 
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0e0c0a" />
@@ -1375,6 +1377,47 @@
         <p class="guest-readonly-hint" id="guestReadonlyHint" hidden>阅览模式 · 可查阅各模块，<a href="/sign-in">登录</a> 后可保存数据</p>
         <p class="card-desc" id="cloudSyncHint" hidden></p>
         <span class="saved-toast guest-blocked-toast" id="guestBlockedToast">请登录后再保存</span>
+        <details class="settings workspace-faq"><summary>使用前你会问的事</summary>
+          <div class="settings-panel faq-panel">
+            <p class="card-desc">数据存在本机浏览器；推荐用「打开砺行.bat」以便备份写入同目录。</p>
+            <details class="faq-item">
+              <summary>数据存在哪里？会不会丢？</summary>
+              <p class="card-desc">默认写入浏览器 localStorage。用 bat / 本地服务打开时，保存会覆盖同目录 <code>lixing-autobackup.json</code>。「02 日省」里的「设置与数据」可手动导出整库 JSON。</p>
+            </details>
+            <details class="faq-item">
+              <summary>十一个模块要按顺序做完吗？</summary>
+              <p class="card-desc">不必。主线是 <strong>今日 · 决策 · 成长</strong>：主页写最多三条收获；工具台按需切换理性、采样、偏差环等。完成比完美重要。</p>
+            </details>
+            <details class="faq-item">
+              <summary>「人生三愿」怎么锁？</summary>
+              <p class="card-desc">先填生日，再定稿三愿。从定稿日起锁定 365 天，到期日再对齐到你的下一个生日；改生日不影响已锁定的这一轮。不设提醒。工具台另有「六个月愿望」可锁 183 天。</p>
+            </details>
+            <details class="faq-item">
+              <summary>密度和厚度分别指什么？</summary>
+              <p class="card-desc"><strong>密度</strong>：今天收获了什么。<strong>厚度</strong>：完成了什么。决定成长的，往往是工作时间以外的事。</p>
+            </details>
+            <details class="faq-item">
+              <summary>三主线和十一模块怎么配合？</summary>
+              <p class="card-desc">今日 → 密度；决策 → 理性 / 采样 / 调研 / 反思 / 意见；成长 → 穿透力、双卡、偏差环、生命之轮、影响力。</p>
+            </details>
+            <details class="faq-item">
+              <summary>认知偏差环的数据从哪来？</summary>
+              <p class="card-desc">本地 <code>assets/cognitive-bias/</code>，约 180 条 Cognitive Bias Codex 结构。</p>
+            </details>
+            <details class="faq-item">
+              <summary>生命之轮是什么？</summary>
+              <p class="card-desc">Leon 的 Wheel of Life：健康 / 财富 / 幸福各三维 0–10 分。日省写下的收获会按关键词归入九维，作为打分依据。</p>
+            </details>
+            <details class="faq-item">
+              <summary>个人影响力是什么？</summary>
+              <p class="card-desc">Key Person of Influence 五 P 战役框架。见工具台「影响力」。</p>
+            </details>
+            <details class="faq-item">
+              <summary>主页语音输入如何工作？</summary>
+              <p class="card-desc">用「打开砺行.bat」启动本地服务，并在 <code>.env</code> 配置 <code>AI_BUILDER_TOKEN</code> 后，点击各小目标旁「语音」→ 录音 → 自动调用 AI Builders Grok STT 转写。未配置时将尝试浏览器原生识别。</p>
+            </details>
+          </div>
+        </details>
       </div>
       <nav class="nav-tabs" id="navTabs" aria-label="工具模块">
         <button type="button" data-panel="wishes"><span class="n">愿</span>三愿</button>
@@ -1397,10 +1440,11 @@
       <details class="guide" open>
         <summary>人生三愿 · 神灯隐喻</summary>
         <div class="guide-body">
-          <p>若人生只能许 <strong>三个愿望</strong>，你会选什么？先完成下方三问，收成三条愿望；再可选锁定 <strong>六个月</strong> 方向（183 天内不可改，不设提醒）。</p>
+          <p>若人生只能许 <strong>三个愿望</strong>，你会选什么？先设生日，再完成下方三问收成三条愿望。定稿后锁定 <strong>365 天</strong>（到期对齐下一个生日，不设提醒）。下方六个月方向仍可另锁 183 天。</p>
         </div>
       </details>
       <p class="card-desc" id="wishMeta"></p>
+      <div id="wishBirthdayHost"></div>
       <div class="card">
         <p class="card-title">三问引导</p>
         <div id="wishQuizHost"></div>
@@ -1511,14 +1555,8 @@
       <div class="stats" id="stats"></div>
 
       <div class="card">
-        <p class="card-title">周 · 月 · 年关键词</p>
-        <p class="card-desc">从日省记录中自动提炼（工作外三事、收获、完成），看见自己走到了哪里。</p>
-        <div class="keywords-wrap" id="keywordsPanel"></div>
-      </div>
-
-      <div class="card">
         <p class="card-title">今日日省 · 密度与厚度</p>
-        <p class="card-desc">首页已写<strong>工作外三件小事</strong>；此处补劳动时长、C/L/P 与<strong>收获 / 完成</strong>，算今日密度。</p>
+        <p class="card-desc">首页写下<strong>最多三条收获</strong>（一条即计 15% 密度）；此处可补劳动时长、C/L/P。密度取公式与收获条数中的较大值。</p>
         <div class="density-hero">
           <div class="value na" id="densityHero">—</div>
           <div class="label">今日密度 D</div>
@@ -1534,54 +1572,18 @@
         </div>
         <div class="inline-row"><input type="checkbox" id="autoPassive" checked /><label for="autoPassive" style="margin:0;font-weight:400">根据金额自动算 P</label></div>
         <div class="field"><label for="passiveIncome">当日被动收入（元）</label><input type="number" id="passiveIncome" min="0" step="0.01" placeholder="不含工资" /></div>
-        <div class="split-fields">
-          <div class="field"><label for="harvest">收获 · 密度</label><textarea id="harvest" rows="2" placeholder="今天具体收获了什么？"></textarea></div>
-          <div class="field"><label for="thickness">完成 · 厚度</label><textarea id="thickness" rows="2" placeholder="今天完成了什么小事？"></textarea></div>
+        <div class="split-fields harvest-split">
+          <div class="field"><label for="harvest1">收获（最多三条）</label>
+            <textarea id="harvest1" rows="2" maxlength="80" placeholder="① 一条就够 · 计入 15%"></textarea>
+            <textarea id="harvest2" rows="2" maxlength="80" placeholder="② 可空" style="margin-top:8px"></textarea>
+            <textarea id="harvest3" rows="2" maxlength="80" placeholder="③ 可空" style="margin-top:8px"></textarea>
+            <p class="harvest-density-hint" id="harvestDensityHint">写一条，今日密度即达 15% · 无感计入</p>
+          </div>
+          <div class="field"><label for="thickness">完成 · 厚度</label><textarea id="thickness" rows="2" placeholder="今天完成了什么小事？（可选）"></textarea></div>
+          <textarea id="harvest" hidden aria-hidden="true"></textarea>
         </div>
         <div class="actions"><button type="button" class="btn" id="saveBtn">保存</button><span class="saved-toast" id="savedToast">已保存</span></div>
       </div>
-
-      <details class="settings"><summary>使用前你会问的事</summary>
-        <div class="settings-panel faq-panel">
-          <p class="card-desc">数据存在本机浏览器；推荐用「打开砺行.bat」以便备份写入同目录。</p>
-          <details class="faq-item">
-            <summary>数据存在哪里？会不会丢？</summary>
-            <p class="card-desc">默认写入浏览器 localStorage。用 bat / 本地服务打开时，保存会覆盖同目录 <code>lixing-autobackup.json</code>。下方「设置与数据」可手动导出整库 JSON。</p>
-          </details>
-          <details class="faq-item">
-            <summary>十一个模块要按顺序做完吗？</summary>
-            <p class="card-desc">不必。主线是 <strong>今日 · 决策 · 成长</strong>：主页写三事；工具台按需切换理性、采样、偏差环等。完成比完美重要。</p>
-          </details>
-          <details class="faq-item">
-            <summary>「人生三愿」和六个月愿望是什么？</summary>
-            <p class="card-desc">若人生只能许三个愿望，你会选哪三个？六个月愿望设定后不可改、也不推送提醒——它是方向，不是待办。见工具台「三愿」页。</p>
-          </details>
-          <details class="faq-item">
-            <summary>密度和厚度分别指什么？</summary>
-            <p class="card-desc"><strong>密度</strong>：今天收获了什么。<strong>厚度</strong>：完成了什么。决定成长的，往往是工作时间以外的事。</p>
-          </details>
-          <details class="faq-item">
-            <summary>三主线和十一模块怎么配合？</summary>
-            <p class="card-desc">今日 → 密度；决策 → 理性 / 采样 / 调研 / 反思 / 意见；成长 → 穿透力、双卡、偏差环、生命之轮、影响力。</p>
-          </details>
-          <details class="faq-item">
-            <summary>认知偏差环的数据从哪来？</summary>
-            <p class="card-desc">本地 <code>assets/cognitive-bias/</code>，约 180 条 Cognitive Bias Codex 结构。</p>
-          </details>
-          <details class="faq-item">
-            <summary>生命之轮是什么？</summary>
-            <p class="card-desc">Leon 的 Wheel of Life：健康 / 财富 / 幸福各三维 0–10 分。见工具台「生命之轮」。</p>
-          </details>
-          <details class="faq-item">
-            <summary>个人影响力是什么？</summary>
-            <p class="card-desc">Key Person of Influence 五 P 战役框架。见工具台「影响力」。</p>
-          </details>
-          <details class="faq-item">
-            <summary>主页语音输入如何工作？</summary>
-            <p class="card-desc">用「打开砺行.bat」启动本地服务，并在 <code>.env</code> 配置 <code>AI_BUILDER_TOKEN</code> 后，点击各小目标旁「语音」→ 录音 → 自动调用 AI Builders Grok STT 转写。未配置时将尝试浏览器原生识别。</p>
-          </details>
-        </div>
-      </details>
 
       <details class="settings"><summary>设置与数据</summary>
         <div class="settings-panel">
@@ -2345,11 +2347,16 @@
       </div>
     </div>
 
-    <!-- ========== ⑫ 复盘收获 ========== -->
+    <!-- ========== ⑫ 日省收获 ========== -->
     <div class="panel" id="panel-harvest">
       <div class="card">
-        <p class="card-title">复盘 · 成</p>
-        <p class="card-desc">主页复盘时点 <strong>成</strong> 的三件小事会汇入此处；点 <strong>否</strong> 的项会折叠消失，不进入本列表。下方的感受 / 收获 / 厚度（人生密度）仍独立记录，互不影响。</p>
+        <p class="card-title">周 · 月 · 年关键词</p>
+        <p class="card-desc">从日省记录中自动提炼（三条收获、完成），看见自己走到了哪里。</p>
+        <div class="keywords-wrap" id="keywordsPanel"></div>
+      </div>
+      <div class="card">
+        <p class="card-title">日省 · 收获</p>
+        <p class="card-desc">主页「行动」记下的<strong>最多三条收获</strong>会按日期汇入此处；每条旁标注归入生命之轮哪一维。空的不显示。</p>
         <div id="harvestPanel"></div>
       </div>
     </div>
@@ -2361,7 +2368,7 @@
   
 
 <script src="assets/lixing-cloud-auth.js"></script>
-  <script src="assets/lixing-v1.js?v=20260829ad"></script>
+  <script src="assets/lixing-v1.js?v=20260829ae"></script>
   <script src="assets/cognitive-bias/biases-data.js"></script>
   <script src="assets/leon-playbook/wheel-of-life.js"></script>
   <script src="assets/leon-playbook/leon-cards.js"></script>
@@ -2389,6 +2396,7 @@
         kpiSnaps: [],
         lifeWishes: {
           wishes: ["", "", ""], quizAnswers: ["", "", ""], completedAt: "",
+          wishesLockedAt: "", wishesUnlockAt: "", yearlyReviews: [],
           sixMonth: { lines: ["", "", ""], lockedAt: "" },
         },
         indSteps: {}, settings: {},
@@ -2717,7 +2725,10 @@
       const ws = document.getElementById("workspace");
       if (ws) ws.scrollIntoView({ behavior: "smooth", block: "start" });
       if (panelId === "wishes" && window.LixingV1) window.LixingV1.renderWishesPanel();
-      if (panelId === "harvest" && window.LixingV1) window.LixingV1.renderHarvestPanel();
+      if (panelId === "harvest" && window.LixingV1) {
+        window.LixingV1.renderKeywords();
+        window.LixingV1.renderHarvestPanel();
+      }
     }
     document.getElementById("navTabs").addEventListener("click", (e) => {
       const btn = e.target.closest("button[data-panel]");
@@ -2745,6 +2756,12 @@
       if (!h || h <= 0) return null;
       return ((c + l + p) / h) * 100;
     }
+    function entryDensity(e) {
+      if (window.LixingV1 && typeof window.LixingV1.dayDensity === "function") {
+        return window.LixingV1.dayDensity(e);
+      }
+      return e ? calcDensity(e.h, e.c, e.l, e.p) : null;
+    }
     function densityTier(d) {
       if (d == null) return "na";
       if (d >= 40) return "high";
@@ -2754,10 +2771,13 @@
     function formatDensity(d) { return d == null ? "—" : Math.round(d) + "%"; }
 
     function getSettings() {
-      return {
-        hourlyWage: parseFloat(document.getElementById("hourlyWage").value) || 0,
-        advancedPassive: document.getElementById("advancedPassive").checked,
-      };
+      const prev = (typeof loadState === "function" && (loadState().settings || {})) || {};
+      const wageEl = document.getElementById("hourlyWage");
+      const advEl = document.getElementById("advancedPassive");
+      return Object.assign({}, prev, {
+        hourlyWage: wageEl ? (parseFloat(wageEl.value) || 0) : (prev.hourlyWage || 0),
+        advancedPassive: advEl ? !!advEl.checked : !!prev.advancedPassive,
+      });
     }
 
     function updatePreview() {
@@ -2770,7 +2790,10 @@
         p = calcPassivePoints(parseFloat(document.getElementById("passiveIncome").value) || 0, getSettings().hourlyWage, getSettings().advancedPassive);
         passiveEl.value = p; passiveEl.readOnly = true;
       } else { passiveEl.readOnly = false; }
-      const d = calcDensity(h, c, l, p);
+      const fields = window.LixingV1 ? window.LixingV1.getDailyFields() : {};
+      const d = window.LixingV1
+        ? window.LixingV1.dayDensity({ h, c, l, p, harvests: fields.harvests, harvest: fields.harvest })
+        : calcDensity(h, c, l, p);
       const hero = document.getElementById("densityHero");
       hero.textContent = formatDensity(d);
       hero.className = "value " + densityTier(d);
@@ -2801,24 +2824,28 @@
       state.entries = state.entries || {};
       const prev = state.entries[date] || {};
       const fields = window.LixingV1 ? window.LixingV1.getDailyFields() : {};
-      const three = fields.three || [1, 2, 3].map((i) => (document.getElementById("three" + i) || {}).value?.trim() || "");
+      const harvests = fields.harvests || ["", "", ""];
+      const three = harvests.some(Boolean) ? harvests.slice() : (fields.three || prev.three || ["", "", ""]);
       const threeKw = fields.threeKw || ["", "", ""];
       const reviewed = (fields.reviewDone || []).some((v) => v === "yes" || v === "no");
       state.entries[date] = Object.assign({}, prev, {
-        dailyWish: fields.dailyWish || "",
+        dailyWish: fields.dailyWish || prev.dailyWish || "",
         three,
         threeKw,
-        feeling: fields.feeling || "",
-        reviewDone: fields.reviewDone || [null, null, null],
-        reviewNote: fields.reviewNote || "",
+        feeling: fields.feeling || prev.feeling || "",
+        reviewDone: fields.reviewDone || prev.reviewDone || [null, null, null],
+        reviewNote: fields.reviewNote || prev.reviewNote || "",
         reviewedAt: reviewed ? new Date().toISOString() : prev.reviewedAt || "",
-        harvest: fields.harvest || prev.harvest || "",
+        harvests,
+        harvest: fields.harvest || harvests.filter(Boolean).join("\n"),
         thickness: fields.thickness || prev.thickness || "",
       });
       saveState(state);
       showToast("savedNotebookToast");
       if (window.LixingV1) window.LixingV1.renderKeywords();
       if (window.LixingV1) window.LixingV1.renderHarvestPanel();
+      if (typeof renderDensity === "function") renderDensity();
+      if (typeof updatePreview === "function") updatePreview();
     }
 
     function saveToday() {
@@ -2828,7 +2855,8 @@
       state.entries = state.entries || {};
       const prev = state.entries[date] || {};
       const fields = window.LixingV1 ? window.LixingV1.getDailyFields() : {};
-      const harvestVal = fields.harvest || (document.getElementById("harvest") || {}).value?.trim() || "";
+      const harvests = fields.harvests || prev.harvests || ["", "", ""];
+      const harvestVal = fields.harvest || harvests.filter(Boolean).join("\n") || prev.harvest || "";
       const thickVal = fields.thickness || (document.getElementById("thickness") || {}).value?.trim() || "";
       const feelVal = fields.feeling || prev.feeling || "";
       state.entries[date] = Object.assign({}, prev, {
@@ -2837,18 +2865,16 @@
         l: parseInt(document.getElementById("learn").value, 10) || 0,
         p: parseInt(document.getElementById("passive").value, 10) || 0,
         passiveIncome: parseFloat(document.getElementById("passiveIncome").value) || 0,
-        three: fields.three || prev.three || ["", "", ""],
+        three: harvests.some(Boolean) ? harvests.slice() : (fields.three || prev.three || ["", "", ""]),
         threeKw: fields.threeKw || prev.threeKw || ["", "", ""],
         dailyWish: fields.dailyWish || prev.dailyWish || "",
         feeling: feelVal,
         reviewDone: fields.reviewDone || prev.reviewDone || [null, null, null],
         reviewNote: fields.reviewNote || prev.reviewNote || "",
-        harvest: harvestVal || prev.harvest || "",
+        harvests,
+        harvest: harvestVal,
         thickness: thickVal || prev.thickness || "",
-        note: (function () {
-          const parts = [feelVal || harvestVal, thickVal ? "完成：" + thickVal : ""].filter(Boolean);
-          return parts.join(" · ");
-        })(),
+        note: harvestVal || prev.note || "",
       });
       saveState(state); renderDensity(); showToast("savedToast");
     }
@@ -2898,11 +2924,11 @@
       let sumD = 0, countD = 0, highDays = 0;
       dates.forEach((d) => {
         const e = entries[d];
-        if (e.h > 0) {
-          const dens = calcDensity(e.h, e.c, e.l, e.p);
-          sumD += dens; countD++;
-          if (dens >= 40) highDays++;
-        }
+        if (!e) return;
+        const dens = entryDensity(e);
+        if (dens == null) return;
+        sumD += dens; countD++;
+        if (dens >= 40) highDays++;
       });
       const avg = countD ? Math.round(sumD / countD) : "—";
       document.getElementById("stats").innerHTML = `
@@ -2927,8 +2953,8 @@
           const e = entries[d];
           if (!e) return "<td>—</td>";
           if (row.key === "d") {
-            if (!e.h) return "<td>—</td>";
-            const dens = calcDensity(e.h, e.c, e.l, e.p);
+            const dens = entryDensity(e);
+            if (dens == null) return "<td>—</td>";
             return `<td class="d-${densityTier(dens)}">${formatDensity(dens)}</td>`;
           }
           return `<td>${e[row.key] ?? "—"}</td>`;
@@ -2948,8 +2974,10 @@
       const lines = ["日期,H,C,L,P,产出分,密度%,备注"];
       Object.keys(entries).sort().forEach((d) => {
         const e = entries[d];
-        const dens = e.h > 0 ? Math.round(calcDensity(e.h, e.c, e.l, e.p) * 10) / 10 : "";
-        lines.push(`${d},${e.h},${e.c},${e.l},${e.p},${e.c+e.l+e.p},${dens},"${(e.note||"").replace(/"/g,'""')}"`);
+        const dens = entryDensity(e);
+        const densCell = dens == null ? "" : Math.round(dens * 10) / 10;
+        const note = (e.harvest || (e.harvests || []).filter(Boolean).join(" / ") || e.note || "").replace(/"/g,'""');
+        lines.push(`${d},${e.h||0},${e.c||0},${e.l||0},${e.p||0},${(e.c||0)+(e.l||0)+(e.p||0)},${densCell},"${note}"`);
       });
       downloadBlob("life-density-" + todayStr() + ".csv", new Blob(["\ufeff" + lines.join("\n")], { type: "text/csv;charset=utf-8" }));
     }
@@ -3492,6 +3520,9 @@
       if (!el) return;
       el.addEventListener("input", updatePreview);
       el.addEventListener("change", updatePreview);
+    });
+    [1, 2, 3].forEach((i) => {
+      document.getElementById("harvest" + i)?.addEventListener("input", updatePreview);
     });
     document.getElementById("saveBtn").addEventListener("click", saveToday);
     document.getElementById("exportBtn").addEventListener("click", exportCsv);
@@ -4135,7 +4166,10 @@
         ${related.length ? `<div class="wheel-related">${related.map((c) => {
           const src = leonSourceById(c.source);
           return `<button type="button" data-leon-jump="${esc(c.id)}"><p class="src">${esc(src.zh)} · 对照</p><p class="q">${esc(c.title)}</p></button>`;
-        }).join("")}</div>` : ""}`;
+        }).join("")}</div>` : ""}
+        ${window.LixingV1 && window.LixingV1.renderSpokeEvidence
+          ? window.LixingV1.renderSpokeEvidence(s.id, loadState().entries || {})
+          : ""}`;
     }
 
     function renderWheelSliders() {

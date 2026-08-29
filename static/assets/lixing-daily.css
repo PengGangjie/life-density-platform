@@ -2705,3 +2705,93 @@ body.review-mode #module-action .action-tabs {
   line-height: 1.7;
   color: var(--ink);
 }
+
+.harvest-lead {
+  max-width: min(440px, 92vw);
+  margin: 8px auto 12px;
+  text-align: center;
+  font-size: 0.92rem;
+  color: var(--ts-muted, #8a8580);
+  letter-spacing: 0.04em;
+}
+
+.harvest-density-hint {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  color: var(--ts-muted, #8a8580);
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.birthday-block {
+  max-width: min(440px, 92vw);
+  margin: 0 auto 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--ts-line, #e5e0d8);
+  border-radius: 12px;
+  background: var(--ts-card, #fff);
+}
+
+.birthday-block label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--ts-muted, #8a8580);
+  margin-bottom: 6px;
+}
+
+.birthday-block input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--ts-line, #e5e0d8);
+  background: transparent;
+  font: inherit;
+  font-size: 1rem;
+  padding: 4px 0 8px;
+}
+
+.birthday-hint {
+  margin: 8px 0 0;
+  font-size: 0.74rem;
+  color: var(--ts-muted, #8a8580);
+  line-height: 1.55;
+}
+
+.wheel-harvest-list {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line, #e5e0d8);
+}
+
+.wheel-harvest-label {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted, #8a8580);
+}
+
+.wheel-harvest-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.wheel-harvest-list li {
+  display: grid;
+  gap: 2px;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.wheel-harvest-list time {
+  font-size: 0.72rem;
+  color: var(--muted, #8a8580);
+}
+
+.wheel-harvest-empty {
+  margin: 12px 0 0;
+  font-size: 0.8rem;
+  color: var(--muted, #8a8580);
+  line-height: 1.55;
+}
