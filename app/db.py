@@ -120,6 +120,7 @@ def _state_has_data(data: object) -> bool:
     n = (
         len(entries)
         + len(data.get("opinions") or [])
+        + len(data.get("kedaibiaoOpinions") or [])
         + len(data.get("industries") or [])
         + len(data.get("rationals") or [])
         + len(data.get("samplings") or [])
@@ -146,6 +147,7 @@ def merge_state(cloud: dict | None, local: dict) -> dict:
     out["entries"] = merged
     for key in (
         "opinions",
+        "kedaibiaoOpinions",
         "industries",
         "rationals",
         "samplings",

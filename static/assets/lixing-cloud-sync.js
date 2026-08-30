@@ -59,7 +59,7 @@
     var localNorm = normalizeState(local);
     out.entries = mergeEntries(out.entries, localNorm.entries);
     [
-      "opinions", "industries", "rationals", "samplings", "reflections",
+      "opinions", "kedaibiaoOpinions", "industries", "rationals", "samplings", "reflections",
       "penetrations", "dualCards", "wheelSnaps", "kpiSnaps",
     ].forEach(function (key) {
       if ((!out[key] || !out[key].length) && localNorm[key] && localNorm[key].length) {

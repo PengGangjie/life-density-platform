@@ -1115,6 +1115,26 @@
       font-size: 0.78rem; white-space: pre-wrap; background: #111; color: #f2f2f2;
       border-radius: 12px; padding: 14px; min-height: 80px; margin-top: 8px;
     }
+    .axiom-picks { display: flex; flex-wrap: wrap; gap: 6px; }
+    .axiom-picks label {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--line); border-radius: 999px;
+      padding: 4px 10px; font-size: 0.78rem; cursor: pointer;
+      background: var(--bg);
+    }
+    .axiom-picks label:has(input:checked) {
+      background: var(--ink); color: #fff; border-color: var(--ink);
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip-row label {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 8px 12px; font-size: 0.85rem; cursor: pointer;
+      background: var(--bg);
+    }
+    .chip-row label:has(input:checked) {
+      background: var(--accent-soft); border-color: var(--line-deep);
+    }
 
     .site-footer {
       border-top: 1px solid var(--line);
@@ -1345,7 +1365,7 @@
     }
     
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260829ae" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260830f" />
 
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0e0c0a" />
@@ -1390,7 +1410,7 @@
             </details>
             <details class="faq-item">
               <summary>「人生三愿」怎么锁？</summary>
-              <p class="card-desc">先填生日，再定稿三愿。从定稿日起锁定 365 天，到期日再对齐到你的下一个生日；改生日不影响已锁定的这一轮。不设提醒。工具台另有「六个月愿望」可锁 183 天。</p>
+              <p class="card-desc">先用日历填写完整生日（年-月-日），再直接写下三条愿望后定稿。从定稿日起锁定 365 天，到期日再对齐到你的下一个生日；改生日不影响已锁定的这一轮。不设提醒。工具台另有「六个月愿望」可锁 183 天。</p>
             </details>
             <details class="faq-item">
               <summary>密度和厚度分别指什么？</summary>
@@ -1398,7 +1418,7 @@
             </details>
             <details class="faq-item">
               <summary>三主线和十一模块怎么配合？</summary>
-              <p class="card-desc">今日 → 密度；决策 → 理性 / 采样 / 调研 / 反思 / 意见；成长 → 穿透力、双卡、偏差环、生命之轮、影响力。</p>
+              <p class="card-desc">今日 → 密度；决策 → 理性 / 采样 / 调研 / 反思 / 意见（亲朋评估 + 课代表意见）；成长 → 穿透力、双卡、偏差环、生命之轮、影响力。</p>
             </details>
             <details class="faq-item">
               <summary>认知偏差环的数据从哪来？</summary>
@@ -1440,21 +1460,14 @@
       <details class="guide" open>
         <summary>人生三愿 · 神灯隐喻</summary>
         <div class="guide-body">
-          <p>若人生只能许 <strong>三个愿望</strong>，你会选什么？先设生日，再完成下方三问收成三条愿望。定稿后锁定 <strong>365 天</strong>（到期对齐下一个生日，不设提醒）。下方六个月方向仍可另锁 183 天。</p>
+          <p>若人生只能许 <strong>三个愿望</strong>，你会选什么？用日历填完整生日（年-月-日），三条愿望直接写，无需按问题作答。定稿后锁定 <strong>365 天</strong>（到期对齐下一个生日，不设提醒）。下方六个月方向仍可另锁 183 天。</p>
         </div>
       </details>
       <p class="card-desc" id="wishMeta"></p>
       <div id="wishBirthdayHost"></div>
       <div class="card">
-        <p class="card-title">三问引导</p>
-        <div id="wishQuizHost"></div>
-        <div class="actions" style="margin-top:12px">
-          <button type="button" class="btn btn-ghost" id="wishQuizPrev">上一问</button>
-          <button type="button" class="btn" id="wishQuizNext">下一问</button>
-        </div>
-      </div>
-      <div class="card">
-        <p class="card-title">人生三愿（可随时微调）</p>
+        <p class="card-title">人生三愿</p>
+        <p class="card-desc">三条都由你自己写。定稿前可改。</p>
         <div id="lifeWishList"></div>
         <div class="actions"><button type="button" class="btn" id="saveWishesBtn">保存三愿</button><span class="saved-toast" id="savedWishToast">已保存</span></div>
       </div>
@@ -1557,6 +1570,10 @@
       <div class="card">
         <p class="card-title">今日日省 · 密度与厚度</p>
         <p class="card-desc">首页写下<strong>最多三条收获</strong>（一条即计 15% 密度）；此处可补劳动时长、C/L/P。密度取公式与收获条数中的较大值。</p>
+        <div class="home-done home-done--workspace" id="densityDoneBanner" hidden>
+          <p class="home-done-kicker" id="densityDoneKicker">已从行动写入</p>
+          <ol class="home-done-list" id="densityDoneList"></ol>
+        </div>
         <div class="density-hero">
           <div class="value na" id="densityHero">—</div>
           <div class="label">今日密度 D</div>
@@ -1573,10 +1590,15 @@
         <div class="inline-row"><input type="checkbox" id="autoPassive" checked /><label for="autoPassive" style="margin:0;font-weight:400">根据金额自动算 P</label></div>
         <div class="field"><label for="passiveIncome">当日被动收入（元）</label><input type="number" id="passiveIncome" min="0" step="0.01" placeholder="不含工资" /></div>
         <div class="split-fields harvest-split">
-          <div class="field"><label for="harvest1">收获（最多三条）</label>
-            <textarea id="harvest1" rows="2" maxlength="80" placeholder="① 一条就够 · 计入 15%"></textarea>
-            <textarea id="harvest2" rows="2" maxlength="80" placeholder="② 可空" style="margin-top:8px"></textarea>
-            <textarea id="harvest3" rows="2" maxlength="80" placeholder="③ 可空" style="margin-top:8px"></textarea>
+          <div class="field"><label for="harvest1">收获（先写一条，需要时再加）</label>
+            <textarea id="harvest1" rows="2" maxlength="80" placeholder="① 一条就够 · 计入 15%" data-harvest-slot="1"></textarea>
+            <div data-harvest-slot="2" hidden>
+              <textarea id="harvest2" rows="2" maxlength="80" placeholder="② 还有一条也可以" style="margin-top:8px"></textarea>
+            </div>
+            <div data-harvest-slot="3" hidden>
+              <textarea id="harvest3" rows="2" maxlength="80" placeholder="③ 最多三条" style="margin-top:8px"></textarea>
+            </div>
+            <button type="button" class="btn btn-ghost btn-harvest-add" id="addHarvestBtn" hidden>再记一条（可选）</button>
             <p class="harvest-density-hint" id="harvestDensityHint">写一条，今日密度即达 15% · 无感计入</p>
           </div>
           <div class="field"><label for="thickness">完成 · 厚度</label><textarea id="thickness" rows="2" placeholder="今天完成了什么小事？（可选）"></textarea></div>
@@ -1823,9 +1845,10 @@
       <details class="guide">
         <summary>意见听取 · 使用说明<span class="trap-tag">困局⑥ 亲朋言听计从</span></summary>
         <div class="guide-body">
-          <p>从<strong>陌生人视角</strong>评估给建议的人，把<strong>亲密度与专业度分离</strong>。权重 = 专业度 × 相关性，综合分 &lt;0 建议忽略。</p>
+          <p>两条轨道分开用。<strong>亲朋意见</strong>：从陌生人视角评估给建议的人，把亲密度与专业度分离。权重 = 专业度 × 相关性，综合分 &lt;0 建议忽略。</p>
           <div class="formula-box"><strong>总分</strong> = 四项评分之和（-1 / 0 / +1）· ≥2 可参考 · 0~1 谨慎 · &lt;0 忽略</div>
-          <h3>收到意见后</h3>
+          <p><strong>课代表意见</strong>：用《真本事》框架 + 课代表公开主张过一遍这件事。不是替立正说话，是借透镜自己判断；填完可复制给 Cursor 走课代表 Skill。</p>
+          <h3>收到亲朋意见后</h3>
           <ul>
             <li><strong>完全错</strong>：简单表示感激，避免冲突浪费时间</li>
             <li><strong>有对的地方</strong>：提炼可改变点 → 如何变 / 何时变 / 路径 / 谁帮忙（求变是中性，不是否定自己）</li>
@@ -1833,6 +1856,12 @@
         </div>
       </details>
 
+      <div class="dual-switch" id="opSwitch">
+        <button type="button" class="active" data-op-mode="kin">亲朋意见</button>
+        <button type="button" data-op-mode="kdb">课代表意见</button>
+      </div>
+
+      <div class="dual-form active" id="opFormKin">
       <div class="card">
         <p class="card-title">评估一条意见</p>
         <p class="card-desc">对方在评论什么领域，就按那个领域来打分。</p>
@@ -1912,6 +1941,79 @@
       <div class="card">
         <p class="card-title">历史评估</p>
         <div class="record-list" id="opinionList"><div class="empty-table">尚无记录</div></div>
+      </div>
+      </div>
+
+      <div class="dual-form" id="opFormKdb">
+        <div class="card">
+          <p class="card-title">课代表意见</p>
+          <p class="card-desc">学点真本事，做点真东西。先写处境，勾陷阱和框架，再决定自己怎么走；需要出处时把下方提示词交给 Cursor。</p>
+
+          <div class="field">
+            <label for="kdbSituation">这件事 / 我卡在哪</label>
+            <textarea id="kdbSituation" class="tall" placeholder="如：家里劝我考公；同事说教务填报才是正业，别再做人居数字化；我在犹豫要不要把林孪智服做成代表作"></textarea>
+          </div>
+
+          <div class="field">
+            <label>我可能踩了哪类陷阱（《真本事》框架一）</label>
+            <div class="chip-row" id="kdbTrapRow">
+              <label><input type="checkbox" data-kdb-trap="object" /> 客体思维（他们应该怎样对我）</label>
+              <label><input type="checkbox" data-kdb-trap="fixed" /> 固定型（我不是那种人）</label>
+              <label><input type="checkbox" data-kdb-trap="score" /> 打分思维（用薪资/职级/学历压扁）</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="kdbFramework">打算用哪套框架</label>
+            <select id="kdbFramework">
+              <option value="">— 尚未选定 —</option>
+              <option value="traps">三大思维陷阱 → 主体 / 成长 / 多维</option>
+              <option value="craft">手艺思维（行动、反馈、结果）</option>
+              <option value="finance">财务自由公式（勿当理财建议）</option>
+              <option value="value">个人价值公式：市场 × 产品 × 杠杆</option>
+              <option value="dao">道天地将法（行业 / 平台 / 人 / 方法）</option>
+              <option value="ten">抓住 10% / 识别 fake work</option>
+              <option value="jungle">手艺 + 坚持 / 丛林能力</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>相关透镜（Public Axioms，可多选）</label>
+            <div class="axiom-picks" id="kdbAxiomPicks">
+              <label><input type="checkbox" data-kdb-axiom="1" /> 先说清结果</label>
+              <label><input type="checkbox" data-kdb-axiom="3" /> 投入 / 产出 / 成果</label>
+              <label><input type="checkbox" data-kdb-axiom="4" /> 靠近真实反馈</label>
+              <label><input type="checkbox" data-kdb-axiom="5" /> 先删除再自动化</label>
+              <label><input type="checkbox" data-kdb-axiom="7" /> 判断放到杠杆位</label>
+              <label><input type="checkbox" data-kdb-axiom="8" /> 工作能否积累</label>
+              <label><input type="checkbox" data-kdb-axiom="11" /> 理解 vs 信念</label>
+              <label><input type="checkbox" data-kdb-axiom="12" /> 做小但要真</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="kdbVerdict">我现在的判断</label>
+            <textarea id="kdbVerdict" placeholder="这件事真正要改变什么？最小的真动作是什么？"></textarea>
+          </div>
+          <div class="field">
+            <label for="kdbNext">本周可验证的一步</label>
+            <textarea id="kdbNext" placeholder="找谁、做什么、观察什么、何时复盘"></textarea>
+          </div>
+
+          <div class="section-divider">复制给 Cursor · 课代表 Skill</div>
+          <div class="prompt-out" id="kdbPromptOut">填写处境后自动生成…</div>
+          <div class="actions" style="margin-top:12px">
+            <button type="button" class="btn" id="copyKdbBtn">复制给 Cursor</button>
+            <button type="button" class="btn btn-ghost" id="saveKdbBtn">保存这条意见</button>
+            <button type="button" class="btn btn-ghost" id="clearKdbBtn">清空</button>
+            <span class="saved-toast" id="savedKdbToast">已保存</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="card-title">历史课代表意见</p>
+          <div class="record-list" id="kdbOpinionList"><div class="empty-table">尚无记录</div></div>
+        </div>
       </div>
     </div>
 
@@ -2368,7 +2470,7 @@
   
 
 <script src="assets/lixing-cloud-auth.js"></script>
-  <script src="assets/lixing-v1.js?v=20260829ae"></script>
+  <script src="assets/lixing-v1.js?v=20260830f"></script>
   <script src="assets/cognitive-bias/biases-data.js"></script>
   <script src="assets/leon-playbook/wheel-of-life.js"></script>
   <script src="assets/leon-playbook/leon-cards.js"></script>
@@ -2388,7 +2490,7 @@
 
     function emptyState() {
       return {
-        entries: {}, opinions: [], industries: [], rationals: [], samplings: [],
+        entries: {}, opinions: [], kedaibiaoOpinions: [], industries: [], rationals: [], samplings: [],
         reflections: [], penetrations: [], dualCards: [], biasSpots: {}, leonMarks: {},
         wheel: { scores: {}, note: "" }, wheelSnaps: [],
         kpi: { scores: {}, niche: "", audience: "", whyMe: "", pitch30: "", pitch3: "", pitch12: "",
@@ -2448,6 +2550,7 @@
       return {
         entries: s.entries && typeof s.entries === "object" ? s.entries : {},
         opinions: Array.isArray(s.opinions) ? s.opinions : [],
+        kedaibiaoOpinions: Array.isArray(s.kedaibiaoOpinions) ? s.kedaibiaoOpinions : [],
         industries: Array.isArray(s.industries) ? s.industries : [],
         rationals: Array.isArray(s.rationals) ? s.rationals : [],
         samplings: Array.isArray(s.samplings) ? s.samplings : [],
@@ -2471,7 +2574,7 @@
     function stateHasData(s) {
       const n = normalizeState(s);
       return Object.keys(n.entries).length
-        + n.opinions.length + n.industries.length + n.rationals.length
+        + n.opinions.length + (n.kedaibiaoOpinions || []).length + n.industries.length + n.rationals.length
         + n.samplings.length + n.reflections.length + n.penetrations.length
         + n.dualCards.length + Object.keys(n.biasSpots).length
         + Object.keys(n.leonMarks).length + (n.wheelSnaps || []).length
@@ -2848,6 +2951,22 @@
       if (typeof updatePreview === "function") updatePreview();
     }
 
+    function syncDensityHarvestBanner() {
+      const banner = document.getElementById("densityDoneBanner");
+      const list = document.getElementById("densityDoneList");
+      const kicker = document.getElementById("densityDoneKicker");
+      if (!banner) return;
+      const fields = window.LixingV1 ? window.LixingV1.getDailyFields() : {};
+      const filled = (fields.harvests || []).filter(Boolean);
+      banner.hidden = !filled.length;
+      if (kicker) kicker.textContent = filled.length ? "已写入本日日省" : "";
+      if (list) {
+        list.innerHTML = filled.map((t, i) =>
+          `<li><span class="home-done-num">${i + 1}</span><span>${esc(t)}</span></li>`
+        ).join("");
+      }
+    }
+
     function saveToday() {
       const date = getDateKey();
       const state = loadState();
@@ -2876,7 +2995,19 @@
         thickness: thickVal || prev.thickness || "",
         note: harvestVal || prev.note || "",
       });
-      saveState(state); renderDensity(); showToast("savedToast");
+      saveState(state);
+      renderDensity();
+      showToast("savedToast");
+      syncDensityHarvestBanner();
+      const btn = document.getElementById("saveBtn");
+      if (btn) {
+        btn.classList.add("is-done");
+        btn.textContent = "已保存";
+        setTimeout(function () {
+          btn.classList.remove("is-done");
+          btn.textContent = "保存";
+        }, 1600);
+      }
     }
 
     function loadTodayForm() {
@@ -2898,6 +3029,7 @@
       if (window.LixingV1) window.LixingV1.setDailyFields(e);
       if (window.LixingV1 && window.LixingV1.refreshHome) window.LixingV1.refreshHome();
       updatePreview();
+      syncDensityHarvestBanner();
     }
 
     function calendarDates(limit, endStr) {
@@ -3018,6 +3150,7 @@
       const next = emptyState();
       if (data.entries && typeof data.entries === "object") next.entries = data.entries;
       if (Array.isArray(data.opinions)) next.opinions = data.opinions;
+      if (Array.isArray(data.kedaibiaoOpinions)) next.kedaibiaoOpinions = data.kedaibiaoOpinions;
       if (Array.isArray(data.industries)) next.industries = data.industries;
       if (Array.isArray(data.rationals)) next.rationals = data.rationals;
       if (Array.isArray(data.samplings)) next.samplings = data.samplings;
@@ -3033,7 +3166,8 @@
       if (data.indSteps && typeof data.indSteps === "object") next.indSteps = data.indSteps;
       if (data.settings && typeof data.settings === "object") next.settings = data.settings;
       const nDays = Object.keys(next.entries).length;
-      const nOther = next.opinions.length + next.industries.length + next.rationals.length
+      const nOther = next.opinions.length + (next.kedaibiaoOpinions || []).length
+        + next.industries.length + next.rationals.length
         + next.samplings.length + next.reflections.length
         + next.penetrations.length + next.dualCards.length
         + Object.keys(next.biasSpots).length + Object.keys(next.leonMarks).length
@@ -3061,7 +3195,7 @@
         if (next.settings.advancedPassive != null) document.getElementById("advancedPassive").checked = !!next.settings.advancedPassive;
       }
       loadTodayForm(); loadIndSteps();
-      renderDensity(); updateOpinionPreview(); renderOpinionList();
+      renderDensity(); updateOpinionPreview(); renderOpinionList(); renderKdbOpinionList();
       renderIndustryList(); renderRationalList(); updateSamplePreview();
       renderSamplingList(); renderReflectList();
       updatePenPreview(); renderPenetrateList();
@@ -3239,6 +3373,163 @@
           <button type="button" class="btn-danger" data-del-op="${o.id}">删</button></div></div>`;
       }).join("");
       el.querySelectorAll("[data-del-op]").forEach((b) => b.addEventListener("click", () => deleteOpinion(+b.dataset.delOp)));
+    }
+
+    /* ===== 课代表意见 ===== */
+    const KDB_TRAP_LABEL = {
+      object: "客体思维",
+      fixed: "固定型思维",
+      score: "打分思维",
+    };
+    const KDB_FW_LABEL = {
+      traps: "三大思维陷阱",
+      craft: "手艺思维",
+      finance: "财务自由公式",
+      value: "个人价值公式",
+      dao: "道天地将法",
+      ten: "抓住 10% / fake work",
+      jungle: "手艺 + 坚持 / 丛林能力",
+    };
+    const KDB_AXIOM_LABEL = {
+      "1": "先说清结果",
+      "3": "投入 / 产出 / 成果",
+      "4": "靠近真实反馈",
+      "5": "先删除再自动化",
+      "7": "判断放到杠杆位",
+      "8": "工作能否积累",
+      "11": "理解 vs 信念",
+      "12": "做小但要真",
+    };
+
+    function setOpMode(mode) {
+      const kdb = mode === "kdb";
+      document.querySelectorAll("#opSwitch button").forEach((b) => {
+        b.classList.toggle("active", (b.dataset.opMode === "kdb") === kdb);
+      });
+      document.getElementById("opFormKin").classList.toggle("active", !kdb);
+      document.getElementById("opFormKdb").classList.toggle("active", kdb);
+    }
+
+    function selectedKdbTraps() {
+      return [...document.querySelectorAll("[data-kdb-trap]:checked")].map((el) => el.dataset.kdbTrap);
+    }
+    function selectedKdbAxioms() {
+      return [...document.querySelectorAll("[data-kdb-axiom]:checked")].map((el) => el.dataset.kdbAxiom);
+    }
+
+    function buildKdbPrompt() {
+      const situation = document.getElementById("kdbSituation").value.trim();
+      const traps = selectedKdbTraps().map((id) => KDB_TRAP_LABEL[id] || id);
+      const fw = document.getElementById("kdbFramework").value;
+      const axioms = selectedKdbAxioms().map((id) => KDB_AXIOM_LABEL[id] || id);
+      const verdict = document.getElementById("kdbVerdict").value.trim();
+      const next = document.getElementById("kdbNext").value.trim();
+      if (!situation) return "填写处境后自动生成…";
+      return [
+        "请用课代表 Skill 回答。先读 Skills/kedaibiao-open-context/skill/SKILL.md，再检索公开语料，不要假装立正本人在说话。",
+        "",
+        "处境：",
+        situation,
+        "",
+        "我初步看到的思维陷阱：" + (traps.length ? traps.join("、") : "尚未勾选"),
+        "我打算用的《真本事》框架：" + (KDB_FW_LABEL[fw] || "尚未选定"),
+        "相关透镜：" + (axioms.length ? axioms.join("、") : "尚未勾选"),
+        verdict ? "我现在的判断：" + verdict : "",
+        next ? "我已想到的下一步：" + next : "",
+        "",
+        "请给出：1) 判断 2) 机制 3) 可验证的下一步 4) 2–4 个带来源的推荐。",
+      ].filter((line, i, arr) => line !== "" || arr[i - 1] !== "").join("\n");
+    }
+
+    function updateKdbPrompt() {
+      document.getElementById("kdbPromptOut").textContent = buildKdbPrompt();
+    }
+
+    async function copyKdbPrompt() {
+      const text = buildKdbPrompt();
+      if (text.startsWith("填写")) { alert("请先填写处境"); return; }
+      try {
+        await navigator.clipboard.writeText(text);
+        const el = document.getElementById("savedKdbToast");
+        if (el) { el.textContent = "已复制"; el.classList.add("show"); setTimeout(() => { el.textContent = "已保存"; el.classList.remove("show"); }, 2000); }
+      } catch {
+        prompt("复制失败，请手动复制：", text);
+      }
+    }
+
+    function saveKdbOpinion() {
+      const situation = document.getElementById("kdbSituation").value.trim();
+      if (!situation) { alert("请填写这件事 / 我卡在哪"); return; }
+      const state = loadState();
+      state.kedaibiaoOpinions = state.kedaibiaoOpinions || [];
+      state.kedaibiaoOpinions.unshift({
+        id: Date.now(),
+        date: todayStr(),
+        situation,
+        traps: selectedKdbTraps(),
+        framework: document.getElementById("kdbFramework").value,
+        axioms: selectedKdbAxioms(),
+        verdict: document.getElementById("kdbVerdict").value.trim(),
+        next: document.getElementById("kdbNext").value.trim(),
+      });
+      saveState(state);
+      renderKdbOpinionList();
+      showToast("savedKdbToast");
+    }
+
+    function deleteKdbOpinion(id) {
+      const state = loadState();
+      state.kedaibiaoOpinions = (state.kedaibiaoOpinions || []).filter((o) => o.id !== id);
+      saveState(state);
+      renderKdbOpinionList();
+    }
+
+    function loadKdbOpinion(item) {
+      setOpMode("kdb");
+      document.getElementById("kdbSituation").value = item.situation || "";
+      document.getElementById("kdbFramework").value = item.framework || "";
+      document.getElementById("kdbVerdict").value = item.verdict || "";
+      document.getElementById("kdbNext").value = item.next || "";
+      document.querySelectorAll("[data-kdb-trap]").forEach((el) => {
+        el.checked = (item.traps || []).includes(el.dataset.kdbTrap);
+      });
+      document.querySelectorAll("[data-kdb-axiom]").forEach((el) => {
+        el.checked = (item.axioms || []).includes(el.dataset.kdbAxiom);
+      });
+      updateKdbPrompt();
+    }
+
+    function clearKdbForm() {
+      document.getElementById("kdbSituation").value = "";
+      document.getElementById("kdbFramework").value = "";
+      document.getElementById("kdbVerdict").value = "";
+      document.getElementById("kdbNext").value = "";
+      document.querySelectorAll("[data-kdb-trap], [data-kdb-axiom]").forEach((el) => { el.checked = false; });
+      updateKdbPrompt();
+    }
+
+    function renderKdbOpinionList() {
+      const list = loadState().kedaibiaoOpinions || [];
+      const el = document.getElementById("kdbOpinionList");
+      if (!el) return;
+      if (!list.length) { el.innerHTML = '<div class="empty-table">尚无记录</div>'; return; }
+      el.innerHTML = list.map((o) => {
+        const fw = KDB_FW_LABEL[o.framework] || "未选框架";
+        const traps = (o.traps || []).map((id) => KDB_TRAP_LABEL[id] || id).join(" / ") || "未勾陷阱";
+        return `<div class="record-item"><div><strong>${esc((o.situation || "").slice(0, 42))}${(o.situation || "").length > 42 ? "…" : ""}</strong>
+          <div class="meta">${o.date} · ${esc(fw)} · ${esc(traps)}</div></div>
+          <div>
+            <button type="button" class="btn btn-ghost" data-load-kdb="${o.id}">编辑</button>
+            <button type="button" class="btn-danger" data-del-kdb="${o.id}">删</button>
+          </div></div>`;
+      }).join("");
+      el.querySelectorAll("[data-del-kdb]").forEach((b) => b.addEventListener("click", () => deleteKdbOpinion(+b.dataset.delKdb)));
+      el.querySelectorAll("[data-load-kdb]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const item = list.find((o) => o.id === +b.dataset.loadKdb);
+          if (item) loadKdbOpinion(item);
+        });
+      });
     }
 
     /* ===== 改变反思 ===== */
@@ -3604,6 +3895,21 @@
     document.querySelectorAll("[data-op]").forEach((sel) => sel.addEventListener("change", updateOpinionPreview));
     document.getElementById("opResponse").addEventListener("change", toggleOpPartial);
     document.getElementById("saveOpBtn").addEventListener("click", saveOpinion);
+
+    document.getElementById("opSwitch").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-op-mode]");
+      if (btn) setOpMode(btn.dataset.opMode);
+    });
+    ["kdbSituation", "kdbVerdict", "kdbNext"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", updateKdbPrompt);
+    });
+    document.getElementById("kdbFramework").addEventListener("change", updateKdbPrompt);
+    document.querySelectorAll("[data-kdb-trap], [data-kdb-axiom]").forEach((el) => {
+      el.addEventListener("change", updateKdbPrompt);
+    });
+    document.getElementById("copyKdbBtn").addEventListener("click", copyKdbPrompt);
+    document.getElementById("saveKdbBtn").addEventListener("click", saveKdbOpinion);
+    document.getElementById("clearKdbBtn").addEventListener("click", clearKdbForm);
 
     document.getElementById("saveRatBtn").addEventListener("click", saveRational);
     document.getElementById("clearRatBtn").addEventListener("click", clearRationalForm);
@@ -4680,7 +4986,7 @@
       if (hydrated) updateAutoBackupStatus("已从本目录备份恢复");
       else if (canUseFolderBackupApi()) updateAutoBackupStatus("本目录自动备份已就绪");
       loadTodayForm(); loadIndSteps();
-      renderDensity(); updateOpinionPreview(); renderOpinionList();
+      renderDensity(); updateOpinionPreview(); renderOpinionList(); renderKdbOpinionList();
       renderIndustryList(); renderRationalList(); updateSamplePreview();
       renderSamplingList(); renderReflectList();
       updatePenPreview(); renderPenetrateList();
@@ -4688,11 +4994,7 @@
       renderBiasPanel();
       renderLeonPanel();
       renderKpiPanel();
-      if (window.LixingV1) {
-        window.LixingV1.renderKeywords();
-        window.LixingV1.renderWishSummary();
-        window.LixingV1.renderWishesPanel();
-      }
+      if (window.LixingV1 && window.LixingV1.init) window.LixingV1.init();
     })();
   </script>
   <script src="/assets/lixing-cloud-sync.js?v=20260828b"></script>

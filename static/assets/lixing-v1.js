@@ -21,18 +21,50 @@
     social: ["朋友", "同事", "人", "聚", "聊", "约", "群"],
   };
 
-  function normalizeBirthday(raw) {
+  function pad2(n) {
+    return String(n).padStart(2, "0");
+  }
+
+  function parseBirthday(raw) {
     const s = String(raw || "").trim();
-    const m = s.match(/^(\d{1,2})[-/.月](\d{1,2})/);
-    if (!m) return "";
-    const mo = Math.max(1, Math.min(12, parseInt(m[1], 10)));
-    const day = Math.max(1, Math.min(31, parseInt(m[2], 10)));
-    return String(mo).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+    const ymd = s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+    if (ymd) {
+      const y = parseInt(ymd[1], 10);
+      const mo = Math.max(1, Math.min(12, parseInt(ymd[2], 10)));
+      const day = Math.max(1, Math.min(31, parseInt(ymd[3], 10)));
+      return {
+        full: y + "-" + pad2(mo) + "-" + pad2(day),
+        mmdd: pad2(mo) + "-" + pad2(day),
+      };
+    }
+    const md = s.match(/^(\d{1,2})[-/.月](\d{1,2})/);
+    if (!md) return { full: "", mmdd: "" };
+    const mo = Math.max(1, Math.min(12, parseInt(md[1], 10)));
+    const day = Math.max(1, Math.min(31, parseInt(md[2], 10)));
+    return { full: "", mmdd: pad2(mo) + "-" + pad2(day) };
+  }
+
+  function normalizeBirthday(raw) {
+    return parseBirthday(raw).mmdd;
+  }
+
+  function normalizeBirthdayFull(raw) {
+    return parseBirthday(raw).full;
   }
 
   function getBirthday(st) {
     const src = st || (typeof loadState === "function" ? loadState() : null);
-    return normalizeBirthday((src && src.settings && src.settings.birthday) || "");
+    return parseBirthday((src && src.settings && src.settings.birthday) || "").mmdd;
+  }
+
+  function getBirthdayFull(st) {
+    const src = st || (typeof loadState === "function" ? loadState() : null);
+    return parseBirthday((src && src.settings && src.settings.birthday) || "").full;
+  }
+
+  function todayYmd() {
+    const d = new Date();
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
   }
 
   function nextBirthdayOnOrAfter(from, mmdd) {
@@ -56,19 +88,12 @@
     return nextBirthdayOnOrAfter(min, b) || min;
   }
 
-  const QUIZ = [
-    {
-      q: "若人生只能留下一种影响，你希望别人怎样记住你？",
-      hint: "不必宏大，一句真实方向即可。",
-    },
-    {
-      q: "工作之外，你希望十年后的自己仍在坚持什么？",
-      hint: "兴趣、习惯、关系或手艺，都可以。",
-    },
-    {
-      q: "什么状态下，你会感到「这一天没有白过」？",
-      hint: "感受比 KPI 更重要。",
-    },
+  const WISH_HINT_MS = 20000;
+  const WISH_HINTS = [
+    "若只能留下一种影响，你希望别人怎样记住你？",
+    "工作之外，十年后仍想坚持的一件事。",
+    "什么状态下，你会觉得这一天没有白过？",
+    "你愿意为谁、或为哪件事长期负责？",
   ];
 
   function defaultLifeWishes() {
@@ -637,12 +662,57 @@
       const fromThree = (!entry.harvests.some(Boolean) && (entry.three[i - 1] || "")) || "";
       hEl.value = fromHarvest || fromThree;
     });
+    syncHarvestSlots({ fromSaved: true });
     if (typeof updateHarvestDensityHint === "function") updateHarvestDensityHint();
     else if (window.LixingV1 && window.LixingV1.updateHarvestDensityHint) window.LixingV1.updateHarvestDensityHint();
     if (thickEl) thickEl.value = entry.thickness || "";
     if (noteEl && !entry.harvest) noteEl.value = entry.note || "";
     if (window.LixingWriteDialog) window.LixingWriteDialog.syncPreviews();
     if (typeof renderReviewSummary === "function") renderReviewSummary();
+  }
+
+  var harvestOpened = 1;
+
+  function lastFilledHarvestIndex() {
+    var last = 0;
+    for (var i = 1; i <= 3; i++) {
+      var el = document.getElementById("harvest" + i);
+      if (el && String(el.value || "").trim()) last = i;
+    }
+    return last;
+  }
+
+  function syncHarvestSlots(opts) {
+    if (!document.getElementById("harvest1")) return;
+    var filled = lastFilledHarvestIndex();
+    if (opts && opts.fromSaved) harvestOpened = Math.max(1, filled);
+    harvestOpened = Math.max(harvestOpened || 1, filled, 1);
+    harvestOpened = Math.min(3, harvestOpened);
+    for (var i = 1; i <= 3; i++) {
+      var slot = document.querySelector('[data-harvest-slot="' + i + '"]');
+      var el = document.getElementById("harvest" + i);
+      var show = i <= harvestOpened;
+      if (slot) slot.hidden = !show;
+      else if (el) el.hidden = !show;
+    }
+    var addBtn = document.getElementById("addHarvestBtn");
+    if (addBtn) {
+      var lastEl = document.getElementById("harvest" + harvestOpened);
+      var canAdd = harvestOpened < 3 && lastEl && String(lastEl.value || "").trim();
+      addBtn.hidden = !canAdd;
+      addBtn.textContent = harvestOpened <= 1 ? "再记一条（可选）" : "再记一条（最后一条）";
+    }
+  }
+
+  function openNextHarvest() {
+    if (harvestOpened >= 3) return;
+    harvestOpened += 1;
+    syncHarvestSlots();
+    var el = document.getElementById("harvest" + harvestOpened);
+    if (el) {
+      el.focus();
+      try { el.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e) { /* ignore */ }
+    }
   }
 
   function updateHarvestDensityHint() {
@@ -654,27 +724,28 @@
     }).filter(Boolean).length;
     if (n <= 0) el.textContent = "写一条，今日密度即达 15% · 无感计入";
     else el.textContent = "今日密度 " + n * HARVEST_DENSITY_EACH + "% · " + n + " 条收获";
+    syncHarvestSlots();
   }
 
   function saveBirthdayFromInput() {
     const inp = document.getElementById("birthdayInput");
     if (!inp || typeof loadState !== "function") return "";
-    const norm = normalizeBirthday(inp.value);
+    const full = normalizeBirthdayFull(inp.value);
+    const mmdd = normalizeBirthday(inp.value);
     const st = loadState();
     st.settings = st.settings || {};
-    st.settings.birthday = norm;
+    st.settings.birthday = full || mmdd || "";
     saveState(st);
-    if (inp.value !== norm && norm) inp.value = norm;
-    return norm;
+    return st.settings.birthday;
   }
 
   function lockLifeWishesNow(st) {
-    const birthday = getBirthday(st);
-    if (!birthday) return { ok: false, reason: "birthday" };
+    const full = getBirthdayFull(st);
+    if (!full) return { ok: false, reason: "birthday" };
     const now = new Date().toISOString();
     st.lifeWishes.completedAt = st.lifeWishes.completedAt || now;
     st.lifeWishes.wishesLockedAt = now;
-    const until = computeUnlockDate(now, birthday);
+    const until = computeUnlockDate(now, full);
     st.lifeWishes.wishesUnlockAt = until ? until.toISOString() : "";
     return { ok: true, until: until };
   }
@@ -772,53 +843,9 @@
 
   function renderQuizStep() {
     const host = document.getElementById("wishQuizHost");
-    if (!host) return;
-    if (quizStep >= QUIZ.length) {
-      const lw = normalizeLifeWishes(typeof loadState === "function" ? loadState().lifeWishes : null);
-      host.innerHTML = `
-        <p class="card-desc">把三个回答收成三条愿望（可再改字）。定稿后 <strong>365 天</strong>不可改，到期对齐你的生日。</p>
-        <div class="wish-final-grid">
-          ${[0, 1, 2]
-            .map(
-              (i) => `
-          <div class="field"><label for="wishFinal${i}">愿望 ${i + 1}</label>
-          <input type="text" id="wishFinal${i}" value="${escapeHtml(
-                lw.quizAnswers[i] || lw.wishes[i] || ""
-              )}" /></div>`
-            )
-            .join("")}
-        </div>
-        <div class="actions"><button type="button" class="btn" id="finalizeQuizBtn">定稿人生三愿</button></div>`;
-      document.getElementById("finalizeQuizBtn")?.addEventListener("click", () => {
-        saveBirthdayFromInput();
-        const st = loadState();
-        st.lifeWishes = normalizeLifeWishes(st.lifeWishes);
-        [0, 1, 2].forEach((i) => {
-          const el = document.getElementById("wishFinal" + i);
-          if (el) st.lifeWishes.wishes[i] = el.value.trim();
-        });
-        const locked = lockLifeWishesNow(st);
-        if (!locked.ok) {
-          alert("请先填写生日（月-日），再定稿。到期日 = 定稿满 365 天后的下一个生日。");
-          return;
-        }
-        saveState(st);
-        quizStep = 0;
-        renderWishesPanel();
-        renderHomeWishes();
-        if (typeof showToast === "function") showToast("savedWishToast");
-      });
-      return;
-    }
-    const item = QUIZ[quizStep];
-    const lw = normalizeLifeWishes(typeof loadState === "function" ? loadState().lifeWishes : null);
-    host.innerHTML = `
-      <p class="quiz-progress">第 ${quizStep + 1} / ${QUIZ.length} 问</p>
-      <p class="quiz-q">${escapeHtml(item.q)}</p>
-      <p class="quiz-hint">${escapeHtml(item.hint)}</p>
-      <div class="field"><textarea id="wishQuizInput" rows="3" placeholder="写下第一直觉…">${escapeHtml(
-        lw.quizAnswers[quizStep] || ""
-      )}</textarea></div>`;
+    if (host) host.innerHTML = "";
+    const card = document.getElementById("wishQuizCard");
+    if (card) card.hidden = true;
   }
 
   function renderWishesPanel() {
@@ -829,7 +856,7 @@
     const until = sixMonthLockedUntil(lw.sixMonth.lockedAt);
     const bdayHost = document.getElementById("wishBirthdayHost");
     if (bdayHost) {
-      bdayHost.innerHTML = birthdayBlockHtml(getBirthday(st), yearLocked);
+      bdayHost.innerHTML = birthdayBlockHtml((st.settings && st.settings.birthday) || "", yearLocked);
       bindBirthdayInput();
     }
 
@@ -839,9 +866,9 @@
         .map(
           (i) => `
         <div class="field"><label for="lifeWish${i}">人生愿望 ${i + 1}</label>
-        <input type="text" id="lifeWish${i}" value="${escapeHtml(lw.wishes[i] || "")}" ${
+        <textarea id="lifeWish${i}" rows="2" maxlength="80" ${
             yearLocked ? "readonly" : ""
-          } /></div>`
+          }>${escapeHtml(lw.wishes[i] || "")}</textarea></div>`
         )
         .join("");
     }
@@ -873,11 +900,12 @@
     if (meta) {
       meta.textContent = lw.completedAt
         ? "人生三愿定稿于 " + formatDate(new Date(lw.completedAt))
-        : "完成下方三问，收成你的人生三愿";
+        : "写下三条愿望后定稿。生日请用日历选年月日。";
     }
 
     renderQuizStep();
     renderWishSummary();
+    bindQuizNav();
   }
 
   function saveLifeWishesFromForm() {
@@ -919,51 +947,109 @@
     if (typeof showToast === "function") showToast("savedWishToast");
   }
 
-  function bindQuizNav() {
-    document.getElementById("wishQuizPrev")?.addEventListener("click", () => {
-      const inp = document.getElementById("wishQuizInput");
-      if (inp) {
-        const st = loadState();
-        st.lifeWishes = normalizeLifeWishes(st.lifeWishes);
-        st.lifeWishes.quizAnswers[quizStep] = inp.value.trim();
-        saveState(st);
-      }
-      if (quizStep > 0) {
-        quizStep--;
-        renderQuizStep();
-      }
+  function pulseWishBtn(btn, label) {
+    if (!btn) return;
+    btn.classList.add("is-done");
+    const prev = btn.textContent;
+    btn.textContent = label;
+    setTimeout(function () {
+      btn.classList.remove("is-done");
+      btn.textContent = prev;
+    }, 320);
+  }
+
+  function finalizeHomeWishes() {
+    const btn = document.getElementById("finalizeQuizBtn");
+    saveBirthdayFromInput();
+    const st = loadState();
+    st.lifeWishes = normalizeLifeWishes(st.lifeWishes);
+    [0, 1, 2].forEach((i) => {
+      const el = document.getElementById("wishFinal" + i) || document.getElementById("lifeWish" + i);
+      if (el) st.lifeWishes.wishes[i] = el.value.trim();
     });
-    document.getElementById("wishQuizNext")?.addEventListener("click", () => {
-      const inp = document.getElementById("wishQuizInput");
-      if (!inp || !inp.value.trim()) {
-        alert("先写一点再往下。");
-        return;
+    if (!st.lifeWishes.wishes.some((w) => w && w.trim())) {
+      if (btn) {
+        btn.classList.add("is-need");
+        setTimeout(function () { btn.classList.remove("is-need"); }, 600);
       }
-      const st = loadState();
-      st.lifeWishes = normalizeLifeWishes(st.lifeWishes);
-      st.lifeWishes.quizAnswers[quizStep] = inp.value.trim();
-      saveState(st);
-      if (quizStep < QUIZ.length) quizStep++;
-      if (quizStep >= QUIZ.length) {
-        [0, 1, 2].forEach((i) => {
-          st.lifeWishes.wishes[i] = st.lifeWishes.quizAnswers[i] || st.lifeWishes.wishes[i];
-        });
-        st.lifeWishes.completedAt = st.lifeWishes.completedAt || new Date().toISOString();
-        saveState(st);
+      return;
+    }
+    const locked = lockLifeWishesNow(st);
+    if (!locked.ok) {
+      const inp = document.getElementById("birthdayInput");
+      if (inp) {
+        inp.classList.add("is-need");
+        inp.focus();
       }
-      renderQuizStep();
-      if (quizStep >= QUIZ.length) renderWishesPanel();
-      renderHomeWishes();
+      alert("请先用日历选择完整生日（年-月-日），再定稿。到期日对齐下一个生日。");
+      return;
+    }
+    if (btn) {
+      btn.classList.add("is-done");
+      btn.textContent = "已定稿";
+    }
+    saveState(st);
+    try {
+      sessionStorage.setItem("lixing-wish-celebrate", "1");
+    } catch (_e) {}
+    renderWishesPanel();
+    renderHomeWishes();
+    if (typeof showToast === "function") showToast("savedWishToast");
+  }
+
+  function bindQuizNav() {}
+
+  var wishHintTimer = 0;
+
+  function clearWishIdleHint() {
+    if (wishHintTimer) {
+      clearTimeout(wishHintTimer);
+      wishHintTimer = 0;
+    }
+  }
+
+  function bindWishHintUi() {
+    const btn = document.getElementById("wishHintBtn");
+    const panel = document.getElementById("wishHintPanel");
+    if (!btn || !panel) return;
+    btn.addEventListener("click", function () {
+      const open = panel.hidden;
+      panel.hidden = !open;
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
     });
   }
 
-  function birthdayBlockHtml(birthday, locked) {
-    const b = birthday || "";
+  function startWishIdleHint(filledCount) {
+    clearWishIdleHint();
+    if (filledCount >= 3) return;
+    const panel = document.getElementById("module-wish");
+    if (panel && panel.hidden) return;
+    wishHintTimer = setTimeout(function () {
+      const btn = document.getElementById("wishHintBtn");
+      if (btn) btn.hidden = false;
+    }, WISH_HINT_MS);
+  }
+
+  function birthdayBlockHtml(birthdayRaw, locked) {
+    const parsed = parseBirthday(birthdayRaw);
+    const leftover =
+      !parsed.full && parsed.mmdd
+        ? `<p class="birthday-hint birthday-hint--need">已有月日 ${escapeHtml(
+            parsed.mmdd
+          )}，请用日历补全年份。</p>`
+        : "";
     return `
       <div class="birthday-block">
-        <label for="birthdayInput">生日（锁定前必填）</label>
-        <input type="text" id="birthdayInput" inputmode="numeric" placeholder="月-日，如 08-29" value="${escapeHtml(b)}" ${locked ? "" : ""} />
-        <p class="birthday-hint">${locked ? "本次到期日已按定稿时的生日对齐，改生日不影响这一轮。" : "定稿后锁 365 天，到期日再对齐到你的下一个生日。"}</p>
+        <label for="birthdayInput">生日（年月日）</label>
+        <input type="date" id="birthdayInput" min="1900-01-01" max="${todayYmd()}" value="${escapeHtml(
+          parsed.full
+        )}" ${locked ? "disabled" : ""} />
+        <p class="birthday-hint">${
+          locked
+            ? "本次到期日已按定稿时的生日对齐，改生日不影响这一轮。"
+            : "点选日历填写年、月、日。定稿后锁 365 天，到期对齐下一个生日；不设提醒。"
+        }</p>
+        ${leftover}
       </div>`;
   }
 
@@ -971,10 +1057,39 @@
     const inp = document.getElementById("birthdayInput");
     if (!inp) return;
     inp.addEventListener("change", function () {
-      const locked = isWishesLocked(normalizeLifeWishes(loadState().lifeWishes));
       saveBirthdayFromInput();
-      if (!locked) renderHomeWishes();
     });
+  }
+
+  function unlockedWishFormHtml(st, lw) {
+    const raw = (st.settings && st.settings.birthday) || "";
+    return (
+      birthdayBlockHtml(raw, false) +
+      `
+      <p class="wish-home-lead">若人生只能许三个愿望，你会选哪三个？写完再定稿，<span class="wish-lock-warn">定稿后 365 天不可改。</span></p>
+      <div class="wish-final-grid">
+        ${[0, 1, 2]
+          .map(
+            (i) => `
+        <div class="field"><label for="wishFinal${i}">愿望 ${i + 1}</label>
+        <textarea id="wishFinal${i}" rows="2" maxlength="80" placeholder="直接写你想要的">${escapeHtml(
+          lw.wishes[i] || ""
+        )}</textarea></div>`
+          )
+          .join("")}
+      </div>
+      <div class="wish-hint-wrap">
+        <button type="button" class="btn-ghost-sm" id="wishHintBtn" hidden aria-expanded="false">卡住了？看几个参考</button>
+        <div class="wish-hint-panel" id="wishHintPanel" hidden>
+          <p class="wish-hint-lead">只作参考，点哪条都不会替你写。</p>
+          <ul>${WISH_HINTS.map((h) => `<li>${escapeHtml(h)}</li>`).join("")}</ul>
+        </div>
+      </div>
+      <div class="action-save-bar wish-finalize-bar">
+        <button type="button" class="btn-store-save" id="finalizeQuizBtn">定稿人生三愿</button>
+        <span class="saved-toast saved-toast--inline" id="savedWishToast" aria-live="polite">已定稿</span>
+      </div>`
+    );
   }
 
   function renderHomeWishes() {
@@ -982,29 +1097,68 @@
     if (!host || typeof loadState !== "function") return;
     const st = loadState();
     const lw = normalizeLifeWishes(st.lifeWishes);
-    const birthday = getBirthday(st);
+    const birthday = getBirthdayFull(st) || getBirthday(st);
     const locked = isWishesLocked(lw);
     const until = wishesLockedUntil(lw, birthday);
     const yearly = needsYearlyWishReview(lw);
-    const hasWishes = lw.completedAt || lw.wishes.some((w) => w && w.trim());
 
-    if (!hasWishes) {
-      host.innerHTML =
-        birthdayBlockHtml(birthday, false) +
-        `
-        <p class="wish-home-lead">若人生只能许三个愿望，你会选哪三个？定稿后 <strong>365 天不可改</strong>，到期对齐生日；不设提醒。</p>
-        <div class="wish-quiz-nav">
-          <button type="button" class="btn-ghost-sm" id="wishQuizPrev">上一问</button>
-          <button type="button" class="btn-ghost-sm" id="wishQuizNext">下一问</button>
-        </div>
-        <div id="wishQuizHost"></div>`;
+    if (!locked) {
+      clearWishIdleHint();
+      host.innerHTML = unlockedWishFormHtml(st, lw);
       bindBirthdayInput();
-      bindQuizNav();
-      renderQuizStep();
+      document.getElementById("finalizeQuizBtn")?.addEventListener("click", finalizeHomeWishes);
+      bindWishHintUi();
+      const filled = lw.wishes.filter((w) => w && String(w).trim()).length;
+      startWishIdleHint(filled);
+      document.querySelectorAll("#wishFinal0, #wishFinal1, #wishFinal2").forEach(function (el) {
+        el.addEventListener("input", function () {
+          const n = [0, 1, 2].filter(function (i) {
+            const t = document.getElementById("wishFinal" + i);
+            return t && t.value.trim();
+          }).length;
+          if (n >= 3) {
+            clearWishIdleHint();
+            const btn = document.getElementById("wishHintBtn");
+            if (btn) btn.hidden = true;
+          }
+        });
+      });
       return;
     }
 
-    let html = birthdayBlockHtml(birthday, locked);
+    let celebrate = false;
+    try {
+      celebrate = sessionStorage.getItem("lixing-wish-celebrate") === "1";
+    } catch (_e) {}
+
+    if (celebrate) {
+      host.innerHTML = `
+        <div class="home-done home-done--wish" id="wishDoneScene">
+          <p class="home-done-kicker">三愿已定稿</p>
+          <p class="home-done-title">锁至 ${until ? formatDate(until) : "下一生日"}</p>
+          <ol class="home-done-list">${[0, 1, 2]
+            .map(
+              (i) =>
+                `<li><span class="home-done-num">${i + 1}</span><span>${escapeHtml(
+                  lw.wishes[i] || "—"
+                )}</span></li>`
+            )
+            .join("")}</ol>
+          <p class="home-done-note">365 天内不可改 · 不设提醒</p>
+          <div class="home-done-actions">
+            <button type="button" class="btn-store-save" id="wishDoneAck">好</button>
+          </div>
+        </div>`;
+      document.getElementById("wishDoneAck")?.addEventListener("click", () => {
+        try {
+          sessionStorage.removeItem("lixing-wish-celebrate");
+        } catch (_e2) {}
+        renderHomeWishes();
+      });
+      return;
+    }
+
+    let html = birthdayBlockHtml((st.settings && st.settings.birthday) || birthday, locked);
     if (locked && until) {
       html += `<p class="lock-badge">三愿已锁定 · 至 ${formatDate(until)} 不可修改</p>`;
     }
@@ -1020,7 +1174,7 @@
           <p class="card-title">年度复盘 · ${new Date().getFullYear()}</p>
           <p class="card-desc">一年一度，回看三愿是否仍值得奔赴。</p>
           <textarea id="yearlyReviewNote" rows="3" placeholder="这一年的靠近与偏差…"></textarea>
-          <button type="button" class="btn-save-wish" id="saveYearlyReviewBtn">保存年度复盘</button>
+          <button type="button" class="btn-store-save btn-save-wish" id="saveYearlyReviewBtn">保存年度复盘</button>
         </div>`;
     } else if ((lw.yearlyReviews || []).length) {
       const last = lw.yearlyReviews[lw.yearlyReviews.length - 1];
@@ -1036,8 +1190,12 @@
 
     document.getElementById("saveYearlyReviewBtn")?.addEventListener("click", () => {
       const note = (document.getElementById("yearlyReviewNote") || {}).value?.trim() || "";
+      const ybtn = document.getElementById("saveYearlyReviewBtn");
       if (!note) {
-        alert("写一句年度复盘再保存。");
+        if (ybtn) {
+          ybtn.classList.add("is-need");
+          setTimeout(function () { ybtn.classList.remove("is-need"); }, 600);
+        }
         return;
       }
       const st2 = loadState();
@@ -1046,8 +1204,12 @@
       st2.lifeWishes.yearlyReviews = (st2.lifeWishes.yearlyReviews || []).filter((r) => r.year !== year);
       st2.lifeWishes.yearlyReviews.push({ year, note, reviewedAt: new Date().toISOString() });
       saveState(st2);
+      if (ybtn) {
+        ybtn.classList.add("is-done");
+        ybtn.textContent = "已保存";
+      }
       renderHomeWishes();
-      if (typeof showToast === "function") showToast("savedNotebookToast");
+      if (typeof showToast === "function") showToast("savedWishToast");
     });
   }
 
@@ -1080,6 +1242,8 @@
     renderHomeWishes,
     updateFeelingNudge,
     updateHarvestDensityHint,
+    syncHarvestSlots,
+    openNextHarvest,
     isWishesLocked,
     needsYearlyWishReview,
     dayDensity,
@@ -1090,7 +1254,10 @@
     spokeLabel,
     inferSpoke,
     getBirthday,
+    getBirthdayFull,
     normalizeBirthday,
+    normalizeBirthdayFull,
+    clearWishIdleHint,
     init() {
       document.getElementById("panel-wishes")?.addEventListener("click", (e) => {
         if (e.target.id === "lockSixMonthBtn") lockSixMonth();
@@ -1103,13 +1270,15 @@
       renderWishesPanel();
       renderHomeWishes();
       initAskFlow();
-      [1, 2, 3].forEach(function (i) {
-        const el = document.getElementById("harvest" + i);
-        if (!el) return;
-        el.addEventListener("input", updateHarvestDensityHint);
-        el.addEventListener("change", updateHarvestDensityHint);
+      document.addEventListener("input", function (e) {
+        const id = e.target && e.target.id;
+        if (id === "harvest1" || id === "harvest2" || id === "harvest3") updateHarvestDensityHint();
+      });
+      document.addEventListener("click", function (e) {
+        if (e.target && e.target.id === "addHarvestBtn") openNextHarvest();
       });
       updateHarvestDensityHint();
+      syncHarvestSlots({ fromSaved: true });
     },
   };
 })();

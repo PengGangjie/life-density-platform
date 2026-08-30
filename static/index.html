@@ -1326,7 +1326,7 @@
     }
 
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260829ae" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260830f" />
 
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0e0c0a" />
@@ -1396,23 +1396,35 @@
         </label>
       </header>
 
-      <p class="module-lead harvest-lead">今天有什么收获？最多三条。写一条，密度即达 15%。</p>
+      <p class="module-lead harvest-lead">今天有什么收获？先写一条就够。需要时再加，最多三条。</p>
       <div class="yesterday-banner" id="yesterdayBanner" hidden></div>
+
+      <div class="home-done" id="actionDoneScene" hidden>
+        <p class="home-done-kicker">已记下今日</p>
+        <p class="home-done-title" id="actionDoneTitle">今日密度 15%</p>
+        <ol class="home-done-list" id="actionDoneList"></ol>
+        <p class="home-done-note">已写入工具台 02 日省并保存</p>
+        <div class="home-done-actions">
+          <button type="button" class="btn-store-save" id="actionDoneEdit">改一改</button>
+          <a class="home-done-link" href="workspace.html">打开 02 日省</a>
+        </div>
+      </div>
 
       <div class="action-pane action-pane--compact" id="action-record">
         <input type="hidden" id="dailyWish" value="" aria-hidden="true" />
         <span id="footWish" hidden></span>
         <div class="action-three-list" id="threePoster">
-          <div class="store-item store-item--goal action-three-item" data-col="1">
+          <div class="store-item store-item--goal action-three-item" data-col="1" data-harvest-slot="1">
             <textarea id="harvest1" class="store-input action-three-input" rows="2" maxlength="80" placeholder="① 一条就够" aria-label="收获一"></textarea>
           </div>
-          <div class="store-item store-item--goal action-three-item" data-col="2">
-            <textarea id="harvest2" class="store-input action-three-input" rows="2" maxlength="80" placeholder="② 可空" aria-label="收获二"></textarea>
+          <div class="store-item store-item--goal action-three-item" data-col="2" data-harvest-slot="2" hidden>
+            <textarea id="harvest2" class="store-input action-three-input" rows="2" maxlength="80" placeholder="② 还有一条也可以" aria-label="收获二"></textarea>
           </div>
-          <div class="store-item store-item--goal action-three-item" data-col="3">
-            <textarea id="harvest3" class="store-input action-three-input" rows="2" maxlength="80" placeholder="③ 可空" aria-label="收获三"></textarea>
+          <div class="store-item store-item--goal action-three-item" data-col="3" data-harvest-slot="3" hidden>
+            <textarea id="harvest3" class="store-input action-three-input" rows="2" maxlength="80" placeholder="③ 最多三条" aria-label="收获三"></textarea>
           </div>
         </div>
+        <button type="button" class="btn-harvest-add" id="addHarvestBtn" hidden>再记一条（可选）</button>
         <p class="harvest-density-hint" id="harvestDensityHint">写一条，今日密度即达 15% · 无感计入</p>
         <div class="action-save-bar">
           <button type="button" class="btn-store-save" id="saveRecordBtn">记下今日</button>
@@ -1443,11 +1455,11 @@
 
   <script src="assets/lixing-cloud-auth.js"></script>
   <script src="assets/lixing-lunar.js?v=20260828ac"></script>
-  <script src="assets/lixing-v1.js?v=20260829ae"></script>
+  <script src="assets/lixing-v1.js?v=20260830f"></script>
   <script src="assets/lixing-voice.js?v=20260828p"></script>
   <script src="assets/lixing-write-dialog.js?v=20260828y"></script>
   <script src="assets/lixing-decide.js?v=20260828z"></script>
-  <script src="assets/lixing-home.js?v=20260829ae"></script>
+  <script src="assets/lixing-home.js?v=20260830e"></script>
   <script>
     const STORAGE_KEY = "life-density-v3";
     const OLD_KEYS = ["life-density-v2", "life-density-v1"];
@@ -1802,7 +1814,7 @@
       if (ws) ws.scrollIntoView({ behavior: "smooth", block: "start" });
       if (panelId === "wishes" && window.LixingV1) window.LixingV1.renderWishesPanel();
     }
-    document.getElementById("navTabs").addEventListener("click", (e) => {
+    document.getElementById("navTabs")?.addEventListener("click", (e) => {
       const btn = e.target.closest("button[data-panel]");
       if (!btn) return;
       switchPanel(btn.dataset.panel);
@@ -1943,6 +1955,7 @@
         harvests,
         harvest: fields.harvest || harvests.filter(Boolean).join("\n"),
         thickness: fields.thickness || prev.thickness || "",
+        note: harvests.filter(Boolean).join(" · ") || prev.note || "",
       });
       saveState(state);
       const toastId = opts && opts.toastId ? opts.toastId : "savedRecordToast";
@@ -1951,6 +1964,7 @@
       if (window.LixingV1) window.LixingV1.renderHarvestPanel();
       if (window.LixingHome) window.LixingHome.updateYesterdayBanner();
       if (typeof renderDensity === "function") renderDensity();
+      return true;
     }
 
     function renderReviewSummary() {
@@ -2024,6 +2038,7 @@
       if (window.LixingV1 && window.LixingV1.refreshHome) window.LixingV1.refreshHome();
       renderReviewSummary();
       if (typeof updatePreview === "function") updatePreview();
+      if (window.LixingHome && window.LixingHome.syncActionDoneView) window.LixingHome.syncActionDoneView();
     }
 
     function calendarDates(limit, endStr) {
@@ -2636,7 +2651,33 @@
     /* ===== 初始化 ===== */
     document.getElementById("date").value = todayStr();
     updateNotebookDateDisplay();
-    document.getElementById("saveRecordBtn")?.addEventListener("click", () => saveNotebookThree({ toastId: "savedRecordToast" }));
+    document.getElementById("saveRecordBtn")?.addEventListener("click", () => {
+      const fields = window.LixingV1 ? window.LixingV1.getDailyFields() : {};
+      const harvests = (fields.harvests || []).filter(Boolean);
+      const btn = document.getElementById("saveRecordBtn");
+      const hint = document.getElementById("harvestDensityHint");
+      if (!harvests.length) {
+        if (btn) {
+          btn.classList.remove("is-done");
+          btn.classList.add("is-need");
+          setTimeout(function () { btn.classList.remove("is-need"); }, 600);
+        }
+        if (hint) {
+          hint.classList.add("is-need");
+          hint.textContent = "先写一条收获，再记下今日";
+        }
+        const h1 = document.getElementById("harvest1");
+        if (h1) h1.focus();
+        return;
+      }
+      if (hint) hint.classList.remove("is-need");
+      if (btn) {
+        btn.classList.add("is-done");
+        btn.textContent = "已记下";
+      }
+      saveNotebookThree({ toastId: "savedRecordToast" });
+      if (window.LixingHome && window.LixingHome.markActionSaved) window.LixingHome.markActionSaved();
+    });
     document.getElementById("saveReviewBtn")?.addEventListener("click", () => saveNotebookThree({ toastId: "savedReviewToast" }));
     document.getElementById("date")?.addEventListener("change", () => { updateNotebookDateDisplay(); loadTodayForm(); });
     const _isWorkspace = !!document.getElementById("saveBtn");

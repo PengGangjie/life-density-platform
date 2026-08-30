@@ -56,9 +56,13 @@
       ensureTodayDate();
       updateYesterdayBanner();
     }
+    if (name !== "wish" && window.LixingV1 && window.LixingV1.clearWishIdleHint) {
+      window.LixingV1.clearWishIdleHint();
+    }
     if (name === "wish" && window.LixingV1 && window.LixingV1.renderHomeWishes) {
       window.LixingV1.renderHomeWishes();
     }
+    if (name === "action") syncActionDoneView();
   }
 
   function localTodayStr() {
@@ -118,6 +122,103 @@
     updateYesterdayBanner();
   }
 
+  function escapeHtml(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function actionDate() {
+    var dateEl = document.getElementById("date");
+    return dateEl && dateEl.value ? dateEl.value : localTodayStr();
+  }
+
+  function currentHarvests() {
+    if (typeof loadState !== "function") return [];
+    var date = actionDate();
+    var e = (loadState().entries || {})[date];
+    if (!e) return [];
+    var hs = Array.isArray(e.harvests) ? e.harvests : [];
+    var filled = hs
+      .map(function (s) {
+        return String(s || "").trim();
+      })
+      .filter(Boolean);
+    if (filled.length) return filled;
+    if (e.harvest) {
+      return String(e.harvest)
+        .split(/\n+/)
+        .map(function (s) {
+          return s.trim();
+        })
+        .filter(Boolean);
+    }
+    return [];
+  }
+
+  function syncActionDoneView() {
+    var scene = document.getElementById("actionDoneScene");
+    var form = document.getElementById("action-record");
+    if (!scene || !form) return;
+    var date = actionDate();
+    var editing = false;
+    try {
+      editing = sessionStorage.getItem("lixing-action-editing") === date;
+    } catch (_e) {}
+    var filled = currentHarvests();
+    var show = filled.length > 0 && !editing;
+    scene.hidden = !show;
+    form.hidden = !!show;
+    var lead = document.querySelector("#module-action .harvest-lead");
+    if (lead) lead.hidden = !!show;
+    if (!show) {
+      var btn = document.getElementById("saveRecordBtn");
+      if (btn && !filled.length) {
+        btn.classList.remove("is-done");
+        btn.textContent = "记下今日";
+      }
+      return;
+    }
+    var title = document.getElementById("actionDoneTitle");
+    var list = document.getElementById("actionDoneList");
+    if (title) title.textContent = "今日密度 " + filled.length * 15 + "%";
+    if (list) {
+      list.innerHTML = filled
+        .map(function (t, i) {
+          return (
+            "<li><span class=\"home-done-num\">" +
+            (i + 1) +
+            "</span><span>" +
+            escapeHtml(t) +
+            "</span></li>"
+          );
+        })
+        .join("");
+    }
+  }
+
+  function beginEditAction() {
+    try {
+      sessionStorage.setItem("lixing-action-editing", actionDate());
+    } catch (_e) {}
+    syncActionDoneView();
+    var h1 = document.getElementById("harvest1");
+    if (h1) {
+      try {
+        h1.focus();
+      } catch (_e2) {}
+    }
+  }
+
+  function markActionSaved() {
+    try {
+      sessionStorage.removeItem("lixing-action-editing");
+    } catch (_e) {}
+    syncActionDoneView();
+  }
+
   function bindModules() {
     document.querySelectorAll(".home-modules [data-module]").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -131,6 +232,7 @@
     });
     document.getElementById("yesterdayReviewBtn")?.addEventListener("click", goReviewYesterday);
     document.getElementById("yesterdaySkipBtn")?.addEventListener("click", skipYesterdayReminder);
+    document.getElementById("actionDoneEdit")?.addEventListener("click", beginEditAction);
   }
 
   function initDefaults() {
@@ -164,6 +266,9 @@
     updateYesterdayBanner: updateYesterdayBanner,
     goReviewYesterday: goReviewYesterday,
     skipYesterdayReminder: skipYesterdayReminder,
+    syncActionDoneView: syncActionDoneView,
+    markActionSaved: markActionSaved,
+    beginEditAction: beginEditAction,
   };
 
   if (document.readyState === "loading") {
