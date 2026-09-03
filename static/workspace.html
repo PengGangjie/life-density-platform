@@ -744,8 +744,6 @@
       display: inline-block; font-size: 0.78rem; padding: 6px 12px; border-radius: 8px;
       background: var(--accent-soft); color: var(--accent-warm); margin-bottom: 12px;
     }
-    .six-month-readonly { margin: 0; padding-left: 1.2em; color: var(--ink-soft); }
-
     .path-grid {
       max-width: 920px; margin: 0 auto;
       padding: 0 24px 48px;
@@ -1410,7 +1408,7 @@
             </details>
             <details class="faq-item">
               <summary>「人生三愿」怎么锁？</summary>
-              <p class="card-desc">先用日历填写完整生日（年-月-日），再直接写下三条愿望后定稿。从定稿日起锁定 365 天，到期日再对齐到你的下一个生日；改生日不影响已锁定的这一轮。不设提醒。工具台另有「六个月愿望」可锁 183 天。</p>
+              <p class="card-desc">先用日历填写完整生日（年-月-日），再直接写下三条愿望后定稿。从定稿日起锁定 365 天，到期日再对齐到你的下一个生日；改生日不影响已锁定的这一轮。不设提醒。</p>
             </details>
             <details class="faq-item">
               <summary>密度和厚度分别指什么？</summary>
@@ -1460,7 +1458,7 @@
       <details class="guide" open>
         <summary>人生三愿 · 神灯隐喻</summary>
         <div class="guide-body">
-          <p>若人生只能许 <strong>三个愿望</strong>，你会选什么？用日历填完整生日（年-月-日），三条愿望直接写，无需按问题作答。定稿后锁定 <strong>365 天</strong>（到期对齐下一个生日，不设提醒）。下方六个月方向仍可另锁 183 天。</p>
+          <p>若人生只能许 <strong>三个愿望</strong>，你会选什么？用日历填完整生日（年-月-日），三条愿望直接写，无需按问题作答。定稿后锁定 <strong>365 天</strong>（到期对齐下一个生日，不设提醒）。</p>
         </div>
       </details>
       <p class="card-desc" id="wishMeta"></p>
@@ -1470,10 +1468,6 @@
         <p class="card-desc">三条都由你自己写。定稿前可改。</p>
         <div id="lifeWishList"></div>
         <div class="actions"><button type="button" class="btn" id="saveWishesBtn">保存三愿</button><span class="saved-toast" id="savedWishToast">已保存</span></div>
-      </div>
-      <div class="card">
-        <p class="card-title">六个月愿望</p>
-        <div id="sixMonthBlock"></div>
       </div>
     </div>
 <!-- ========== ① 理性工具 ========== -->
@@ -2499,7 +2493,6 @@
         lifeWishes: {
           wishes: ["", "", ""], quizAnswers: ["", "", ""], completedAt: "",
           wishesLockedAt: "", wishesUnlockAt: "", yearlyReviews: [],
-          sixMonth: { lines: ["", "", ""], lockedAt: "" },
         },
         indSteps: {}, settings: {},
       };
@@ -4998,5 +4991,7 @@
     })();
   </script>
   <script src="/assets/lixing-cloud-sync.js?v=20260828b"></script>
+  <!-- oil-icon 适配测试：删除此行即回退 -->
+  <script src="assets/icons-test.js?v=20260903b"></script>
 </body>
 </html>
