@@ -1453,6 +1453,7 @@
     </div>
   </main>
 
+  <script src="assets/cap-storage.js"></script>
   <script src="assets/lixing-cloud-auth.js"></script>
   <script src="assets/lixing-lunar.js?v=20260828ac"></script>
   <script src="assets/lixing-v1.js?v=20260830f"></script>
@@ -3840,6 +3841,7 @@
     }
 
     (async function boot() {
+      await window.__capReady;
       migrateStorage();
       const hydrated = await tryHydrateFromDirBackup();
       if (hydrated) updateAutoBackupStatus("已从本目录备份恢复");
