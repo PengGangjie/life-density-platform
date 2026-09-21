@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mimosa-hook-status/v1",
+  "recordedAt": "2026-09-20T14:44:38.564Z",
+  "sessionId": "sess_d2bb24f5-de1e-4baf-b1ba-7058b3c3537f",
+  "event": "PostToolUse",
+  "toolName": "Edit",
+  "file": "assets/lixing-entitlements.js",
+  "outcome": "clear",
+  "coverage": "complete",
+  "findingCount": 0,
+  "durationMs": 97,
+  "hostState": "hook_complete",
+  "reportHint": ".mimosa/reports/"
+}

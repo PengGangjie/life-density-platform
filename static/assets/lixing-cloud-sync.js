@@ -16,8 +16,14 @@
     return window.__lixingMe || {};
   }
 
+  function apiUrl(p) {
+    return window.LixingConfig ? window.LixingConfig.apiUrl(p) : p;
+  }
+
   function canSync() {
     if (isLocalDev()) return false;
+    var cfg = window.LixingConfig;
+    if (cfg && cfg.FEATURES && cfg.FEATURES.cloudSync === false) return false;
     var m = me();
     return !!(m.authenticated && m.auth_configured !== false);
   }
@@ -81,7 +87,7 @@
     if (!canSync() || _hydrating) return;
     try {
       var body = { data: typeof normalizeState === "function" ? normalizeState(state) : state };
-      var res = await fetch("/api/state", {
+      var res = await fetch(apiUrl("/api/state"), {
         method: "PUT",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json;charset=utf-8" },
@@ -135,7 +141,7 @@
     _hydrating = true;
     setSyncHint("正在拉取云端…");
     try {
-      var res = await fetch("/api/state", { credentials: "same-origin" });
+      var res = await fetch(apiUrl("/api/state"), { credentials: "same-origin" });
       if (res.status === 401 || !res.ok) return;
       var payload = await res.json();
       var cloud = payload && payload.data ? payload.data : null;

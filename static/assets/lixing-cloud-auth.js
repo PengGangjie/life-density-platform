@@ -21,6 +21,15 @@
     return window.__lixingMe || {};
   }
 
+  function apiUrl(p) {
+    return window.LixingConfig ? window.LixingConfig.apiUrl(p) : p;
+  }
+
+  function authFeatureOn() {
+    var cfg = window.LixingConfig;
+    return !cfg || !cfg.FEATURES || cfg.FEATURES.cloudAuth !== false;
+  }
+
   function canWrite() {
     if (isLocalDev()) return true;
     var m = me();
@@ -106,12 +115,12 @@
       isGuestReadonly: isGuestReadonly,
       notifyGuestBlocked: notifyGuestBlocked,
     };
-    if (isLocalDev()) {
+    if (isLocalDev() || !authFeatureOn()) {
       window.__lixingMe = { authenticated: true, auth_configured: false, auth_required: false };
       setAuthUi({ authenticated: true });
       return;
     }
-    fetch("/api/me", { credentials: "same-origin", headers: { Accept: "application/json" } })
+    fetch(apiUrl("/api/me"), { credentials: "same-origin", headers: { Accept: "application/json" } })
       .then(function (r) {
         return r.json();
       })
