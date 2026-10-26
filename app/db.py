@@ -136,7 +136,11 @@ def _state_has_data(data: object) -> bool:
 
 
 def merge_state(cloud: dict | None, local: dict) -> dict:
-    """云端为空用本地；两边都有时密度日记以本地日期为准并集。"""
+    """云端为空用本地；两边都有时密度日记以本地日期为准并集。
+
+    已知限制：同一天两边各写一条时，本地覆盖云端，另一边会丢掉。
+    灰度期是单机单账号，先不改。接入云同步前须按条目的 updated_at 取新。
+    """
     if not cloud or not _state_has_data(cloud):
         return local
     out = dict(cloud)

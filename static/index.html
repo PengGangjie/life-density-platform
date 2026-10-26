@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>砺行 · 砥砺日省，知行合一</title>
+  <title>Lixing · Daily review</title>
   <link rel="icon" href="/brand/app-logo-mark.svg" type="image/svg+xml" />
   <style>
     @font-face {
@@ -23,7 +23,7 @@
     }
     @font-face {
       font-family: "GuoWen ZhengKai";
-      src: url("assets/fonts/KaiOldstyle.ttf") format("truetype");
+      src: url("assets/fonts/lx-k-e8d41f.woff2") format("woff2");
       font-weight: normal;
       font-style: normal;
       font-display: swap;
@@ -67,7 +67,7 @@
       background: #120e0b;
       color: var(--ink);
       line-height: 1.65;
-      font-size: 15px;
+      font-size: 0.9375rem;
       min-height: 100vh;
     }
     body.auth-pending .auth-gated { display: none !important; }
@@ -1320,12 +1320,18 @@
       .workspace-body { padding: 16px; }
       #navUser { display: none !important; }
       .topnav-login, #navLogout, #navInstall {
-        min-height: 44px; white-space: nowrap; flex-shrink: 0;
+        white-space: nowrap; flex-shrink: 0;
       }
     }
 
+  .coin-record {
+      margin: 0 auto 10px; max-width: 92vw; padding: 8px 14px;
+      border: 1px solid rgba(201,55,86,0.28); border-radius: 12px;
+      font-size: 0.78rem; color: #6b5d4a; text-align: center; background: rgba(246,241,231,0.5);
+    }
+    .coin-record b { color: #c93756; }
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260830f" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260932a" />
 
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0e0c0a" />
@@ -1336,19 +1342,35 @@
 </head>
 
 <body class="auth-pending daily-page focus-layout home-three home-scene-page">
+  <script src="assets/shenshou-data.js?v=20261026"></script>
+  <script src="assets/shenshou-splash.js?v=20261026"></script>
   <nav class="topnav app-banner" aria-label="主导航">
     <a class="brand brand--banner" href="#top" aria-label="砺行 · 日省">
       <img class="brand-logo" src="assets/brand-logo.png" alt="" width="34" height="34" decoding="async" />
       <span class="brand-wordmark"><span class="char-li">砺</span>行 · 日省</span>
     </a>
     <div class="topnav-auth">
-      <a class="tool-link" id="navToolLink" href="workspace.html">工具台</a>
-      <a class="topnav-login" id="navPro" href="#" data-open-paywall title="PRO行者">PRO</a>
-      <a class="topnav-login" id="navLogin" href="/sign-in">登录</a>
+      <a class="tool-link" id="navToolLink" href="workspace.html" data-i18n="nav.tools">工具台</a>
+      <div class="font-size-pick font-size-pick--nav" id="fontSizePick" role="group" aria-label="字体大小">
+        <button type="button" data-fs="s" class="fsp-btn" data-i18n="au.11"><span data-i18n="au.11">小</span></button>
+        <button type="button" data-fs="m" class="fsp-btn is-on"><span data-i18n="au.12">中</span></button>
+        <button type="button" data-fs="l" class="fsp-btn" data-i18n="au.13"><span data-i18n="au.13">大</span></button>
+      </div>
+      <button type="button" id="navLang" class="topnav-login" style="background:none;cursor:pointer;font-family:inherit;">EN</button>
+      <a class="topnav-login" id="navPro" href="#" data-open-paywall data-i18n-title="nav.pro.title" title="PRO行者">PRO</a>
+      <a class="topnav-login" id="navLogin" href="/sign-in" data-i18n="nav.login">登录</a>
       <span id="navUser" hidden></span>
-      <a class="topnav-logout" id="navLogout" href="/sign-out" hidden>退出</a>
+      <a class="topnav-logout" id="navLogout" href="/sign-out" hidden data-i18n="nav.logout">退出</a>
     </div>
   </nav>
+  <script>
+    /* 012：原生电容壳标记——v1.0 本地优先无账号，隐藏 登录/退出（/sign-in /sign-out 为死链） */
+    (function () {
+      if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+        document.body.classList.add("native-app");
+      }
+    })();
+  </script>
 
   <main class="daily-shell home-shell home-scene" id="top" aria-label="砺行日省">
     <div class="home-scene-bg" aria-hidden="true">
@@ -1357,17 +1379,18 @@
     </div>
     <div class="home-scene-inner">
     <nav class="home-modules" role="tablist" aria-label="主页模块">
-      <button type="button" class="home-module-btn is-active" data-module="decide" role="tab">抉择</button>
-      <button type="button" class="home-module-btn" data-module="action" role="tab">行动</button>
-      <button type="button" class="home-module-btn" data-module="wish" role="tab">愿想</button>
+      <button type="button" class="home-module-btn is-active" data-module="decide" role="tab" data-i18n="home.tab.decide">抉择</button>
+      <button type="button" class="home-module-btn" data-module="action" role="tab" data-i18n="home.tab.action">行动</button>
+      <button type="button" class="home-module-btn" data-module="wish" role="tab" data-i18n="home.tab.wish">愿想</button>
     </nav>
 
     <!-- 抉择 -->
     <section class="home-panel" id="module-decide" role="tabpanel" aria-label="抉择">
-      <p class="module-lead">犹豫不决时，交给随机 · 摇一摇手机或点击落位</p>
+      <div class="card-desc coin-record" id="coinRecordHost" hidden></div>
+      <p class="module-lead" data-i18n="home.decide.lead">犹豫不决时，交给随机 · 摇一摇手机或点击落位</p>
       <div class="field decide-field">
-        <label for="decideQuestion">可选：你在纠结什么？</label>
-        <input type="text" id="decideQuestion" class="decide-input" placeholder="去不去、做不做…" />
+        <label for="decideQuestion" data-i18n="home.decide.label">可选：你在纠结什么？</label>
+        <input type="text" id="decideQuestion" class="decide-input" placeholder="去不去、做不做…" data-i18n-ph="home.decide.ph" />
       </div>
       <div class="decide-stage">
         <button type="button" class="decide-coin" id="decideCoin" aria-label="点击随机抉择">
@@ -1377,8 +1400,8 @@
           </span>
           <span class="decide-coin-inner" id="decideCoinFace" aria-live="polite">？</span>
         </button>
-        <p class="decide-hint" id="decideHint">点击或摇晃手机</p>
-        <button type="button" class="btn-decide" id="decideBtn">帮我决定</button>
+        <p class="decide-hint" id="decideHint" data-i18n="home.decide.hint">点击或摇晃手机</p>
+        <button type="button" class="btn-decide" id="decideBtn" data-i18n="home.decide.btn">帮我决定</button>
       </div>
       <div class="decide-history" id="decideHistory" aria-label="最近抉择"></div>
     </section>
@@ -1396,17 +1419,17 @@
         </label>
       </header>
 
-      <p class="module-lead harvest-lead">今天有什么收获？先写一条就够。需要时再加，最多三条。</p>
+      <p class="module-lead harvest-lead" data-i18n="home.action.lead">今天有什么收获？先写一条就够。需要时再加，最多三条。</p>
       <div class="yesterday-banner" id="yesterdayBanner" hidden></div>
 
       <div class="home-done" id="actionDoneScene" hidden>
-        <p class="home-done-kicker">已记下今日</p>
-        <p class="home-done-title" id="actionDoneTitle">今日密度 15%</p>
+        <p class="home-done-kicker" data-i18n="home.action.done.kicker">已记下今日</p>
+        <p class="home-done-title" id="actionDoneTitle"><span data-i18n="au.4">今日密度 15%</span></p>
         <ol class="home-done-list" id="actionDoneList"></ol>
-        <p class="home-done-note">已写入工具台 02 日省并保存</p>
+        <p class="home-done-note" data-i18n="home.action.done.note">已写入工具台 02 日省并保存</p>
         <div class="home-done-actions">
-          <button type="button" class="btn-store-save" id="actionDoneEdit">改一改</button>
-          <a class="home-done-link" href="workspace.html">打开 02 日省</a>
+          <button type="button" class="btn-store-save" id="actionDoneEdit" data-i18n="home.action.edit">改一改</button>
+          <a class="home-done-link" href="workspace.html" data-i18n="home.action.done.link">打开 02 日省</a>
         </div>
       </div>
 
@@ -1415,20 +1438,20 @@
         <span id="footWish" hidden></span>
         <div class="action-three-list" id="threePoster">
           <div class="store-item store-item--goal action-three-item" data-col="1" data-harvest-slot="1">
-            <textarea id="harvest1" class="store-input action-three-input" rows="2" maxlength="80" placeholder="① 一条就够" aria-label="收获一"></textarea>
+            <textarea id="harvest1" class="store-input action-three-input" rows="2" maxlength="80" placeholder="① 一条就够" data-i18n-ph="home.action.ph1" aria-label="收获一"></textarea>
           </div>
           <div class="store-item store-item--goal action-three-item" data-col="2" data-harvest-slot="2" hidden>
-            <textarea id="harvest2" class="store-input action-three-input" rows="2" maxlength="80" placeholder="② 还有一条也可以" aria-label="收获二"></textarea>
+            <textarea id="harvest2" class="store-input action-three-input" rows="2" maxlength="80" placeholder="② 还有一条也可以" data-i18n-ph="home.action.ph2" aria-label="收获二"></textarea>
           </div>
           <div class="store-item store-item--goal action-three-item" data-col="3" data-harvest-slot="3" hidden>
-            <textarea id="harvest3" class="store-input action-three-input" rows="2" maxlength="80" placeholder="③ 最多三条" aria-label="收获三"></textarea>
+            <textarea id="harvest3" class="store-input action-three-input" rows="2" maxlength="80" placeholder="③ 最多三条" data-i18n-ph="home.action.ph3" aria-label="收获三"></textarea>
           </div>
         </div>
-        <button type="button" class="btn-harvest-add" id="addHarvestBtn" hidden>再记一条（可选）</button>
-        <p class="harvest-density-hint" id="harvestDensityHint">写一条，今日密度即达 15% · 无感计入</p>
+        <button type="button" class="btn-harvest-add" id="addHarvestBtn" hidden data-i18n="home.action.add">再记一条（可选）</button>
+        <p class="harvest-density-hint" id="harvestDensityHint" data-i18n="home.action.hint">写一条，今日密度即达 15% · 无感计入</p>
         <div class="action-save-bar">
-          <button type="button" class="btn-store-save" id="saveRecordBtn">记下今日</button>
-          <span class="saved-toast saved-toast--inline" id="savedRecordToast" aria-live="polite">已记下</span>
+          <button type="button" class="btn-store-save" id="saveRecordBtn" data-i18n="home.action.save">记下今日</button>
+          <span class="saved-toast saved-toast--inline" id="savedRecordToast" aria-live="polite" data-i18n="home.action.saved">已记下</span>
         </div>
         <textarea id="three1" hidden aria-hidden="true"></textarea>
         <textarea id="three2" hidden aria-hidden="true"></textarea>
@@ -1447,17 +1470,19 @@
     </section>
 
     <footer class="notebook-foot notebook-foot--minimal">
-      <a class="tool-link-foot" href="qr.html">扫码打开</a>
-      <a class="tool-link-foot" href="workspace.html" id="notebookToolLink">工具台 →</a>
+      <a class="tool-link-foot" href="qr.html"><span data-i18n="au.5">扫码打开</span></a>
+      <a class="tool-link-foot" href="workspace.html" id="notebookToolLink"><span data-i18n="au.6">工具台 →</span></a>
     </footer>
     </div>
   </main>
 
   <script src="assets/cap-storage.js"></script>
-  <script src="assets/lixing-config.js?v=20260920d"></script>
+  <script src="assets/lixing-i18n.js?v=20260930g"></script>
+  <script src="assets/lixing-config.js?v=20260925b"></script>
   <script src="assets/lixing-license-store.js?v=20260920a"></script>
   <script src="assets/lixing-entitlements.js?v=20260920a"></script>
-  <script src="assets/lixing-paywall.js?v=20260920e"></script>
+  <script src="assets/lixing-paywall.js?v=20260925b"></script>
+  <script src="assets/lixing-deeplink.js?v=20260926a"></script>
   <script src="assets/lixing-cloud-auth.js"></script>
   <script src="assets/lixing-lunar.js?v=20260828ac"></script>
   <script src="assets/lixing-v1.js?v=20260830f"></script>
@@ -3858,3 +3883,44 @@
   </script>
 </body>
 </html>
+
+<script>
+  /* 026：主页展示小组件掷币记录（原生注入 window.__LIXING_COIN__） */
+  (function () {
+    function renderCoin(d) {
+      if (!d || !d.count) return;
+      var host = document.getElementById("coinRecordHost");
+      if (!host) return;
+      var parts = ["今日掷币 <b>" + d.count + "</b> 次"];
+      if (d.gua) parts.push("卦象 <b>" + d.gua + "</b>");
+      if (d.face) parts.push("最近掷得「<b>" + d.face + "</b>」");
+      if (d.time) parts.push(d.time);
+      host.innerHTML = parts.join(" · ");
+      host.hidden = false;
+    }
+    renderCoin(window.__LIXING_COIN__);
+    window.addEventListener("lixing-coin", function () { renderCoin(window.__LIXING_COIN__); });
+  })();
+</script>
+
+<script>
+  /* 031：字体大小设置（主页 topnav，与工具台共享 localStorage） */
+  (function () {
+    var KEY = "life-density-fontsize";
+    function apply(v) {
+      document.documentElement.setAttribute("data-fs", v);
+      var btns = document.querySelectorAll("#fontSizePick .fsp-btn");
+      btns.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-fs") === v); });
+    }
+    var saved;
+    try { saved = localStorage.getItem(KEY) || "m"; } catch (e) { saved = "m"; }
+    apply(saved);
+    document.addEventListener("click", function (ev) {
+      var b = ev.target.closest && ev.target.closest("#fontSizePick .fsp-btn");
+      if (!b) return;
+      var v = b.getAttribute("data-fs");
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      apply(v);
+    });
+  })();
+</script>

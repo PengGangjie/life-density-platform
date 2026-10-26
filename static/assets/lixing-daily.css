@@ -3073,3 +3073,233 @@ body.home-three .wish-finalize-bar {
   color: #f3ead8;
 }
 
+
+/* ============================================================
+   移动端 / 电容壳深度适配 · 木与石
+   圆角三级轴参考 Supastack 主题体系（surface / card / control）：
+   石 = 卵石与印章边缘的圆润；木 = 暖纸底色与楷体（既有色板不动）
+   ============================================================ */
+:root {
+  --r-stone-surface: 20px;  /* 面板级 */
+  --r-stone-card: 16px;     /* 输入/日期条级 */
+  --r-stone-control: 14px;  /* 主按钮级 */
+  --r-pebble: 999px;        /* 胶囊（顶栏小件/日期条） */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (max-width: 719px) {
+  /* —— 全屏：吃满视口，安全区入位 —— */
+  body.daily-page {
+    min-height: 100dvh;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* 012 修正：topnav 原为固定 height，叠安全区 padding 后内容下坠贴底（真机「不居中」根因）
+     改为自动高度 + 上下配平，内容垂直居中于安全区以下；主页与工具台同修 */
+  /* 013：回到单行紧凑——左品牌右按钮（space-between），品牌组左对齐；
+     自动高度+上下小 padding 吃安全区，不再堆叠加高 */
+  body .topnav.app-banner {
+    height: auto;
+    min-height: var(--nav-h, 52px);
+    padding-top: calc(var(--safe-top) + 4px);
+    padding-bottom: 4px;
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+    flex-wrap: wrap;          /* 原生壳已隐藏登录，单行放得下；超窄时兜底换行 */
+    row-gap: 4px;
+    justify-content: space-between;
+  }
+  body .topnav.app-banner .brand {
+    justify-content: flex-start;
+  }
+  body .topnav.app-banner .topnav-auth {
+    justify-content: flex-end;
+  }
+  /* 034：大字号换行时整组居中（行内+行间） */
+  html[data-fs="l"] body .topnav.app-banner .topnav-auth {
+    justify-content: center;
+    align-content: center;
+    row-gap: 8px;
+  }
+  body.workspace-only .workspace {
+    padding-bottom: calc(var(--safe-bottom) + 24px);
+  }
+  body.home-scene-page .home-scene {
+    min-height: calc(100dvh - var(--nav-h, 52px));
+    /* 原为旧底栏预留的 112px，现只留安全区呼吸位 */
+    padding-bottom: calc(var(--safe-bottom) + 24px);
+  }
+
+  /* —— 底部「扫码打开 / 工具台」：桌面 web 引流件，移动端移除 —— */
+  .notebook-foot--minimal { display: none !important; }
+
+  /* —— banner 优化：透气、留白、层级 —— */
+  body.home-scene-page .topnav.app-banner { gap: 10px; }
+  body.home-scene-page .brand-wordmark,
+  body.workspace-only .brand-wordmark {
+    letter-spacing: 0.2em; font-size: 0.88rem;
+    color: rgba(214, 190, 150, 0.96); /* 暖金，替近白（木与石口径） */
+  }
+  body.home-scene-page .topnav-auth { gap: 8px; flex-wrap: nowrap; }
+
+  /* —— 按钮：卵石之圆润 —— */
+  .home-module-btn {
+    border-radius: var(--r-stone-control);
+    padding: 11px 10px;
+    letter-spacing: 0.16em;
+  }
+  .btn-decide {
+    border-radius: var(--r-pebble);
+    padding: 12px 28px;
+    background: rgba(243, 234, 216, 0.06);
+  }
+  .btn-store-save,
+  .btn-harvest-add,
+  .btn-save {
+    border-radius: var(--r-pebble);
+  }
+  .topnav-login,
+  .tool-link,
+  .topnav-logout {
+    border-radius: var(--r-pebble);
+    padding: 6px 14px;
+  }
+  .decide-input {
+    border-radius: var(--r-stone-card);
+    font-size: 1rem; /* 防 iOS 聚焦缩放 */
+  }
+  .journal-date-picker { border-radius: var(--r-pebble); }
+}
+
+
+/* 012：原生电容壳内隐藏 登录/退出（v1.0 本地优先无账号体系；/sign-in /sign-out 为死链） */
+.native-app #navLogin,
+.native-app #navLogout,
+.native-app #navUser {
+  display: none !important;
+}
+
+/* ============================================================
+   014 · 工具台胶囊标签 + PRO 升级页移动端适配
+   ============================================================ */
+@media (max-width: 719px) {
+  /* 工具台模块 tab：胶囊化+加明显（暖纸面上的墨色芯片） */
+  .nav-tabs { gap: 8px 8px; padding: 0 14px 14px; }
+  .nav-tabs button {
+    padding: 9px 16px;
+    font-size: 0.84rem;
+    border: 1px solid rgba(28, 22, 16, 0.18);
+    background: rgba(28, 22, 16, 0.055);
+    color: #574d40;
+  }
+  .nav-tabs button:hover { background: rgba(28, 22, 16, 0.1); color: var(--ink); }
+  .nav-tabs button .n { font-size: 0.7rem; }
+
+  /* PRO 升级页（lxpw 为 JS 注入，此处覆盖其注入样式） */
+  .lxpw-mask {
+    padding: calc(var(--safe-top, 0px) + 14px) 14px calc(var(--safe-bottom, 0px) + 14px);
+    z-index: 9990;
+  }
+  body .lxpw {
+    width: 100%;
+    max-height: calc(100dvh - 28px - var(--safe-top, 0px) - var(--safe-bottom, 0px));
+    overflow-y: auto;
+    border-radius: var(--r-stone-surface, 20px);
+    padding: 20px 16px 18px;
+  }
+  body .lxpw .lxpw-hero h3 { font-size: 16px; letter-spacing: 0.22em; }
+  body .lxpw .lxpw-quote { font-size: 16px; letter-spacing: 0.06em; line-height: 1.7; }
+  body .lxpw .lxpw-act input { border-radius: var(--r-stone-card, 16px); font-size: 1rem; }
+  body .lxpw .lxpw-act button { border-radius: var(--r-pebble, 999px); }
+}
+
+/* ============================================================
+   015 · 工具台主入口提亮（banner 中唯一主按钮，EN/PRO 退后）
+   ============================================================ */
+@media (max-width: 719px) {
+  body .topnav.app-banner .tool-link {
+    background: rgba(214, 190, 150, 0.18);
+    border: 1px solid rgba(214, 190, 150, 0.6);
+    color: #eedfc4;
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+    padding: 7px 18px;
+    border-radius: var(--r-pebble, 999px);
+    text-decoration: none;
+  }
+  body .topnav.app-banner .tool-link:hover {
+    background: rgba(214, 190, 150, 0.3);
+    color: #f7eeda;
+  }
+}
+
+/* 022：原生壳内隐藏 登录遗留提示（guest 阅览提示/云同步 hint/请登录 toast） */
+.native-app #guestReadonlyHint,
+.native-app #cloudSyncHint,
+.native-app .guest-blocked-toast { display: none !important; }
+
+
+/* ============================================================
+   030 · 字体大小设置（大中小）
+   ============================================================ */
+/* 032 修正：缩放挂 html（rem 随根字号缩放，全局生效；body 级只影响继承文本） */
+html[data-fs="s"] { font-size: 14px; }
+html[data-fs="m"] { font-size: 16px; }
+html[data-fs="l"] { font-size: 19px; }
+
+/* 老年无障碍（L 档）：触控目标 ≥48px、加粗关键词、输入框加高 */
+html[data-fs="l"] .workspace-body .field input,
+html[data-fs="l"] .workspace-body textarea.store-input,
+html[data-fs="l"] .workspace-body .btn,
+html[data-fs="l"] .workspace-body .btn-store-save,
+html[data-fs="l"] .home-module-btn,
+html[data-fs="l"] .btn-decide {
+  min-height: 48px;
+}
+html[data-fs="l"] .nav-tabs button { padding: 12px 18px; }
+html[data-fs="l"] .workspace-body label { font-weight: 600; }
+html[data-fs="l"] .card-desc { color: #5a4f40; }
+
+.font-size-pick {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 10px 0 2px; padding: 6px 10px;
+  border: 1px solid rgba(201,55,86,0.25); border-radius: 999px;
+  background: rgba(246,241,231,0.6);
+}
+.fsp-label { font-size: 0.78rem; letter-spacing: 0.2em; color: #8a7a63; }
+.fsp-btn {
+  padding: 4px 14px; border-radius: 999px; border: 1px solid rgba(28,22,16,0.16);
+  background: rgba(28,22,16,0.05); color: #574d40; font: inherit; font-size: 0.82rem; cursor: pointer;
+}
+.fsp-btn.is-on { background: var(--ink, #1a1a1a); color: #fff; border-color: var(--ink, #1a1a1a); }
+
+.font-size-pick--nav { display: inline-flex; gap: 4px; padding: 2px; border-color: rgba(243,234,216,0.25); background: rgba(243,234,216,0.06); }
+.font-size-pick--nav .fsp-btn { padding: 3px 10px; font-size: 0.74rem; border-color: transparent; background: transparent; color: rgba(214,190,150,0.85); }
+.font-size-pick--nav .fsp-btn.is-on { background: rgba(214,190,150,0.2); color: #eedfc4; }
+
+
+/* ============================================================
+   032 · topnav 胶囊统一：等高、垂直居中（修高矮不齐）
+   ============================================================ */
+.topnav-auth { align-items: center; }
+/* L 档窄屏兜底：放不下时整组换行并居中（行内+行间都居中，034 口径） */
+
+/* 033 修正：强制等高（min-height 会随内容长高）+ 清掉选择器组的旧 margin（错位元凶） */
+.topnav-auth > * {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 34px; min-height: 0; box-sizing: border-box; margin: 0;
+  line-height: 1; white-space: nowrap; /* 034：中文双字词不换行（工具/台 竖排 bug） */
+}
+.topnav-auth .topnav-login,
+.topnav-auth .topnav-logout {
+  border: 1px solid rgba(243,234,216,0.3);
+  border-radius: 999px; padding: 0 12px;
+}
+.topnav-auth .tool-link { padding: 0 12px; border-radius: 999px; }
+.font-size-pick--nav {
+  height: 34px; padding: 2px 3px; margin: 0;
+  border-radius: 999px;
+}
+.font-size-pick--nav .fsp-btn { height: 28px; min-height: 0; padding: 0 9px; font-size: 0.8rem; line-height: 1; }
+/* 间距统一：顶栏子项间距一律 8px，消除“有的挤有的开” */
+.topnav-auth { gap: 6px !important; }

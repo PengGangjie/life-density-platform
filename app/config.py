@@ -37,8 +37,10 @@ class Settings:
     port: int
 
 
-@lru_cache
-def get_settings() -> Settings:
+_DEFAULT_SESSION_SECRET = "dev-change-me-in-production"
+
+
+def _build_settings() -> Settings:
     static = ROOT / "static"
     redirect = os.getenv("LOGTO_REDIRECT_URI", "").strip()
     post_logout = os.getenv("LOGTO_POST_LOGOUT_URI", "").strip()
@@ -53,7 +55,7 @@ def get_settings() -> Settings:
         turso_url = turso_url.replace("libsql://", "https://", 1)
     return Settings(
         app_name="lixing-rixing",
-        session_secret=os.getenv("SESSION_SECRET", "dev-change-me-in-production"),
+        session_secret=os.getenv("SESSION_SECRET", _DEFAULT_SESSION_SECRET),
         auth_required=os.getenv("AUTH_REQUIRED", "false").lower() in {"1", "true", "yes"},
         logto_endpoint=os.getenv("LOGTO_ENDPOINT", "").strip(),
         logto_app_id=os.getenv("LOGTO_APP_ID", "").strip(),
@@ -67,3 +69,14 @@ def get_settings() -> Settings:
         static_dir=static,
         port=int(os.getenv("PORT", "8010")),
     )
+
+
+@lru_cache
+def get_settings() -> Settings:
+    settings = _build_settings()
+    # 生产打开登录墙时，默认密钥会让会话可被伪造。本地 AUTH_REQUIRED 默认关闭，不受影响。
+    if settings.auth_required and settings.session_secret == _DEFAULT_SESSION_SECRET:
+        raise RuntimeError(
+            "AUTH_REQUIRED 已打开，但 SESSION_SECRET 仍是默认值。请设置随机 SESSION_SECRET 后再启动。"
+        )
+    return settings

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import datetime, timezone
 from typing import Union
 
 from fastapi import FastAPI, File, Request, UploadFile
@@ -30,9 +29,18 @@ PUBLIC_PREFIXES = (
     "/cloud-ui.css",
 )
 
-PUBLIC_PATHS = {"/", "/index.html", "/workspace.html", "/qr.html", "/api/me", "/__backup", "/api/audio/config"}
+PUBLIC_PATHS = {
+    "/",
+    "/index.html",
+    "/workspace.html",
+    "/qr.html",
+    "/shenshou.html",
+    "/api/me",
+    "/api/audio/config",
+}
 
-BACKUP_NAME = "lixing-autobackup.json"
+MAX_AUDIO_BYTES = 15 * 1024 * 1024
+MAX_STATE_BYTES = 2 * 1024 * 1024
 
 settings = get_settings()
 app = FastAPI(title="砺行 · 日省")
@@ -129,7 +137,9 @@ async def audio_config():
 
 @app.post("/api/audio/transcribe")
 async def audio_transcribe(audio_file: UploadFile = File(...)):
-    raw = await audio_file.read()
+    raw = await audio_file.read(MAX_AUDIO_BYTES + 1)
+    if len(raw) > MAX_AUDIO_BYTES:
+        return JSONResponse({"ok": False, "error": "音频超过 15MB"}, status_code=413)
     name = audio_file.filename or "voice.webm"
     result = audio_proxy.transcribe_blob(raw, filename=name)
     if not result.get("ok"):
@@ -214,38 +224,18 @@ async def write_state(request: Request):
     sub = current_sub(request)
     if not sub:
         return JSONResponse({"detail": "未登录"}, status_code=401)
-    body = await request.json()
-    data = body.get("data", body)
+    raw_body = await request.body()
+    if len(raw_body) > MAX_STATE_BYTES:
+        return JSONResponse({"detail": "状态超过 2MB"}, status_code=413)
+    try:
+        body = json.loads(raw_body.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return JSONResponse({"detail": "invalid json"}, status_code=400)
+    data = body.get("data", body) if isinstance(body, dict) else None
     if not isinstance(data, dict):
         return JSONResponse({"detail": "data 须为对象"}, status_code=400)
     updated_at = put_state(sub, json.dumps(data, ensure_ascii=False))
     return {"ok": True, "updated_at": updated_at}
-
-
-@app.post("/__backup")
-async def backup(request: Request):
-    try:
-        payload = await request.json()
-    except Exception:
-        return JSONResponse({"ok": False, "error": "invalid json"}, status_code=400)
-    if not isinstance(payload, dict):
-        return JSONResponse({"ok": False, "error": "expected object"}, status_code=400)
-    if "data" not in payload:
-        payload = {
-            "app": "lixing-rixing",
-            "version": 3,
-            "exportedAt": datetime.now(tz=timezone.utc).isoformat(),
-            "auto": True,
-            "data": payload,
-        }
-    else:
-        payload.setdefault("app", "lixing-rixing")
-        payload.setdefault("auto", True)
-        payload["exportedAt"] = datetime.now(tz=timezone.utc).isoformat()
-    out = settings.static_dir / BACKUP_NAME
-    text = json.dumps(payload, ensure_ascii=False, indent=2)
-    out.write_text(text, encoding="utf-8")
-    return {"ok": True, "path": str(out), "bytes": len(text.encode("utf-8"))}
 
 
 static_dir = settings.static_dir

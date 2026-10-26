@@ -7,18 +7,18 @@
 (function () {
   "use strict";
 
-  var FEATURE_LABELS = {
-    "cloud-sync": { name: "多设备云同步", desc: "日记与复盘在手机、电脑、网页间自动对齐" },
-    "ai-insights": { name: "AI 年度洞察", desc: "把一年的日省沉淀成可读的趋势与提醒" },
-    "export-pdf": { name: "导出成册", desc: "把选定的日省区间排成可打印的册子" },
-    "decision-artifacts": { name: "决策法宝", desc: "决策币之外，骰子等多种决策器换着问" },
-    "bazi-coin-skin": { name: "八字五行定制卡面", desc: "按生辰定制专属决策币，问心更对味" }
-  };
+  function t(key) { return window.LixingI18n ? window.LixingI18n.t(key) : key; }
+  function lang() { return window.LixingI18n ? window.LixingI18n.lang() : "zh"; }
 
-  /* 增值服务（Pro 之外单独议价，不入 PRO_FEATURES 门控清单） */
-  var ADDON_SERVICES = [
-    { name: "人生教练 1V1", desc: "日省数据在手，教练陪你把复盘落成行动；深度定制咨询，价格上线时公布" }
-  ];
+  var FEATURE_IDS = ["cloud-sync", "ai-insights", "export-pdf", "decision-artifacts", "bazi-coin-skin"];
+  /* 增值服务 id 列表（Pro 之外单独议价，不入 PRO_FEATURES 门控清单） */
+  var ADDON_IDS = ["lifecoach"];
+
+  function featureLabel(f) {
+    var meta = { name: t("pw.f." + f), desc: t("pw.f." + f + ".d") };
+    if (meta.name === "pw.f." + f) meta = { name: f, desc: "" };
+    return meta;
+  }
 
   var modal = null;
 
@@ -31,11 +31,12 @@
   }
 
   function featureRows(highlight) {
-    return (cfg().PRO_FEATURES || []).map(function (f) {
-      var meta = FEATURE_LABELS[f] || { name: f, desc: "" };
+    var list = (cfg().PRO_FEATURES && cfg().PRO_FEATURES.length) ? cfg().PRO_FEATURES : FEATURE_IDS;
+    return list.map(function (f) {
+      var meta = featureLabel(f);
       var isHi = highlight === f;
       return '<li class="lxpw-item' + (isHi ? " is-hi" : "") + '">'
-        + '<span class="lxpw-badge">' + (isHi ? "当前" : "Pro") + "</span>"
+        + '<span class="lxpw-badge">' + (isHi ? t("pw.badge.now") : "PRO") + "</span>"
         + '<div class="lxpw-txt"><b>' + esc(meta.name) + "</b>"
         + (meta.desc ? "<small>" + esc(meta.desc) + "</small>" : "")
         + "</div></li>";
@@ -47,19 +48,21 @@
     if (!st) return "";
     if (st.plan === "pro") {
       var until = st.license && st.license.expiresAt
-        ? " · 有效期至 " + st.license.expiresAt.replace(/^(\d{4})(\d{2})(\d{2})$/, "$1-$2-$3")
-        : " · 长期有效";
-      return '<p class="lxpw-state is-pro">已激活 PRO行者' + until + '　<button type="button" class="lxpw-unlink" data-act="deactivate">解除激活</button></p>';
+        ? t("pw.state.until") + st.license.expiresAt.replace(/^(\d{4})(\d{2})(\d{2})$/, "$1-$2-$3")
+        : t("pw.state.forever");
+      return '<p class="lxpw-state is-pro">' + t("pw.state.pro") + esc(until) + '　<button type="button" class="lxpw-unlink" data-act="deactivate">' + t("pw.unlink") + "</button></p>";
     }
-    return '<p class="lxpw-state">当前：免费版 · 全部基础功能可用</p>';
+    return '<p class="lxpw-state">' + t("pw.state.free") + "</p>";
   }
 
   function addonRows() {
-    return ADDON_SERVICES.map(function (s) {
+    return ADDON_IDS.map(function (id) {
+      var name = t("pw.a." + id);
+      var desc = t("pw.a." + id + ".d");
       return '<li class="lxpw-item">'
-        + '<span class="lxpw-badge lxpw-badge--addon">另议</span>'
-        + '<div class="lxpw-txt"><b>' + esc(s.name) + "</b>"
-        + (s.desc ? "<small>" + esc(s.desc) + "</small>" : "")
+        + '<span class="lxpw-badge lxpw-badge--addon">' + t("pw.addon.badge") + "</span>"
+        + '<div class="lxpw-txt"><b>' + esc(name === "pw.a." + id ? id : name) + "</b>"
+        + (desc && desc !== "pw.a." + id + ".d" ? "<small>" + esc(desc) + "</small>" : "")
         + "</div></li>";
     }).join("");
   }
@@ -102,25 +105,34 @@
     el.hidden = true;
     /* 增值服务（教练入驻/定制咨询）为后话，默认不展示；SHOW_ADDON_SERVICES 置 true 启用 */
     var addonSection = cfg().SHOW_ADDON_SERVICES
-      ? '<p class="lxpw-group">增值服务 · 价格另议</p>'
+      ? '<p class="lxpw-group">' + t("pw.addon.group") + "</p>"
         + '<ul class="lxpw-list lxpw-list--addon">' + addonRows() + "</ul>"
       : "";
-    el.innerHTML = '<div class="lxpw" role="dialog" aria-label="PRO行者">'
-      + '<button type="button" class="lxpw-close" data-act="close" aria-label="关闭">×</button>'
+    var titleParts = t("pw.title").split(" ");
+    var titleHtml = titleParts.length > 1 && /^PRO$/i.test(titleParts[0])
+      ? "<em>" + titleParts[0] + "</em> " + esc(titleParts.slice(1).join(" "))
+      : esc(t("pw.title"));
+    var quoteHtml = esc(t("pw.quote"))
+      .replace(t("pw.quote.hl1"), "<b>" + t("pw.quote.hl1") + "</b>")
+      .replace(t("pw.quote.hl2"), "<b>" + t("pw.quote.hl2") + "</b>");
+    if (lang() !== "en") quoteHtml = quoteHtml.replace("，<b>", "，<br/><b>"); /* 中文两行排，英文一行 */
+    el.innerHTML = '<div class="lxpw" role="dialog" aria-label="' + esc(t("pw.title")) + '">'
+      + '<button type="button" class="lxpw-close" data-act="close" aria-label="×">×</button>'
       + '<div class="lxpw-hero">'
-      + '<h3><em>PRO</em> 行者</h3>'
-      + '<p class="lxpw-quote">君子<b>藏器于身</b>，<br/><b>待时而动</b>，何不利之有。</p>'
-      + '<p class="lxpw-quote-src">——《周易 · 系辞下》</p>'
+      + "<h3>" + titleHtml + "</h3>"
+      + '<p class="lxpw-quote">' + quoteHtml + "</p>"
+      + '<p class="lxpw-quote-src">' + esc(t("pw.quote.src")) + "</p>"
       + "</div>"
-      + '<p class="lxpw-group">PRO 之器</p>'
+      + '<p class="lxpw-group">' + esc(t("pw.group")) + "</p>"
       + '<ul class="lxpw-list">' + featureRows() + "</ul>"
       + addonSection
       + '<div data-slot="state">' + statusLine() + "</div>"
-      + '<form class="lxpw-act" data-slot="form">'
-      + '<input data-slot="key" placeholder="激活码（内测发放）" autocomplete="off" spellcheck="false" />'
-      + '<button type="submit">激活</button></form>'
-      + '<p class="lxpw-err" data-slot="err"></p>'
-      + '<p class="lxpw-note">基础记录、日省、复盘永久免费 — PRO行者 价格上线时公布，早期用户享创始优惠。</p>'
+      + (cfg().PAYWALL_ACTIVATION_INPUT === false ? "" :
+         '<form class="lxpw-act" data-slot="form">'
+      + '<input data-slot="key" placeholder="' + esc(t("pw.key.ph")) + '" autocomplete="off" spellcheck="false" />'
+      + '<button type="submit">' + esc(t("pw.cta")) + "</button></form>"
+      + '<p class="lxpw-err" data-slot="err"></p>')
+      + '<p class="lxpw-note">' + esc(t("pw.note")) + "</p>"
       + "</div>";
 
     document.head.appendChild(style);
@@ -138,7 +150,8 @@
     var list = modal.querySelector(".lxpw-list");
     if (list) list.innerHTML = featureRows(feature);
     renderState();
-    modal.querySelector('[data-slot="err"]').textContent = "";
+    var errEl = modal.querySelector('[data-slot="err"]');
+    if (errEl) errEl.textContent = "";
     modal.hidden = false;
     var input = modal.querySelector('[data-slot="key"]');
     if (input && window.LixingEntitlements && window.LixingEntitlements.status().plan !== "pro") input.focus();
@@ -167,7 +180,7 @@
     window.LixingEntitlements.activate(input.value.trim()).then(function (r) {
       btn.disabled = false;
       if (r.ok) { input.value = ""; err.textContent = ""; renderState(); }
-      else err.textContent = r.error || "激活失败";
+      else err.textContent = (r.error === "激活码格式不正确") ? t("pw.err.format") : (r.error || t("pw.err.format"));
     });
   }
 
@@ -187,6 +200,12 @@
   }
 
   window.LixingPaywall = { open: open, close: close };
+  /* 语言切换后销毁已建弹窗，下次 open 按新语言重建 */
+  if (window.LixingI18n && window.LixingI18n.onChange) {
+    window.LixingI18n.onChange(function () {
+      if (modal) { modal.remove(); modal = null; }
+    });
+  }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

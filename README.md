@@ -26,5 +26,8 @@ cd output\life-density-platform
 ## 部署
 
 1. 按 `secrets/life-density/README.md` 配置 Logto + Turso → `secrets/life-density/.env`
-2. `.\venv\Scripts\python.exe scripts\sync_lixing_to_life_density_space.py`
-3. `.\venv\Scripts\python.exe scripts\deploy_life_density_space.py`
+2. 发版前确认环境变量：`SESSION_SECRET` 为随机值（不能是 `dev-change-me-in-production`），`AUTH_REQUIRED=true`。缺一且登录墙打开时，进程会拒绝启动。
+3. `.\venv\Scripts\python.exe scripts\sync_lixing_to_life_density_space.py`
+4. `.\venv\Scripts\python.exe scripts\deploy_life_density_space.py`
+
+灰度页 `/shenshou.html` 对未登录开放。`POST /__backup` 已移除，避免日记写进公开静态目录。

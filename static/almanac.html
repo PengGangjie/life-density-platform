@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>砺行 · 今日黄历</title>
+<style>
+  @font-face { font-family: "GuoWen"; src: url("assets/fonts/lx-w-e8d41f.woff2") format("woff2"); }
+  @font-face { font-family: "LiFix"; src: url("assets/fonts/LixingFix.ttf") format("truetype"); }
+  .char-li { font-family: "LiFix", "GuoWen", serif; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: "GuoWen", "KaiTi", "STKaiti", serif;
+    background: linear-gradient(180deg, #f7f2e6 0%, #f2ebd8 100%);
+    color: #1a1a1a; display: flex; flex-direction: column; align-items: center;
+    padding: max(24px, env(safe-area-inset-top)) 22px 40px;
+  }
+  .top { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+  .top .back { text-decoration: none; color: #8b8272; font-size: 15px; letter-spacing: .2em; }
+  .card {
+    width: 100%; max-width: 420px; background: #fcf9f2; border: 1px solid rgba(201,55,86,.28);
+    border-radius: 18px; padding: 30px 26px; margin-top: 18px;
+    box-shadow: 0 14px 40px rgba(30,20,10,.08);
+  }
+  .date-big { display: flex; align-items: baseline; gap: 14px; }
+  .date-big .d { font-size: 88px; line-height: 1; color: #1a1a1a; }
+  .date-big .side { display: flex; flex-direction: column; gap: 6px; }
+  .date-big .lunar { font-size: 20px; color: #c93756; }
+  .date-big .g { font-size: 15px; color: #666; }
+  .seal-line { display: flex; align-items: center; gap: 12px; margin: 22px 0 18px; }
+  .seal-line i { flex: 1; height: 1px; background: rgba(201,55,86,.3); }
+  .seal-line span { font-size: 13px; letter-spacing: .5em; text-indent: .5em; color: #c93756; }
+  .yiji { display: flex; gap: 18px; }
+  .yiji .col { flex: 1; background: #f6efe0; border-radius: 12px; padding: 16px 16px 14px; }
+  .yiji .tag { font-size: 15px; margin-bottom: 10px; }
+  .yiji .yi .tag { color: #c93756; }
+  .yiji .ji .tag { color: #666; }
+  .yiji .items { font-size: 24px; line-height: 1.8; }
+  .poem { margin-top: 20px; text-align: center; font-size: 17px; line-height: 1.9; color: #3a352c; }
+  .poem small { display: block; margin-top: 4px; font-size: 13px; color: #8b8272; }
+  .foot { margin-top: 26px; text-align: center; }
+  .foot .logo { width: 44px; height: 44px; border-radius: 10px; }
+  .foot .t { margin-top: 8px; font-size: 12px; letter-spacing: .3em; color: #8b8272; }
+  .hint { margin-top: 14px; font-size: 11px; color: #a89e8a; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="top">
+    <a class="back" href="index.html">‹ 日省</a>
+    <span style="font-size:14px;color:#8b8272;letter-spacing:.3em;">今日黄历</span>
+  </div>
+
+  <div class="card">
+    <div class="date-big">
+      <div class="d" id="day">—</div>
+      <div class="side">
+        <div class="lunar" id="lunar">—</div>
+        <div class="g" id="greg">—</div>
+      </div>
+    </div>
+    <div class="seal-line"><i></i><span>宜 忌</span><i></i></div>
+    <div class="yiji">
+      <div class="col yi"><div class="tag">宜</div><div class="items" id="yi">—</div></div>
+      <div class="col ji"><div class="tag">忌</div><div class="items" id="ji">—</div></div>
+    </div>
+    <div class="poem" id="poem">—<small id="poemSrc"></small></div>
+  </div>
+
+  <div class="foot">
+    <img class="logo" src="assets/brand-logo.png" onerror="this.style.display='none'" alt="" />
+    <div class="t"><span class="char-li">砺</span>行 · 黄历</div>
+  </div>
+  <div class="hint">宜忌为砺行式日常提醒，非传统黄历</div>
+
+<script>
+(function () {
+  var POOL_YI = ["三省吾身", "知行合一", "藏器待时", "厚积薄发", "笃行不怠", "温故知新", "正心诚意", "谋定后动", "一诺千金", "日省吾身"];
+  var POOL_JI = ["半途而废", "三心二意", "心浮气躁", "怨天尤人", "因小失大", "随波逐流", "好高骛远", "浅尝辄止"];
+  var POOL_POEM = [
+    ["君子藏器于身，待时而动。", "周易·系辞下"],
+    ["不积跬步，无以至千里。", "荀子·劝学"],
+    ["日省吾身，则知明而行无过矣。", "荀子·劝学"],
+    ["路漫漫其修远兮，吾将上下而求索。", "离骚"],
+    ["博学之，审问之，慎思之，明辨之，笃行之。", "中庸"],
+    ["锲而不舍，金石可镂。", "荀子·劝学"],
+    ["胜人者有力，自胜者强。", "道德经"],
+    ["知人者智，自知者明。", "道德经"],
+    ["合抱之木，生于毫末。", "道德经"],
+    ["岁不寒，无以知松柏；事不难，无以知君子。", "荀子·大略"],
+    ["玉不琢，不成器；人不学，不知道。", "礼记·学记"],
+    ["凡事豫则立，不豫则废。", "中庸"],
+    ["见贤思齐焉，见不贤而内自省也。", "论语·里仁"],
+    ["士不可以不弘毅，任重而道远。", "论语·泰伯"]
+  ];
+  var LM = ["正月","二月","三月","四月","五月","六月","七月","八月","九月","十月","冬月","腊月"];
+  var LD = ["初一","初二","初三","初四","初五","初六","初七","初八","初九","初十","十一","十二","十三","十四","十五","十六","十七","十八","十九","二十","廿一","廿二","廿三","廿四","廿五","廿六","廿七","廿八","廿九","三十"];
+  var WD = ["周日","周一","周二","周三","周四","周五","周六"];
+
+  // 与 Swift Almanac.today 同算法：按日在池内确定性取
+  function dayIndex(d) {
+    var start = new Date(d.getFullYear(), 0, 0);
+    return Math.floor((d - start) / 86400000);
+  }
+  var now = new Date();
+  var day = dayIndex(now);
+  var a = day % POOL_YI.length;
+  var b = Math.floor(day / 7 + 3) % POOL_YI.length;
+  if (b === a) b = (b + 1) % POOL_YI.length;
+  var j = (day * 3 + 1) % POOL_JI.length;
+  var poem = POOL_POEM[day % POOL_POEM.length];
+
+  document.getElementById("day").textContent = now.getDate();
+  var cal = document.createElement("canvas"); // 农历：借 Intl
+  var lunarStr = "";
+  try {
+    var fmt = new Intl.DateTimeFormat("zh-CN-u-ca-chinese", { month: "long", day: "numeric" });
+    var parts = fmt.formatToParts(now);
+    var mo = parts.find(function (p) { return p.type === "month"; }).value;
+    var dd = parts.find(function (p) { return p.type === "day"; }).value;
+    var mi = parseInt(mo, 10);
+    var di = parseInt(dd, 10);
+    lunarStr = (LM[mi - 1] || mo) + "·" + (LD[di - 1] || dd);
+  } catch (e) { lunarStr = ""; }
+  document.getElementById("lunar").textContent = lunarStr || (now.getMonth() + 1) + "月";
+  document.getElementById("greg").textContent = (now.getMonth() + 1) + "月" + now.getDate() + "日 " + WD[now.getDay()];
+  document.getElementById("yi").innerHTML = POOL_YI[a] + "<br/>" + POOL_YI[b];
+  document.getElementById("ji").textContent = POOL_JI[j];
+  document.getElementById("poem").firstChild.textContent = poem[0];
+  document.getElementById("poemSrc").textContent = "—— " + poem[1];
+})();
+</script>
+  <script src="assets/lixing-deeplink.js?v=20260926a"></script>
+</body>
+</html>

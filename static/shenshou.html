@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>砺行 · 每日神兽</title>
+<style>
+  @font-face { font-family: "Kai"; src: url("assets/fonts/lx-k-e8d41f.woff2") format("woff2"); }
+  @font-face { font-family: "LiFix"; src: url("assets/fonts/LixingFix.ttf") format("truetype"); }
+  .char-li { font-family: "LiFix", "Kai", serif; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #0f0e12; }
+  body {
+    font-family: "Kai", "KaiTi", "STKaiti", serif;
+    color: #f0ead9; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: max(20px, env(safe-area-inset-top)) 20px 48px;
+  }
+  .top { width: 100%; max-width: 640px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .top .bk { color: #9a917d; text-decoration: none; font-size: 14px; letter-spacing: .2em; }
+  .top .tt { font-size: 15px; letter-spacing: .5em; color: #c9a85c; text-shadow: 0 0 12px rgba(201,168,92,.3); }
+  .eyebrow {
+    width: 100%; max-width: 640px; margin-bottom: 14px;
+    font-size: 15px; line-height: 1.8; letter-spacing: .06em; color: #e6dcc2;
+  }
+
+  .card {
+    width: 100%; max-width: 640px; position: relative;
+    background:
+      radial-gradient(ellipse 500px 300px at 50% 20%, rgba(255,240,200,.12), transparent 70%),
+      linear-gradient(170deg, #241f2a 0%, #1a1720 55%, #120f16 100%);
+    border: 1.5px solid rgba(201,168,92,.45); border-radius: 18px;
+    overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,.4);
+  }
+  .card::after { content:""; position:absolute; inset:6px; border:1px solid rgba(240,234,217,.15); border-radius:13px; pointer-events:none; }
+  .card .art { position: relative; aspect-ratio: 3/4; overflow:hidden; }
+  .card .art img { width: 100%; height: 100%; object-fit: cover; object-position: center center; display: block; }
+  .card .art::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 72%,#1a1720 100%); }
+  .card .rarity-seal {
+    position: absolute; top: 14px; left: 14px; z-index:2;
+    border: 2px solid #a82845; color: #d6494f; font-size: 13px;
+    padding: 5px 10px; letter-spacing: .3em; text-indent: .3em; border-radius: 4px;
+    background: rgba(15,14,18,.65); backdrop-filter: blur(4px);
+    box-shadow: 0 0 14px rgba(168,40,69,.2);
+  }
+  .card .term-badge {
+    position: absolute; top: 14px; right: 14px; z-index:2;
+    background: rgba(201,168,92,.92); color: #14110d; font-size: 13px;
+    padding: 5px 12px; letter-spacing: .2em; border-radius: 999px;
+    text-shadow: none;
+  }
+  .card .body { padding: 22px 24px 24px; position:relative; z-index:1; margin-top:-40px; }
+  .card .nm { display: flex; align-items: baseline; gap: 12px; }
+  .card .nm .n { font-size: 44px; letter-spacing: .1em; text-shadow: 0 0 20px rgba(201,168,92,.25); }
+  .card .nm .py { font-size: 12px; color: #9a917d; letter-spacing: .12em; }
+  .card .nm .dim {
+    margin-left: auto; font-size: 15px; padding: 4px 12px; border-radius: 999px;
+    border: 1px solid; letter-spacing: .1em; text-shadow: 0 0 8px currentColor;
+  }
+  .card .quote {
+    margin-top: 14px; font-size: 16px; line-height: 1.9; color: #e6dcc2;
+    border-left: 3px solid #c9a85c; padding-left: 14px;
+  }
+  .card .quote small { display: block; margin-top: 4px; font-size: 12px; color: #9a917d; }
+  .card .story { margin-top: 12px; font-size: 14px; line-height: 1.95; color: #cfc5ab; }
+  .card .skill {
+    margin-top: 16px; background: rgba(201,168,92,.10); border: 1px dashed rgba(201,168,92,.5);
+    border-radius: 10px; padding: 13px 16px; font-size: 15px; color: #f0ead9;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .card .skill .ic { color: #f0d78c; font-size: 13px; border: 1px solid #c9a85c; border-radius: 4px; padding: 2px 7px; flex: none; margin-top: 2px; text-shadow: 0 0 8px rgba(201,168,92,.3); }
+  .morrow {
+    margin-top: 16px; display: flex; align-items: center; gap: 10px;
+    color: #9a917d; font-size: 13px; letter-spacing: .2em;
+  }
+  .morrow img {
+    width: 48px; height: 36px; object-fit: cover; border-radius: 4px;
+    filter: brightness(0); opacity: .8;
+  }
+
+  .lamp {
+    width: 100%; max-width: 640px; margin-top: 18px;
+    background: linear-gradient(170deg, #1a1720, #120f16);
+    border: 1px solid rgba(201,168,92,.3); border-radius: 14px;
+    padding: 18px 20px 20px;
+  }
+  .lamp h3 {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+    font-size: 15px; letter-spacing: .2em; color: #c9a85c; margin-bottom: 8px;
+    text-shadow: 0 0 10px rgba(201,168,92,.25);
+  }
+  .lamp .side { font-size: 12px; letter-spacing: .12em; color: #f0d78c; white-space: nowrap; }
+  .badge {
+    font-size: 11px; letter-spacing: .2em; color: #14110d; background: #f0d78c;
+    border-radius: 999px; padding: 2px 8px; margin-left: 8px;
+  }
+  .echo { min-height: 0; margin: 0 0 12px; font-size: 15px; line-height: 1.7; color: #f0ead9; }
+  .echo.tuck { font-size: 12px; color: #9a917d; }
+  .lamp .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 8px; }
+  .lamp .cell { display: flex; flex-direction: column; align-items: center; color: #9a917d; position: relative; }
+  .flame {
+    width: 36px; height: 36px; border-radius: 50%; position: relative;
+    background: radial-gradient(circle at 50% 40%, #3a342c, #1a1714 72%);
+    box-shadow: inset 0 0 0 1px rgba(240,234,217,.08);
+  }
+  .stem { width: 18px; height: 2px; margin-top: 6px; background: #3a342c; }
+  .label { font-size: 12px; margin-top: 6px; letter-spacing: .08em; }
+  .ashnote { font-size: 10px; color: #7a7261; margin-top: 2px; min-height: 14px; letter-spacing: .04em; }
+  .cell.due .label { color: #f0ead9; }
+  .cell.ash .flame { background: transparent; border: 1.5px dashed #6a6256; box-shadow: none; }
+  .cell.on .flame {
+    background: radial-gradient(circle at 50% 40%, #fff6d0, #f0d78c 46%, #c9a85c 82%);
+    box-shadow: 0 0 12px #f0d78c, 0 0 32px rgba(240,215,140,.45);
+  }
+  .cell.on .stem { background: #f0d78c; }
+  .cell.on .label { color: #f0ead9; }
+  .cell.ignite .flame { animation: lampIn 450ms cubic-bezier(.34,1.4,.64,1); }
+  .spark {
+    position: absolute; left: 16px; top: 10px; width: 4px; height: 4px; border-radius: 50%;
+    background: #f0d78c; opacity: 0; pointer-events: none;
+  }
+  .cell.ignite .spark { animation: sparkUp 600ms ease-out forwards; }
+  .cell.ignite .s2 { margin-left: 7px; animation-delay: 70ms; }
+  .cell.ignite .s3 { margin-left: -8px; animation-delay: 120ms; }
+  @keyframes lampIn {
+    0% { transform: scale(.6); }
+    55% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+  }
+  @keyframes sparkUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-28px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cell.ignite .flame, .cell.ignite .spark { animation: none; }
+  }
+
+  .btn {
+    margin-top: 16px; display: block; text-align: center; text-decoration: none;
+    border: 1.5px dashed #c9a85c; color: #f0d78c; padding: 10px 18px; border-radius: 999px;
+    font-size: 14px; letter-spacing: .3em; text-indent: .3em;
+    background: rgba(201,168,92,.08);
+  }
+  .btn.done { opacity: .6; }
+
+  .dex { width: 100%; max-width: 640px; margin-top: 18px; }
+  .dex h3 { font-size: 15px; letter-spacing: .4em; color: #c9a85c; margin-bottom: 4px; }
+  .dex .sub { font-size: 12px; color: #c9a85c; letter-spacing: .18em; margin-bottom: 12px; }
+  .dex .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px; }
+  .dex .grid.complete { box-shadow: 0 0 0 1px #f0d78c, 0 0 18px rgba(240,215,140,.28); border-radius: 12px; padding: 8px; }
+  .dex .g {
+    aspect-ratio: 3/4; border-radius: 10px;
+    border: 1px solid rgba(201,168,92,.18);
+    background: linear-gradient(170deg, #1e1a22, #14110e);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    font-size: 15px; position: relative;
+  }
+  .dex .g .r { font-size: 10px; letter-spacing: .2em; }
+  .dex .g.unmet { color: rgba(240,234,217,.08); }
+  .dex .g.unmet .r { color: #7a7261; opacity: .6; }
+  .dex .g.met { color: #f0ead9; }
+  .dex .g.met .r { color: #7a7261; }
+  .dex .g.lit { color: #f0d78c; }
+  .dex .g.lit .r { color: #c9a85c; }
+  .dex .g.today {
+    border-color: #c9a85c; box-shadow: 0 0 0 1px rgba(201,168,92,.4), 0 0 20px rgba(201,168,92,.15);
+  }
+  .dex .g.today::after {
+    content: "今"; position: absolute; top: 6px; right: 6px; font-size: 10px;
+    background: #c9a85c; color: #14110d; border-radius: 3px; padding: 1px 5px;
+  }
+  .foot { margin-top: 28px; text-align: center; font-size: 12px; color: #7a7261; letter-spacing: .15em; line-height: 2; }
+</style>
+</head>
+<body>
+  <div class="top">
+    <a class="bk" href="index.html">‹ 日省</a>
+    <span class="tt">每 日 神 兽</span>
+    <a class="bk" href="almanac.html">黄历 ›</a>
+  </div>
+  <p class="eyebrow" id="eyebrow"></p>
+
+  <div class="card" id="card">
+    <div class="art"><img id="artImg" alt="" width="768" height="1024" decoding="async" /></div>
+    <div class="rarity-seal" id="rarity">灵兽</div>
+    <div class="term-badge" id="termBadge" hidden></div>
+    <div class="body">
+      <div class="nm">
+        <span class="n" id="name">—</span>
+        <span class="py" id="py"></span>
+        <span class="dim" id="dim">—</span>
+      </div>
+      <div class="quote"><span id="quote">—</span><small id="src"></small></div>
+      <div class="story" id="story">—</div>
+      <div class="skill"><span class="ic">技能</span><span id="skill">—</span></div>
+      <div class="morrow">明日 · ？<img id="morrowImg" alt="" width="48" height="36" decoding="async" /></div>
+    </div>
+  </div>
+
+  <div class="lamp">
+    <h3>
+      <span id="lampTitle">今夜待点</span>
+      <span class="side" id="lampSide"></span>
+    </h3>
+    <p class="echo" id="echo" hidden></p>
+    <div class="row" id="lampRow"></div>
+    <a class="btn" href="#" id="lightBtn">为今日神兽点灯</a>
+  </div>
+
+  <div class="dex">
+    <h3>神兽图鉴</h3>
+    <div class="sub" id="dexSub">廿五兽 · 已逢 0 · 长明 0</div>
+    <div class="grid" id="dexGrid"></div>
+  </div>
+
+  <div class="foot">
+    <span class="char-li">砺</span>行 · 灰度验证版 · 数据本地留存
+  </div>
+
+<script src="assets/shenshou-data.js?v=20261026"></script>
+<script src="assets/shenshou-splash.js?v=20261026"></script>
+<script src="assets/shenshou-state.js?v=20261026"></script>
+<script>
+(function () {
+  var S = window.SHENSHOU;
+  var State = window.ShenState;
+  var pageDay = State.today();
+  var t = S.today(new Date());
+  var b = t.beast;
+  var echoTimer = 0;
+
+  function count(set) {
+    var n = 0;
+    Object.keys(set).forEach(function () { n += 1; });
+    return n;
+  }
+
+  function priorLit(st) {
+    return Object.keys(st).some(function (k) {
+      return k < pageDay && st[k] && st[k].lit;
+    });
+  }
+
+  function lampCopy() {
+    var st = State.load();
+    var todayLit = !!(st[pageDay] && st[pageDay].lit);
+    var n = State.streak();
+    var yKey = State.shiftKey(pageDay, -1);
+    var y = st[yKey];
+    var missed = !y || !y.lit;
+    var broke = !todayLit && missed && priorLit(st);
+    var title = "今夜待点";
+    if (broke) title = "昨夜灯灭 · 今日重燃";
+    else if (todayLit && n >= 2) title = "长明 · 第 " + n + " 夜";
+    else if (todayLit) title = "今夜已点";
+    var side = "";
+    if (!broke && n >= 2 && !todayLit) side = "灯火 " + n + " 天";
+    var badge = "";
+    if (n >= 90) badge = "季灯";
+    else if (n >= 30) badge = "季灯";
+    else if (n >= 7) badge = "月灯";
+    return { title: title, side: side, badge: badge, todayLit: todayLit };
+  }
+
+  function renderLamps(ignite) {
+    var st = State.load();
+    var todayLit = !!(st[pageDay] && st[pageDay].lit);
+    var yDate = new Date();
+    yDate.setDate(yDate.getDate() - 1);
+    var yInfo = S.today(yDate);
+    var yDim = yInfo.beast ? yInfo.beast.dim : "";
+    var yKey = State.shiftKey(pageDay, -1);
+    var yLit = !!(st[yKey] && st[yKey].lit);
+    var showAsh = !yLit && priorLit(st);
+    var row = document.getElementById("lampRow");
+    row.innerHTML = "";
+    S.dims.forEach(function (d) {
+      var el = document.createElement("div");
+      var on = todayLit && d === b.dim;
+      var ash = showAsh && d === yDim && !on;
+      var due = d === b.dim && !on;
+      el.className = "cell" + (on ? " on" : "") + (ash ? " ash" : "") + (due ? " due" : "") + (ignite && on ? " ignite" : "");
+      var flame = document.createElement("span");
+      flame.className = "flame";
+      ["s1", "s2", "s3"].forEach(function (cls) {
+        var spark = document.createElement("i");
+        spark.className = "spark " + cls;
+        flame.appendChild(spark);
+      });
+      var stem = document.createElement("span");
+      stem.className = "stem";
+      var label = document.createElement("span");
+      label.className = "label";
+      label.textContent = d;
+      var note = document.createElement("span");
+      note.className = "ashnote";
+      note.textContent = ash ? "昨夜灯灭" : "";
+      el.appendChild(flame);
+      el.appendChild(stem);
+      el.appendChild(label);
+      el.appendChild(note);
+      row.appendChild(el);
+    });
+  }
+
+  function renderDex() {
+    var met = State.metSet();
+    var lit = State.litSet();
+    var metN = count(met);
+    var litN = count(lit);
+    var total = Object.keys(S.all).length;
+    document.getElementById("dexSub").textContent = "廿五兽 · 已逢 " + metN + " · 长明 " + litN;
+    var grid = document.getElementById("dexGrid");
+    grid.className = "grid" + (metN === total ? " complete" : "");
+    grid.innerHTML = "";
+    Object.keys(S.all).forEach(function (k) {
+      var g = S.all[k];
+      var el = document.createElement("div");
+      var cls = "g";
+      if (lit[g.name]) cls += " lit";
+      else if (met[g.name]) cls += " met";
+      else cls += " unmet";
+      if (g.name === b.name) cls += " today";
+      el.className = cls;
+      var name = document.createElement("span");
+      name.textContent = g.name;
+      var rar = document.createElement("span");
+      rar.className = "r";
+      rar.textContent = S.rarityName[g.rarity];
+      el.appendChild(name);
+      el.appendChild(rar);
+      grid.appendChild(el);
+    });
+  }
+
+  function renderHead() {
+    var copy = lampCopy();
+    var title = document.getElementById("lampTitle");
+    title.textContent = copy.title;
+    var old = title.querySelector(".badge");
+    if (old) old.remove();
+    if (copy.badge) {
+      var badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = copy.badge;
+      title.appendChild(badge);
+    }
+    document.getElementById("lampSide").textContent = copy.side;
+    var btn = document.getElementById("lightBtn");
+    btn.textContent = copy.todayLit ? "今日已点亮" : "为今日神兽点灯";
+    btn.className = "btn" + (copy.todayLit ? " done" : "");
+  }
+
+  function showEcho(text) {
+    var el = document.getElementById("echo");
+    el.hidden = false;
+    el.classList.remove("tuck");
+    el.textContent = text;
+    if (echoTimer) clearTimeout(echoTimer);
+    echoTimer = setTimeout(function () { el.classList.add("tuck"); }, 2500);
+  }
+
+  State.markVisit(b.name);
+
+  var claim = (t.isTerm ? (t.term + "已至 · ") : "") + b.name + "当值 —— 每天一只神兽，照见你的轮盘";
+  document.getElementById("eyebrow").textContent = claim;
+  var art = document.getElementById("artImg");
+  function portrait(img, key) {
+    img.onerror = function () {
+      if (this.dataset.fb) { this.style.display = "none"; return; }
+      this.dataset.fb = "1";
+      this.src = "assets/shenshou-art/" + key + ".png";
+    };
+    img.src = "assets/shenshou-art/en-" + key + ".jpg";
+  }
+  portrait(art, t.key || "baize");
+  art.alt = b.name;
+  document.getElementById("name").textContent = b.name;
+  document.getElementById("py").textContent = b.py;
+  document.getElementById("quote").textContent = b.quote;
+  document.getElementById("src").textContent = "——《" + b.src + "》";
+  document.getElementById("story").textContent = b.story;
+  document.getElementById("skill").textContent = b.skill;
+  document.getElementById("rarity").textContent = S.rarityName[b.rarity];
+  var dimEl = document.getElementById("dim");
+  dimEl.textContent = b.dim + (b.dim2 ? " · " + b.dim2 : "");
+  var palette = S.wuxingNight || S.wuxingColor;
+  var c = palette[b.wuxing] || "#f0d78c";
+  dimEl.style.borderColor = dimEl.style.color = c;
+  if (t.isTerm) {
+    var tb = document.getElementById("termBadge");
+    tb.hidden = false;
+    tb.textContent = "今日节气 · " + t.term;
+  }
+  var tomorrow = new Date(Date.now() + 86400000);
+  var tm = S.today(tomorrow);
+  portrait(document.getElementById("morrowImg"), tm.key || "baize");
+
+  renderHead();
+  renderLamps(false);
+  renderDex();
+
+  document.getElementById("lightBtn").addEventListener("click", function (ev) {
+    ev.preventDefault();
+    var first = State.lightToday();
+    renderHead();
+    renderLamps(first);
+    renderDex();
+    if (first) showEcho(b.echo || b.skill);
+  });
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible" && State.today() !== pageDay) location.reload();
+  });
+})();
+</script>
+</body>
+</html>

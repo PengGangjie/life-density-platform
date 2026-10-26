@@ -21,7 +21,11 @@
     /* 实际启用门控的功能：默认空 = 全部免费，行为与引入本层之前完全一致 */
     GATED_FEATURES: [],
     /* 增值服务（教练入驻/定制咨询）是否在升级页展示：默认不展示（后话），机制保留 */
-    SHOW_ADDON_SERVICES: false
+    SHOW_ADDON_SERVICES: false,
+    /* 升级页激活码输入框：内测期 true（发放 LIXING-PRO 等）；
+     * 提审上架前必须置 false —— 自造兑换码属 3.1.1 红线（详见更新日志 006/012）。
+     * Phase 4 收费后改用 ASC 官方 Promo Code / StoreKit，本地激活码退役。 */
+    PAYWALL_ACTIVATION_INPUT: true
   };
 
   function merge(base, extra) {

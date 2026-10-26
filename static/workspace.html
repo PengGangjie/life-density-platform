@@ -23,7 +23,7 @@
     }
     @font-face {
       font-family: "GuoWen ZhengKai";
-      src: url("assets/fonts/KaiOldstyle.ttf") format("truetype");
+      src: url("assets/fonts/lx-k-e8d41f.woff2") format("woff2");
       font-weight: normal;
       font-style: normal;
       font-display: swap;
@@ -67,7 +67,7 @@
       background: #120e0b;
       color: var(--ink);
       line-height: 1.65;
-      font-size: 15px;
+      font-size: 0.9375rem;
       min-height: 100vh;
     }
     body.auth-pending .auth-gated { display: none !important; }
@@ -1344,7 +1344,7 @@
       .workspace-body { padding: 16px; }
       #navUser { display: none !important; }
       .topnav-login, #navLogout, #navInstall {
-        min-height: 44px; white-space: nowrap; flex-shrink: 0;
+        white-space: nowrap; flex-shrink: 0;
       }
     }
 
@@ -1363,7 +1363,7 @@
     }
     
   </style>
-  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260830f" />
+  <link rel="stylesheet" href="assets/lixing-daily.css?v=20260932a" />
 
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#0e0c0a" />
@@ -1379,182 +1379,189 @@
       <span class="brand-wordmark"><span class="char-li">砺</span>行 · 日省</span>
     </a>
     <div class="topnav-auth">
-      <a class="tool-link" href="index.html">← 今日卡片</a>
-      <a class="topnav-login" id="navLogin" href="/sign-in">登录</a>
+      <a class="tool-link" href="index.html" data-i18n="nav.back">← 今日卡片</a>
+      <button type="button" id="navLang" class="topnav-login" style="background:none;cursor:pointer;font-family:inherit;">EN</button>
+      <a class="topnav-login" id="navLogin" href="/sign-in"><span data-i18n="au.4">登录</span></a>
       <span id="navUser" hidden></span>
-      <a class="topnav-logout" id="navLogout" href="/sign-out" hidden>退出</a>
+      <a class="topnav-logout" id="navLogout" href="/sign-out" hidden><span data-i18n="au.5">退出</span></a>
     </div>
   </nav>
+  <script>
+    /* 012：原生电容壳标记——隐藏 登录/退出 */
+    (function () {
+      if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+        document.body.classList.add("native-app");
+      }
+    })();
+  </script>
 
   <main class="workspace" id="workspace">
     <div class="workspace-shell">
       <div class="workspace-head">
-        <p class="section-kicker">工具台</p>
-        <h2>十二模块，收在同一工作台</h2>
-        <p>主线：今日（密度）· 决策（困局①–⑥）· 成长（生命之轮、偏差环、双卡、影响力）。登录后可记录；未登录为阅览模式。</p>
-        <p class="guest-readonly-hint" id="guestReadonlyHint" hidden>阅览模式 · 可查阅各模块，<a href="/sign-in">登录</a> 后可保存数据</p>
+        <p class="section-kicker" data-i18n="ws.head.kicker">工具台</p>
+        <h2 data-i18n="ws.head.title">十二模块，收在同一工作台</h2>
+        <p data-i18n="ws.head.desc">主线：今日（密度）· 决策（困局①–⑥）· 成长（生命之轮、偏差环、双卡、影响力）。</p>
+        <p class="guest-readonly-hint" id="guestReadonlyHint" hidden><span data-i18n="au.6">阅览模式 · 可查阅各模块，</span><a href="/sign-in"><span data-i18n="au.7">登录</span></a><span data-i18n="au.8"> 后可保存数据</span></p>
         <p class="card-desc" id="cloudSyncHint" hidden></p>
-        <span class="saved-toast guest-blocked-toast" id="guestBlockedToast">请登录后再保存</span>
-        <details class="settings workspace-faq"><summary>使用前你会问的事</summary>
+        <span class="saved-toast guest-blocked-toast" id="guestBlockedToast"><span data-i18n="au.9">请登录后再保存</span></span>
+        <div class="font-size-pick" id="fontSizePick" role="group" aria-label="字体大小">
+            <span class="fsp-label"><span data-i18n="au.10">字号</span></span>
+            <button type="button" data-fs="s" class="fsp-btn"><span data-i18n="au.11">小</span></button>
+            <button type="button" data-fs="m" class="fsp-btn is-on"><span data-i18n="au.12">中</span></button>
+            <button type="button" data-fs="l" class="fsp-btn"><span data-i18n="au.13">大</span></button>
+          </div>
+          <details class="settings workspace-faq"><summary><span data-i18n="au.14">使用前你会问的事</span></summary>
           <div class="settings-panel faq-panel">
-            <p class="card-desc">数据存在本机浏览器；推荐用「打开砺行.bat」以便备份写入同目录。</p>
+            <p class="card-desc"><span data-i18n="au.15">数据保存在设备本地，可随时导出备份。</span></p>
             <details class="faq-item">
-              <summary>数据存在哪里？会不会丢？</summary>
-              <p class="card-desc">默认写入浏览器 localStorage。用 bat / 本地服务打开时，保存会覆盖同目录 <code>lixing-autobackup.json</code>。「02 日省」里的「设置与数据」可手动导出整库 JSON。</p>
+              <summary><span data-i18n="au.16">数据存在哪里？会不会丢？</span></summary>
+              <p class="card-desc"><span data-i18n="au.17">数据只保存在你的设备本地，不上传任何服务器。「02 日省」的「设置与数据」可随时导出整库备份。</span></p>
             </details>
             <details class="faq-item">
-              <summary>十一个模块要按顺序做完吗？</summary>
-              <p class="card-desc">不必。主线是 <strong>今日 · 决策 · 成长</strong>：主页写最多三条收获；工具台按需切换理性、采样、偏差环等。完成比完美重要。</p>
+              <summary><span data-i18n="au.18">十一个模块要按顺序做完吗？</span></summary>
+              <p class="card-desc"><span data-i18n="au.19">不必。主线是 </span><strong><span data-i18n="au.20">今日 · 决策 · 成长</span></strong><span data-i18n="au.21">：主页写最多三条收获；工具台按需切换理性、采样、偏差环等。完成比完美重要。</span></p>
             </details>
             <details class="faq-item">
-              <summary>「人生三愿」怎么锁？</summary>
-              <p class="card-desc">先用日历填写完整生日（年-月-日），再直接写下三条愿望后定稿。从定稿日起锁定 365 天，到期日再对齐到你的下一个生日；改生日不影响已锁定的这一轮。不设提醒。</p>
+              <summary><span data-i18n="au.22">「人生三愿」怎么锁？</span></summary>
+              <p class="card-desc"><span data-i18n="au.23">先用日历填写完整生日（年-月-日），再直接写下三条愿望后定稿。从定稿日起锁定 365 天，到期日再对齐到你的下一个生日；改生日不影响已锁定的这一轮。不设提醒。</span></p>
             </details>
             <details class="faq-item">
-              <summary>密度和厚度分别指什么？</summary>
-              <p class="card-desc"><strong>密度</strong>：今天收获了什么。<strong>厚度</strong>：完成了什么。决定成长的，往往是工作时间以外的事。</p>
+              <summary><span data-i18n="au.24">密度和厚度分别指什么？</span></summary>
+              <p class="card-desc"><strong><span data-i18n="au.25">密度</span></strong><span data-i18n="au.26">：今天收获了什么。</span><strong><span data-i18n="au.27">厚度</span></strong><span data-i18n="au.28">：完成了什么。决定成长的，往往是工作时间以外的事。</span></p>
             </details>
             <details class="faq-item">
-              <summary>三主线和十一模块怎么配合？</summary>
-              <p class="card-desc">今日 → 密度；决策 → 理性 / 采样 / 调研 / 反思 / 意见（亲朋评估 + 课代表意见）；成长 → 穿透力、双卡、偏差环、生命之轮、影响力。</p>
+              <summary><span data-i18n="au.29">三主线和十一模块怎么配合？</span></summary>
+              <p class="card-desc"><span data-i18n="au.30">今日 → 密度；决策 → 理性 / 采样 / 调研 / 反思 / 意见（亲朋评估 + 课代表意见）；成长 → 穿透力、双卡、偏差环、生命之轮、影响力。</span></p>
             </details>
             <details class="faq-item">
-              <summary>认知偏差环的数据从哪来？</summary>
-              <p class="card-desc">本地 <code>assets/cognitive-bias/</code>，约 180 条 Cognitive Bias Codex 结构。</p>
+              <summary><span data-i18n="au.31">生命之轮是什么？</span></summary>
+              <p class="card-desc"><span data-i18n="au.32">Leon 的 Wheel of Life：健康 / 财富 / 幸福各三维 0–10 分。日省写下的收获会按关键词归入九维，作为打分依据。</span></p>
             </details>
             <details class="faq-item">
-              <summary>生命之轮是什么？</summary>
-              <p class="card-desc">Leon 的 Wheel of Life：健康 / 财富 / 幸福各三维 0–10 分。日省写下的收获会按关键词归入九维，作为打分依据。</p>
-            </details>
-            <details class="faq-item">
-              <summary>个人影响力是什么？</summary>
-              <p class="card-desc">Key Person of Influence 五 P 战役框架。见工具台「影响力」。</p>
-            </details>
-            <details class="faq-item">
-              <summary>主页语音输入如何工作？</summary>
-              <p class="card-desc">用「打开砺行.bat」启动本地服务，并在 <code>.env</code> 配置 <code>AI_BUILDER_TOKEN</code> 后，点击各小目标旁「语音」→ 录音 → 自动调用 AI Builders Grok STT 转写。未配置时将尝试浏览器原生识别。</p>
+              <summary><span data-i18n="au.33">个人影响力是什么？</span></summary>
+              <p class="card-desc"><span data-i18n="au.34">Key Person of Influence 五 P 战役框架。见工具台「影响力」。</span></p>
             </details>
           </div>
         </details>
       </div>
       <nav class="nav-tabs" id="navTabs" aria-label="工具模块">
-        <button type="button" data-panel="wishes"><span class="n">愿</span>三愿</button>
-        <button type="button" data-panel="rational"><span class="n">01</span>理性</button>
-        <button type="button" class="active" data-panel="density"><span class="n">02</span>日省</button>
-        <button type="button" data-panel="sampling"><span class="n">03</span>采样</button>
-        <button type="button" data-panel="industry"><span class="n">04</span>调研</button>
-        <button type="button" data-panel="reflect"><span class="n">05</span>反思</button>
-        <button type="button" data-panel="opinion"><span class="n">06</span>意见</button>
-        <button type="button" data-panel="penetrate"><span class="n">07</span>穿透力</button>
-        <button type="button" data-panel="dualcard"><span class="n">08</span>双卡</button>
-        <button type="button" data-panel="bias"><span class="n">09</span>偏差环</button>
-        <button type="button" data-panel="leon"><span class="n">10</span>生命之轮</button>
-        <button type="button" data-panel="kpi"><span class="n">11</span>影响力</button>
-        <button type="button" data-panel="harvest"><span class="n">12</span>收获</button>
+        <button type="button" data-panel="wishes"><span class="n">愿</span><span data-i18n="ws.tab.wishes">三愿</span></button>
+        <button type="button" data-panel="rational"><span class="n">01</span><span data-i18n="ws.tab.rational">理性</span></button>
+        <button type="button" class="active" data-panel="density"><span class="n">02</span><span data-i18n="ws.tab.density">日省</span></button>
+        <button type="button" data-panel="sampling"><span class="n">03</span><span data-i18n="ws.tab.sampling">采样</span></button>
+        <button type="button" data-panel="industry"><span class="n">04</span><span data-i18n="ws.tab.industry">调研</span></button>
+        <button type="button" data-panel="reflect"><span class="n">05</span><span data-i18n="ws.tab.reflect">反思</span></button>
+        <button type="button" data-panel="opinion"><span class="n">06</span><span data-i18n="ws.tab.opinion">意见</span></button>
+        <button type="button" data-panel="penetrate"><span class="n">07</span><span data-i18n="ws.tab.penetrate">穿透力</span></button>
+        <button type="button" data-panel="dualcard"><span class="n">08</span><span data-i18n="ws.tab.dualcard">双卡</span></button>
+        <button type="button" data-panel="bias"><span class="n">09</span><span data-i18n="ws.tab.bias">偏差环</span></button>
+        <button type="button" data-panel="leon"><span class="n">10</span><span data-i18n="ws.tab.leon">生命之轮</span></button>
+        <button type="button" data-panel="kpi"><span class="n">11</span><span data-i18n="ws.tab.kpi">影响力</span></button>
+        <button type="button" data-panel="harvest"><span class="n">12</span><span data-i18n="ws.tab.harvest">收获</span></button>
       </nav>
       <div class="workspace-body">
 <!-- ========== 人生三愿 ========== -->
     <div class="panel" id="panel-wishes">
       <details class="guide" open>
-        <summary>人生三愿 · 神灯隐喻</summary>
+        <summary><span data-i18n="ws.wishes.guide">人生三愿 · 神灯隐喻</span></summary>
         <div class="guide-body">
-          <p>若人生只能许 <strong>三个愿望</strong>，你会选什么？用日历填完整生日（年-月-日），三条愿望直接写，无需按问题作答。定稿后锁定 <strong>365 天</strong>（到期对齐下一个生日，不设提醒）。</p>
+          <p><span data-i18n="au.36">若人生只能许 </span><strong><span data-i18n="au.37">三个愿望</span></strong><span data-i18n="au.38">，你会选什么？用日历填完整生日（年-月-日），三条愿望直接写，无需按问题作答。定稿后锁定 </span><strong><span data-i18n="au.39">365 天</span></strong><span data-i18n="au.40">（到期对齐下一个生日，不设提醒）。</span></p>
         </div>
       </details>
       <p class="card-desc" id="wishMeta"></p>
       <div id="wishBirthdayHost"></div>
       <div class="card">
-        <p class="card-title">人生三愿</p>
-        <p class="card-desc">三条都由你自己写。定稿前可改。</p>
+        <p class="card-title"><span data-i18n="ws.wishes.d1">人生三愿</span></p>
+        <p class="card-desc"><span data-i18n="ws.wishes.d2">三条都由你自己写。定稿前可改。</span></p>
         <div id="lifeWishList"></div>
-        <div class="actions"><button type="button" class="btn" id="saveWishesBtn">保存三愿</button><span class="saved-toast" id="savedWishToast">已保存</span></div>
+        <div class="actions"><button type="button" class="btn" id="saveWishesBtn"><span data-i18n="ws.btn.saveWishes">保存三愿</span></button><span class="saved-toast" id="savedWishToast"><span data-i18n="au.41">已保存</span></span></div>
       </div>
     </div>
 <!-- ========== ① 理性工具 ========== -->
     <div class="panel" id="panel-rational">
       <details class="guide">
-        <summary>理性工具 · 使用说明<span class="trap-tag">困局① 词语美化</span></summary>
+        <summary><span data-i18n="au.42">理性工具 · 使用说明</span><span class="trap-tag"><span data-i18n="au.43">困局① 词语美化</span></span></summary>
         <div class="guide-body">
-          <p>核心问题：<strong>做这件事，还是不做？</strong>穿透包装话术，算清双方利益结构与性价比，看有没有帕累托改进（共赢）空间。</p>
-          <p>谁获益更多？是否存在 1+1&gt;2？别被「一起努力」「为你好」等词带偏。</p>
+          <p><span data-i18n="au.44">核心问题：</span><strong><span data-i18n="au.45">做这件事，还是不做？</span></strong><span data-i18n="au.46">穿透包装话术，算清双方利益结构与性价比，看有没有帕累托改进（共赢）空间。</span></p>
+          <p><span data-i18n="ws.rational.d7">谁获益更多？是否存在 1+1&gt;2？别被「一起努力」「为你好」等词带偏。</span></p>
         </div>
       </details>
       <div class="card">
-        <p class="card-title">理性工具表</p>
-        <p class="card-desc">合伙、跳槽、合作、投资前填这张表。例子：合伙做生意，我占股 80% 对方 20%。</p>
-        <div class="field"><label for="ratTitle">决策事项</label><input type="text" id="ratTitle" placeholder="如：与 XX 合伙做课程业务" /></div>
+        <p class="card-title"><span data-i18n="ws.rational.d1">理性工具表</span></p>
+        <p class="card-desc"><span data-i18n="ws.rational.d2">合伙、跳槽、合作、投资前填这张表。例子：合伙做生意，我占股 80% 对方 20%。</span></p>
+        <div class="field"><label for="ratTitle"><span data-i18n="fl.决策事项">决策事项</span></label><input type="text" id="ratTitle"  data-i18n-ph="fp.如与XX合伙做课程业务6572" placeholder="如：与 XX 合伙做课程业务" /></div>
 
         <div class="matrix-block">
-          <div class="mb-title">对我有什么好处</div>
+          <div class="mb-title"><span data-i18n="au.47">对我有什么好处</span></div>
           <div class="matrix-row">
-            <div class="field"><label for="ratMyBenS">我的短期收益</label><textarea id="ratMyBenS" placeholder="如：获得优秀合伙人"></textarea></div>
-            <div class="field"><label for="ratMyBenL">我的长期收益</label><textarea id="ratMyBenL" placeholder="如：成了分红 80%"></textarea></div>
+            <div class="field"><label for="ratMyBenS"><span data-i18n="fl.我的短期收益">我的短期收益</span></label><textarea id="ratMyBenS" placeholder="如：获得优秀合伙人"></textarea></div>
+            <div class="field"><label for="ratMyBenL"><span data-i18n="fl.我的长期收益">我的长期收益</span></label><textarea id="ratMyBenL" placeholder="如：成了分红 80%"></textarea></div>
           </div>
         </div>
         <div class="matrix-block">
-          <div class="mb-title">对你有什么好处</div>
+          <div class="mb-title"><span data-i18n="au.48">对你有什么好处</span></div>
           <div class="matrix-row">
-            <div class="field"><label for="ratYouBenS">你的短期收益</label><textarea id="ratYouBenS"></textarea></div>
-            <div class="field"><label for="ratYouBenL">你的长期收益</label><textarea id="ratYouBenL"></textarea></div>
+            <div class="field"><label for="ratYouBenS"><span data-i18n="fl.你的短期收益">你的短期收益</span></label><textarea id="ratYouBenS"></textarea></div>
+            <div class="field"><label for="ratYouBenL"><span data-i18n="fl.你的长期收益">你的长期收益</span></label><textarea id="ratYouBenL"></textarea></div>
           </div>
         </div>
         <div class="matrix-block">
-          <div class="mb-title">对我们整体有什么好处</div>
+          <div class="mb-title"><span data-i18n="au.49">对我们整体有什么好处</span></div>
           <div class="matrix-row">
-            <div class="field"><label for="ratOurBenS">整体短期收益</label><textarea id="ratOurBenS" placeholder="如：也许创造 200 万收入"></textarea></div>
-            <div class="field"><label for="ratOurBenL">整体长期收益</label><textarea id="ratOurBenL" placeholder="如：打造品牌，将来破亿"></textarea></div>
+            <div class="field"><label for="ratOurBenS"><span data-i18n="fl.整体短期收益">整体短期收益</span></label><textarea id="ratOurBenS" placeholder="如：也许创造 200 万收入"></textarea></div>
+            <div class="field"><label for="ratOurBenL"><span data-i18n="fl.整体长期收益">整体长期收益</span></label><textarea id="ratOurBenL" placeholder="如：打造品牌，将来破亿"></textarea></div>
           </div>
         </div>
         <div class="matrix-block">
-          <div class="mb-title">我要付出多少</div>
+          <div class="mb-title"><span data-i18n="au.50">我要付出多少</span></div>
           <div class="matrix-row">
-            <div class="field"><label for="ratMyCostS">我的短期付出</label><textarea id="ratMyCostS" placeholder="如：股权认购 80 万"></textarea></div>
-            <div class="field"><label for="ratMyCostL">我的长期付出</label><textarea id="ratMyCostL" placeholder="如：每周工作 10 小时"></textarea></div>
+            <div class="field"><label for="ratMyCostS"><span data-i18n="fl.我的短期付出">我的短期付出</span></label><textarea id="ratMyCostS" placeholder="如：股权认购 80 万"></textarea></div>
+            <div class="field"><label for="ratMyCostL"><span data-i18n="fl.我的长期付出">我的长期付出</span></label><textarea id="ratMyCostL" placeholder="如：每周工作 10 小时"></textarea></div>
           </div>
         </div>
         <div class="matrix-block">
-          <div class="mb-title">你要付出多少</div>
+          <div class="mb-title"><span data-i18n="au.51">你要付出多少</span></div>
           <div class="matrix-row">
-            <div class="field"><label for="ratYouCostS">你的短期付出</label><textarea id="ratYouCostS"></textarea></div>
-            <div class="field"><label for="ratYouCostL">你的长期付出</label><textarea id="ratYouCostL"></textarea></div>
+            <div class="field"><label for="ratYouCostS"><span data-i18n="fl.你的短期付出">你的短期付出</span></label><textarea id="ratYouCostS"></textarea></div>
+            <div class="field"><label for="ratYouCostL"><span data-i18n="fl.你的长期付出">你的长期付出</span></label><textarea id="ratYouCostL"></textarea></div>
           </div>
         </div>
-        <div class="section-divider">收益性价比</div>
-        <div class="field"><label for="ratMyRoi">我的收益性价比 / 总体性价比</label><textarea id="ratMyRoi" placeholder="如：10 小时换千万级公司"></textarea></div>
-        <div class="field"><label for="ratYouRoi">你的收益性价比 / 总体性价比</label><textarea id="ratYouRoi"></textarea></div>
-        <div class="field"><label for="ratSynergy">我们双方能否 1+1&gt;2？</label><textarea id="ratSynergy" placeholder="如：肯定能，双方能增大价值"></textarea></div>
-        <div class="field"><label for="ratDecision">结论：做 / 不做 / 再谈条件</label><input type="text" id="ratDecision" placeholder="如：做，但需调整股权或工时" /></div>
+        <div class="section-divider"><span data-i18n="au.52">收益性价比</span></div>
+        <div class="field"><label for="ratMyRoi"><span data-i18n="fl.我的收益性价比总体性价比">我的收益性价比 / 总体性价比</span></label><textarea id="ratMyRoi" placeholder="如：10 小时换千万级公司"></textarea></div>
+        <div class="field"><label for="ratYouRoi"><span data-i18n="fl.你的收益性价比总体性价比">你的收益性价比 / 总体性价比</span></label><textarea id="ratYouRoi"></textarea></div>
+        <div class="field"><label for="ratSynergy"><span data-i18n="fl.我们双方能否11gt2">我们双方能否 1+1&gt;2？</span></label><textarea id="ratSynergy" placeholder="如：肯定能，双方能增大价值"></textarea></div>
+        <div class="field"><label for="ratDecision"><span data-i18n="fl.结论做不做再谈条件">结论：做 / 不做 / 再谈条件</span></label><input type="text" id="ratDecision"  data-i18n-ph="fp.如做但需调整股权或工时7391" placeholder="如：做，但需调整股权或工时" /></div>
         <div class="actions">
-          <button type="button" class="btn" id="saveRatBtn">保存分析</button>
-          <button type="button" class="btn btn-ghost" id="clearRatBtn">清空</button>
-          <span class="saved-toast" id="savedRatToast">已保存</span>
+          <button type="button" class="btn" id="saveRatBtn"><span data-i18n="ws.rational.b.保存分析">保存分析</span></button>
+          <button type="button" class="btn btn-ghost" id="clearRatBtn"><span data-i18n="ws.btn.clear">清空</span></button>
+          <span class="saved-toast" id="savedRatToast"><span data-i18n="au.53">已保存</span></span>
         </div>
       </div>
-      <div class="card"><p class="card-title">历史分析</p><div class="record-list" id="rationalList"><div class="empty-table">尚无记录</div></div></div>
+      <div class="card"><p class="card-title"><span data-i18n="ws.rational.d3">历史分析</span></p><div class="record-list" id="rationalList"><div class="empty-table"><span data-i18n="au.54">尚无记录</span></div></div></div>
     </div>
 
     <!-- ========== ② 人生密度 ========== -->
     <div class="panel active" id="panel-density">
       <details class="guide">
-        <summary>人生密度 · 使用说明<span class="trap-tag">困局② 被动吃苦≠自强</span></summary>
+        <summary><span data-i18n="au.55">人生密度 · 使用说明</span><span class="trap-tag"><span data-i18n="au.56">困局② 被动吃苦≠自强</span></span></summary>
         <div class="guide-body">
           <div class="formula-box">
-            <strong>公式</strong>：<code>D = (C + L + P) ÷ H × 100%</code><br />
-            <span style="font-size:0.84rem;color:#666">强/苦比：追求苦转化为强的转化率 &gt; 1，避免高苦低强</span>
+            <strong><span data-i18n="au.57">公式</span></strong>：<code>D = (C + L + P) ÷ H × 100%</code><br />
+            <span style="font-size:0.84rem;color:#666"><span data-i18n="au.58">强/苦比：追求苦转化为强的转化率 </span>&gt;<span data-i18n="au.59"> 1，避免高苦低强</span></span>
           </div>
-          <h3>四个指标</h3>
+          <h3><span data-i18n="ws.rational.title">四个指标</span></h3>
           <ul>
-            <li><strong>H</strong> 有意识投入的劳动小时数（刷手机、无产出会议不计）</li>
-            <li><strong>C</strong> 每主动连接 1 个有用新人 +1</li>
-            <li><strong>L</strong> 每应用 1 个知识点 +1（写进产出才算）</li>
-            <li><strong>P</strong> 被动收入 ≥ 3×时薪 → +1</li>
+            <li><strong>H</strong><span data-i18n="au.60"> 有意识投入的劳动小时数（刷手机、无产出会议不计）</span></li>
+            <li><strong>C</strong><span data-i18n="au.61"> 每主动连接 1 个有用新人 +1</span></li>
+            <li><strong>L</strong><span data-i18n="au.62"> 每应用 1 个知识点 +1（写进产出才算）</span></li>
+            <li><strong>P</strong><span data-i18n="au.63"> 被动收入 ≥ 3×时薪 → +1</span></li>
           </ul>
-          <h3>密度解读</h3>
+          <h3><span data-i18n="au.64">密度解读</span></h3>
           <div class="threshold">
-            <div><strong class="d-high">≥40%</strong> 高密度</div><div>维持</div>
-            <div><strong class="d-mid">25–39%</strong> 正常</div><div>检查 C/L</div>
-            <div><strong class="d-mid">15–24%</strong> 低效</div><div>警惕假忙碌</div>
-            <div><strong class="d-low">&lt;15%</strong> 划水</div><div>明天优先 1 次应用型学习</div>
+            <div><strong class="d-high">≥40%</strong><span data-i18n="au.65"> 高密度</span></div><div><span data-i18n="au.66">维持</span></div>
+            <div><strong class="d-mid">25–39%</strong><span data-i18n="au.67"> 正常</span></div><div><span data-i18n="au.68">检查 C/L</span></div>
+            <div><strong class="d-mid">15–24%</strong><span data-i18n="au.69"> 低效</span></div><div><span data-i18n="au.70">警惕假忙碌</span></div>
+            <div><strong class="d-low">&lt;15%</strong><span data-i18n="au.71"> 划水</span></div><div><span data-i18n="au.72">明天优先 1 次应用型学习</span></div>
           </div>
         </div>
       </details>
@@ -1562,29 +1569,29 @@
       <div class="stats" id="stats"></div>
 
       <div class="card">
-        <p class="card-title">今日日省 · 密度与厚度</p>
-        <p class="card-desc">首页写下<strong>最多三条收获</strong>（一条即计 15% 密度）；此处可补劳动时长、C/L/P。密度取公式与收获条数中的较大值。</p>
+        <p class="card-title"><span data-i18n="ws.rational.d4">今日日省 · 密度与厚度</span></p>
+        <p class="card-desc"><span data-i18n="au.73">首页写下</span><strong><span data-i18n="au.74">最多三条收获</span></strong><span data-i18n="au.75">（一条即计 15% 密度）；此处可补劳动时长、C/L/P。密度取公式与收获条数中的较大值。</span></p>
         <div class="home-done home-done--workspace" id="densityDoneBanner" hidden>
-          <p class="home-done-kicker" id="densityDoneKicker">已从行动写入</p>
+          <p class="home-done-kicker" id="densityDoneKicker"><span data-i18n="au.76">已从行动写入</span></p>
           <ol class="home-done-list" id="densityDoneList"></ol>
         </div>
         <div class="density-hero">
           <div class="value na" id="densityHero">—</div>
-          <div class="label">今日密度 D</div>
+          <div class="label"><span data-i18n="au.77">今日密度 D</span></div>
         </div>
         <div class="row-date">
-          <div class="field"><label for="date">日期</label><input type="date" id="date" /><span id="dateWorkspaceLabel" class="card-desc" hidden aria-hidden="true"></span></div>
-          <div class="field"><label for="hours">H · 劳动时长（小时）</label><input type="number" id="hours" min="0" max="24" step="0.5" placeholder="如 8" /></div>
+          <div class="field"><label for="date"><span data-i18n="fl.日期">日期</span></label><input type="date" id="date" /><span id="dateWorkspaceLabel" class="card-desc" hidden aria-hidden="true"></span></div>
+          <div class="field"><label for="hours"><span data-i18n="fl.H劳动时长小时">H · 劳动时长（小时）</span></label><input type="number" id="hours" min="0" max="24" step="0.5"  data-i18n-ph="fp.如86185" placeholder="如 8" /></div>
         </div>
         <div class="metrics">
-          <div class="field"><label for="conn">C · 主动连接<span class="desc">+1 / 有用新人</span></label><input type="number" id="conn" min="0" max="20" value="0" /></div>
-          <div class="field"><label for="learn">L · 有效学习<span class="desc">+1 / 应用知识点</span></label><input type="number" id="learn" min="0" max="20" value="0" /></div>
-          <div class="field"><label for="passive">P · 被动收入分<span class="desc">≥3×时薪 +1</span></label><input type="number" id="passive" min="0" max="10" value="0" /></div>
+          <div class="field"><label for="conn"><span data-i18n="fl.C主动连接">C · 主动连接</span><span class="desc" data-i18n="fd.1有用新人">+1 / 有用新人</span></label><input type="number" id="conn" min="0" max="20" value="0" /></div>
+          <div class="field"><label for="learn"><span data-i18n="fl.L有效学习">L · 有效学习</span><span class="desc" data-i18n="fd.1应用知识点">+1 / 应用知识点</span></label><input type="number" id="learn" min="0" max="20" value="0" /></div>
+          <div class="field"><label for="passive"><span data-i18n="fl.P被动收入分">P · 被动收入分</span><span class="desc" data-i18n="fd.3时薪1">≥3×时薪 +1</span></label><input type="number" id="passive" min="0" max="10" value="0" /></div>
         </div>
-        <div class="inline-row"><input type="checkbox" id="autoPassive" checked /><label for="autoPassive" style="margin:0;font-weight:400">根据金额自动算 P</label></div>
-        <div class="field"><label for="passiveIncome">当日被动收入（元）</label><input type="number" id="passiveIncome" min="0" step="0.01" placeholder="不含工资" /></div>
+        <div class="inline-row"><input type="checkbox" id="autoPassive" checked /><label for="autoPassive" style="margin:0;font-weight:400"><span data-i18n="fl.根据金额自动算P">根据金额自动算 P</span></label></div>
+        <div class="field"><label for="passiveIncome"><span data-i18n="fl.当日被动收入元">当日被动收入（元）</span></label><input type="number" id="passiveIncome" min="0" step="0.01"  data-i18n-ph="fp.不含工资3234" placeholder="不含工资" /></div>
         <div class="split-fields harvest-split">
-          <div class="field"><label for="harvest1">收获（先写一条，需要时再加）</label>
+          <div class="field"><label for="harvest1"><span data-i18n="fl.收获先写一条需要时再加">收获（先写一条，需要时再加）</span></label>
             <textarea id="harvest1" rows="2" maxlength="80" placeholder="① 一条就够 · 计入 15%" data-harvest-slot="1"></textarea>
             <div data-harvest-slot="2" hidden>
               <textarea id="harvest2" rows="2" maxlength="80" placeholder="② 还有一条也可以" style="margin-top:8px"></textarea>
@@ -1592,79 +1599,79 @@
             <div data-harvest-slot="3" hidden>
               <textarea id="harvest3" rows="2" maxlength="80" placeholder="③ 最多三条" style="margin-top:8px"></textarea>
             </div>
-            <button type="button" class="btn btn-ghost btn-harvest-add" id="addHarvestBtn" hidden>再记一条（可选）</button>
-            <p class="harvest-density-hint" id="harvestDensityHint">写一条，今日密度即达 15% · 无感计入</p>
+            <button type="button" class="btn btn-ghost btn-harvest-add" id="addHarvestBtn" hidden><span data-i18n="ws.btn.addOne">再记一条（可选）</span></button>
+            <p class="harvest-density-hint" id="harvestDensityHint"><span data-i18n="au.78">写一条，今日密度即达 15% · 无感计入</span></p>
           </div>
-          <div class="field"><label for="thickness">完成 · 厚度</label><textarea id="thickness" rows="2" placeholder="今天完成了什么小事？（可选）"></textarea></div>
+          <div class="field"><label for="thickness"><span data-i18n="fl.完成厚度">完成 · 厚度</span></label><textarea id="thickness" rows="2" placeholder="今天完成了什么小事？（可选）"></textarea></div>
           <textarea id="harvest" hidden aria-hidden="true"></textarea>
         </div>
-        <div class="actions"><button type="button" class="btn" id="saveBtn">保存</button><span class="saved-toast" id="savedToast">已保存</span></div>
+        <div class="actions"><button type="button" class="btn" id="saveBtn"><span data-i18n="ws.btn.save">保存</span></button><span class="saved-toast" id="savedToast"><span data-i18n="au.79">已保存</span></span></div>
       </div>
 
-      <details class="settings"><summary>设置与数据</summary>
+      <details class="settings"><summary><span data-i18n="au.80">设置与数据</span></summary>
         <div class="settings-panel">
-          <div class="field"><label for="hourlyWage">时薪基准（元/小时）</label><input type="number" id="hourlyWage" min="0" step="1" value="200" /></div>
-          <div class="inline-row"><input type="checkbox" id="advancedPassive" /><label for="advancedPassive" style="margin:0;font-weight:400">进阶：每满 3×时薪 +1，上限 3 分</label></div>
+          <div class="field"><label for="hourlyWage"><span data-i18n="fl.时薪基准元小时">时薪基准（元/小时）</span></label><input type="number" id="hourlyWage" min="0" step="1" value="200" /></div>
+          <div class="inline-row"><input type="checkbox" id="advancedPassive" /><label for="advancedPassive" style="margin:0;font-weight:400"><span data-i18n="fl.进阶每满3时薪1上限3分">进阶：每满 3×时薪 +1，上限 3 分</span></label></div>
           <div class="inline-row" style="margin-top:10px">
             <input type="checkbox" id="autoDownloadBackup" />
-            <label for="autoDownloadBackup" style="margin:0;font-weight:400">备用：写入失败时再下载到浏览器（默认关）</label>
+            <label for="autoDownloadBackup" style="margin:0;font-weight:400"><span data-i18n="fl.备用写入失败时再下载到浏览器">备用：写入失败时再下载到浏览器（默认关）</span></label>
           </div>
           <div class="actions" style="margin-top:10px; flex-wrap:wrap">
-            <button type="button" class="btn btn-ghost" id="bindBackupFileBtn" hidden>绑定本地备份文件</button>
-            <button type="button" class="btn btn-ghost" id="unbindBackupFileBtn" hidden>解除绑定</button>
+            <button type="button" class="btn btn-ghost" id="bindBackupFileBtn" hidden><span data-i18n="ws.rational.b.绑定本地备份文件">绑定本地备份文件</span></button>
+            <button type="button" class="btn btn-ghost" id="unbindBackupFileBtn" hidden><span data-i18n="ws.rational.b.解除绑定">解除绑定</span></button>
           </div>
-          <p class="card-desc" id="autoBackupStatus" style="margin:8px 0 0">自动备份：尚未保存</p>
+          <p class="card-desc" id="autoBackupStatus" style="margin:8px 0 0"><span data-i18n="ws.rational.d5">自动备份：尚未保存</span></p>
           <div class="actions" style="margin-top:12px; flex-wrap:wrap">
-            <button type="button" class="btn" id="exportJsonBtn">备份整库 JSON</button>
-            <button type="button" class="btn btn-ghost" id="importJsonBtn">恢复整库 JSON</button>
+            <button type="button" class="btn" id="exportJsonBtn"><span data-i18n="ws.rational.b.备份整库JSON">备份整库 JSON</span></button>
+            <button type="button" class="btn btn-ghost" id="importJsonBtn"><span data-i18n="ws.rational.b.恢复整库JSON">恢复整库 JSON</span></button>
             <input type="file" id="importJsonFile" accept=".json,application/json" hidden />
-            <button type="button" class="btn btn-ghost" id="exportBtn">导出密度 CSV</button>
-            <button type="button" class="btn btn-ghost" id="importBtn">导入密度 CSV</button>
+            <button type="button" class="btn btn-ghost" id="exportBtn"><span data-i18n="ws.rational.b.导出密度CSV">导出密度 CSV</span></button>
+            <button type="button" class="btn btn-ghost" id="importBtn"><span data-i18n="ws.rational.b.导入密度CSV">导入密度 CSV</span></button>
             <input type="file" id="importFile" accept=".csv" hidden />
           </div>
-          <p class="card-desc" style="margin:10px 0 0">推荐用本目录 <code>打开砺行.bat</code> 打开：保存时自动覆盖写入同目录 <code>lixing-autobackup.json</code>，不会进浏览器下载列表。直接双击 HTML（file://）时仅保存在浏览器内。</p>
+          <p class="card-desc" style="margin:10px 0 0"><span data-i18n="au.81">推荐用本目录 </span><code><span data-i18n="au.82">打开砺行.bat</span></code><span data-i18n="au.83"> 打开：保存时自动覆盖写入同目录 </span><code>lixing-autobackup.json</code><span data-i18n="au.84">，不会进浏览器下载列表。直接双击 HTML（file://）时仅保存在浏览器内。</span></p>
         </div>
       </details>
 
       <div class="card">
-        <p class="card-title">近 14 天</p>
+        <p class="card-title"><span data-i18n="ws.rational.d6">近 14 天</span></p>
         <div class="table-wrap"><table id="mainTable"><thead><tr id="dateHeader"></tr></thead><tbody id="tableBody"></tbody></table></div>
-        <div class="empty-table" id="emptyTable" hidden>尚无记录</div>
+        <div class="empty-table" id="emptyTable" hidden><span data-i18n="au.85">尚无记录</span></div>
       </div>
     </div>
 
     <!-- ========== ③ 想法采样 ========== -->
     <div class="panel" id="panel-sampling">
       <details class="guide">
-        <summary>想法采样 · 使用说明<span class="trap-tag">困局③ 刻舟求剑</span></summary>
+        <summary><span data-i18n="au.86">想法采样 · 使用说明</span><span class="trap-tag"><span data-i18n="au.87">困局③ 刻舟求剑</span></span></summary>
         <div class="guide-body">
-          <p>对每个 idea 采样 <strong>30 人</strong>（精英 / 普通年轻人 / 大爷大妈各 10 人），每人选：同意 / 不同意 / 不知道。汇总后判断<strong>入场窗口</strong>，别用过时策略。</p>
+          <p><span data-i18n="au.88">对每个 idea 采样 </span><strong><span data-i18n="au.89">30 人</span></strong><span data-i18n="au.90">（精英 / 普通年轻人 / 大爷大妈各 10 人），每人选：同意 / 不同意 / 不知道。汇总后判断</span><strong><span data-i18n="au.91">入场窗口</span></strong><span data-i18n="au.92">，别用过时策略。</span></p>
           <ul>
-            <li><strong>机会期</strong>：精英开始接受，年轻人多数不知道，大爷大妈不同意或不知道 → 开始入场</li>
-            <li><strong>成熟期</strong>：精英多数接受，年轻人半数接受，大爷大妈有人同意 → 最后入场机会</li>
-            <li><strong>刻舟求剑</strong>：三组普遍接受 → 该退了 / 入场性价比低</li>
+            <li><strong><span data-i18n="au.93">机会期</span></strong><span data-i18n="au.94">：精英开始接受，年轻人多数不知道，大爷大妈不同意或不知道 → 开始入场</span></li>
+            <li><strong><span data-i18n="au.95">成熟期</span></strong><span data-i18n="au.96">：精英多数接受，年轻人半数接受，大爷大妈有人同意 → 最后入场机会</span></li>
+            <li><strong><span data-i18n="au.97">刻舟求剑</span></strong><span data-i18n="au.98">：三组普遍接受 → 该退了 / 入场性价比低</span></li>
           </ul>
-          <p>精英：年收入 50 万+ 或博士+ · 年轻人：35 岁以下专科+ · 大爷大妈：55 岁以上高中-</p>
+          <p><span data-i18n="ws.sampling.d3">精英：年收入 50 万+ 或博士+ · 年轻人：35 岁以下专科+ · 大爷大妈：55 岁以上高中-</span></p>
         </div>
       </details>
       <div class="card">
-        <p class="card-title">想法采样表</p>
-        <div class="field"><label for="ideaName">想法 / 赛道</label><input type="text" id="ideaName" placeholder="如：做 AI 育儿知识付费" /></div>
+        <p class="card-title"><span data-i18n="ws.sampling.d1">想法采样表</span></p>
+        <div class="field"><label for="ideaName"><span data-i18n="fl.想法赛道">想法 / 赛道</span></label><input type="text" id="ideaName"  data-i18n-ph="fp.如做AI育儿知识付费2005" placeholder="如：做 AI 育儿知识付费" /></div>
         <div class="sample-grid">
           <table>
-            <thead><tr><th>群体</th><th>同意</th><th>不同意</th><th>不知道</th><th>小计</th></tr></thead>
+            <thead><tr><th><span data-i18n="au.99">群体</span></th><th><span data-i18n="au.100">同意</span></th><th><span data-i18n="au.101">不同意</span></th><th><span data-i18n="au.102">不知道</span></th><th><span data-i18n="au.103">小计</span></th></tr></thead>
             <tbody id="sampleBody">
-              <tr data-group="elite"><td>精英群体</td>
+              <tr data-group="elite"><td><span data-i18n="au.104">精英群体</span></td>
                 <td><input type="number" class="s-agree" min="0" max="10" value="0" /></td>
                 <td><input type="number" class="s-dis" min="0" max="10" value="0" /></td>
                 <td><input type="number" class="s-unk" min="0" max="10" value="0" /></td>
                 <td class="s-sum">0</td></tr>
-              <tr data-group="youth"><td>普通年轻人</td>
+              <tr data-group="youth"><td><span data-i18n="au.105">普通年轻人</span></td>
                 <td><input type="number" class="s-agree" min="0" max="10" value="0" /></td>
                 <td><input type="number" class="s-dis" min="0" max="10" value="0" /></td>
                 <td><input type="number" class="s-unk" min="0" max="10" value="0" /></td>
                 <td class="s-sum">0</td></tr>
-              <tr data-group="elder"><td>大爷大妈</td>
+              <tr data-group="elder"><td><span data-i18n="au.106">大爷大妈</span></td>
                 <td><input type="number" class="s-agree" min="0" max="10" value="0" /></td>
                 <td><input type="number" class="s-dis" min="0" max="10" value="0" /></td>
                 <td><input type="number" class="s-unk" min="0" max="10" value="0" /></td>
@@ -1672,341 +1679,341 @@
             </tbody>
           </table>
         </div>
-        <p class="card-desc" style="margin-top:8px">每组三项之和应 = 10（共 30 人采样）</p>
+        <p class="card-desc" style="margin-top:8px"><span data-i18n="ws.sampling.d2">每组三项之和应 = 10（共 30 人采样）</span></p>
         <div class="score-hero" style="margin-top:12px">
           <div class="value na" id="stageHero">—</div>
-          <div class="label">趋势判断</div>
+          <div class="label"><span data-i18n="au.107">趋势判断</span></div>
           <div class="verdict" id="stageVerdict"></div>
         </div>
         <div class="bar-chart" id="sampleChart"></div>
         <div class="actions">
-          <button type="button" class="btn" id="saveSampleBtn">保存采样</button>
-          <span class="saved-toast" id="savedSampleToast">已保存</span>
+          <button type="button" class="btn" id="saveSampleBtn"><span data-i18n="ws.industry.b.保存采样">保存采样</span></button>
+          <span class="saved-toast" id="savedSampleToast"><span data-i18n="au.108">已保存</span></span>
         </div>
       </div>
-      <div class="card"><p class="card-title">历史采样</p><div class="record-list" id="samplingList"><div class="empty-table">尚无记录</div></div></div>
+      <div class="card"><p class="card-title"><span data-i18n="ws.industry.d1">历史采样</span></p><div class="record-list" id="samplingList"><div class="empty-table"><span data-i18n="au.109">尚无记录</span></div></div></div>
     </div>
 
     <!-- ========== ④ 行业调研 ========== -->
     <div class="panel" id="panel-industry">
       <details class="guide">
-        <summary>行业调研 · 使用说明<span class="trap-tag">困局④ 靠亲朋好友</span></summary>
+        <summary><span data-i18n="au.110">行业调研 · 使用说明</span><span class="trap-tag"><span data-i18n="au.111">困局④ 靠亲朋好友</span></span></summary>
         <div class="guide-body">
-          <p>每个行业把上下游、监管、替代调查清楚。优先访谈 <strong>2–3 个陌生人/工厂</strong>，不靠熟人的信息 bubble。</p>
-          <h3>调研深度与广度（7 步）</h3>
+          <p><span data-i18n="au.112">每个行业把上下游、监管、替代调查清楚。优先访谈 </span><strong><span data-i18n="au.113">2–3 个陌生人/工厂</span></strong><span data-i18n="au.114">，不靠熟人的信息 bubble。</span></p>
+          <h3><span data-i18n="ws.industry.title">调研深度与广度（7 步）</span></h3>
           <ol style="font-size:0.85rem;padding-left:1.2em;margin:0">
-            <li>先看至少 5 个大行业</li><li>每个行业聊 30 人左右</li><li>看各种调查报告</li>
-            <li>去 2–3 个企业参观</li><li>去 2–3 个展会</li><li>每个行业填下面这张表</li><li>再决定去哪里、干什么</li>
+            <li><span data-i18n="ws.industry.d5">先看至少 5 个大行业</span></li><li><span data-i18n="ws.industry.d6">每个行业聊 30 人左右</span></li><li><span data-i18n="ws.industry.d7">看各种调查报告</span></li>
+            <li><span data-i18n="ws.industry.d8">去 2–3 个企业参观</span></li><li><span data-i18n="ws.industry.d9">去 2–3 个展会</span></li><li><span data-i18n="ws.industry.d10">每个行业填下面这张表</span></li><li><span data-i18n="ws.industry.d11">再决定去哪里、干什么</span></li>
           </ol>
         </div>
       </details>
 
       <div class="card">
-        <p class="card-title">调研进度清单</p>
+        <p class="card-title"><span data-i18n="ws.industry.d2">调研进度清单</span></p>
         <ul class="checklist" id="indChecklist">
-          <li><input type="checkbox" data-step="1" /><span>① 已锁定至少 5 个潜在大行业</span></li>
-          <li><input type="checkbox" data-step="2" /><span>② 每个目标行业已聊约 30 人</span></li>
-          <li><input type="checkbox" data-step="3" /><span>③ 已阅读行业调查报告</span></li>
-          <li><input type="checkbox" data-step="4" /><span>④ 已参观 2–3 家企业</span></li>
-          <li><input type="checkbox" data-step="5" /><span>⑤ 已参加 2–3 个展会</span></li>
-          <li><input type="checkbox" data-step="6" /><span>⑥ 已填写下方行业表</span></li>
-          <li><input type="checkbox" data-step="7" /><span>⑦ 已做出去向决策</span></li>
+          <li><input type="checkbox" data-step="1" /><span><span data-i18n="au.115">① 已锁定至少 5 个潜在大行业</span></span></li>
+          <li><input type="checkbox" data-step="2" /><span><span data-i18n="au.116">② 每个目标行业已聊约 30 人</span></span></li>
+          <li><input type="checkbox" data-step="3" /><span><span data-i18n="au.117">③ 已阅读行业调查报告</span></span></li>
+          <li><input type="checkbox" data-step="4" /><span><span data-i18n="au.118">④ 已参观 2–3 家企业</span></span></li>
+          <li><input type="checkbox" data-step="5" /><span><span data-i18n="au.119">⑤ 已参加 2–3 个展会</span></span></li>
+          <li><input type="checkbox" data-step="6" /><span><span data-i18n="au.120">⑥ 已填写下方行业表</span></span></li>
+          <li><input type="checkbox" data-step="7" /><span><span data-i18n="au.121">⑦ 已做出去向决策</span></span></li>
         </ul>
       </div>
 
       <div class="card">
-        <p class="card-title">行业调研表</p>
-        <p class="card-desc">填完一级问题后，补充头部企业与目标职位。</p>
+        <p class="card-title"><span data-i18n="ws.industry.d3">行业调研表</span></p>
+        <p class="card-desc"><span data-i18n="ws.industry.d4">填完一级问题后，补充头部企业与目标职位。</span></p>
 
         <div class="field">
-          <label for="indName">调研标题</label>
-          <input type="text" id="indName" placeholder="如：出版业-图书编辑 / 计算机-AI 应用" />
+          <label for="indName"><span data-i18n="fl.调研标题">调研标题</span></label>
+          <input type="text" id="indName"  data-i18n-ph="fp.如出版业图书编辑计算机A1938" placeholder="如：出版业-图书编辑 / 计算机-AI 应用" />
         </div>
 
         <div class="research-q">
           <div class="q-num">Q1</div>
-          <label for="indQ1">我目前公司所在的行业是？（学生写专业）</label>
+          <label for="indQ1"><span data-i18n="fl.我目前公司所在的行业是学生写">我目前公司所在的行业是？（学生写专业）</span></label>
           <textarea id="indQ1" class="tall" placeholder="如：出版社，图书编辑"></textarea>
         </div>
         <div class="research-q">
           <div class="q-num">Q2</div>
-          <label for="indQ2">该行业的上游供应商有哪些行业？</label>
+          <label for="indQ2"><span data-i18n="fl.该行业的上游供应商有哪些行业">该行业的上游供应商有哪些行业？</span></label>
           <textarea id="indQ2" placeholder="如：作者、插画师、平面设计师、引进版公司…"></textarea>
         </div>
         <div class="research-q">
           <div class="q-num">Q3</div>
-          <label for="indQ3">该行业的下游渠道商有哪些行业？</label>
+          <label for="indQ3"><span data-i18n="fl.该行业的下游渠道商有哪些行业">该行业的下游渠道商有哪些行业？</span></label>
           <textarea id="indQ3" placeholder="如：线下书店、线上书店、直播带货、读书 KOL…"></textarea>
         </div>
         <div class="research-q">
           <div class="q-num">Q4</div>
-          <label for="indQ4">该行业有哪些监管部门或调控部门？</label>
+          <label for="indQ4"><span data-i18n="fl.该行业有哪些监管部门或调控部">该行业有哪些监管部门或调控部门？</span></label>
           <textarea id="indQ4" placeholder="如：出版局、文字审查部门…"></textarea>
         </div>
         <div class="research-q">
           <div class="q-num">Q5</div>
-          <label for="indQ5">该行业有哪些替代行业？</label>
+          <label for="indQ5"><span data-i18n="fl.该行业有哪些替代行业">该行业有哪些替代行业？</span></label>
           <textarea id="indQ5" placeholder="如：电子书、知识付费、成人进修、儿童益智桌游…"></textarea>
         </div>
         <div class="research-q">
           <div class="q-num">Q6</div>
-          <label for="indQ6">该行业有中介或辅助行业吗？</label>
+          <label for="indQ6"><span data-i18n="fl.该行业有中介或辅助行业吗">该行业有中介或辅助行业吗？</span></label>
           <textarea id="indQ6" placeholder="如：图书发行公司（二道贩子）、印刷厂…"></textarea>
         </div>
         <div class="research-q">
           <div class="q-num">Q7</div>
-          <label for="indQ7">该行业有其他相关行业吗？</label>
+          <label for="indQ7"><span data-i18n="fl.该行业有其他相关行业吗">该行业有其他相关行业吗？</span></label>
           <textarea id="indQ7" placeholder="如：杂志期刊、新媒体…"></textarea>
         </div>
         <div class="research-q">
           <div class="q-num">Q8</div>
-          <label for="indQ8">该行业有小众企业或外企吗？</label>
+          <label for="indQ8"><span data-i18n="fl.该行业有小众企业或外企吗">该行业有小众企业或外企吗？</span></label>
           <textarea id="indQ8" placeholder="如：潮玩店、外文书店、买手店…"></textarea>
         </div>
 
-        <div class="section-divider">然后看企业和职位</div>
+        <div class="section-divider"><span data-i18n="au.122">然后看企业和职位</span></div>
 
         <div class="field">
-          <label for="indLeaders">该行业的头部企业有哪些？</label>
+          <label for="indLeaders"><span data-i18n="fl.该行业的头部企业有哪些">该行业的头部企业有哪些？</span></label>
           <textarea id="indLeaders" class="tall" placeholder="列出 3–5 家头部公司"></textarea>
         </div>
         <div class="field">
-          <label for="indJobs">头部企业的好职位有哪些？</label>
+          <label for="indJobs"><span data-i18n="fl.头部企业的好职位有哪些">头部企业的好职位有哪些？</span></label>
           <textarea id="indJobs" placeholder="如：策划编辑、版权经理、数字出版负责人…"></textarea>
         </div>
         <div class="field">
-          <label for="indSkills">这些职位需要什么技能？</label>
+          <label for="indSkills"><span data-i18n="fl.这些职位需要什么技能">这些职位需要什么技能？</span></label>
           <textarea id="indSkills" placeholder="如：选题能力、版权谈判、数据分析、内容运营…"></textarea>
         </div>
 
         <div class="actions">
-          <button type="button" class="btn" id="saveIndBtn">保存调研</button>
-          <button type="button" class="btn btn-ghost" id="clearIndBtn">清空表单</button>
-          <span class="saved-toast" id="savedIndToast">已保存</span>
+          <button type="button" class="btn" id="saveIndBtn"><span data-i18n="ws.reflect.b.保存调研">保存调研</span></button>
+          <button type="button" class="btn btn-ghost" id="clearIndBtn"><span data-i18n="ws.btn.clearForm">清空表单</span></button>
+          <span class="saved-toast" id="savedIndToast"><span data-i18n="au.123">已保存</span></span>
         </div>
       </div>
 
       <div class="card">
-        <p class="card-title">历史调研</p>
-        <div class="record-list" id="industryList"><div class="empty-table">尚无记录</div></div>
+        <p class="card-title"><span data-i18n="ws.reflect.d1">历史调研</span></p>
+        <div class="record-list" id="industryList"><div class="empty-table"><span data-i18n="au.124">尚无记录</span></div></div>
       </div>
     </div>
 
     <!-- ========== ⑤ 改变反思 ========== -->
     <div class="panel" id="panel-reflect">
       <details class="guide">
-        <summary>改变反思 · 使用说明<span class="trap-tag">困局⑤ 总想证明自己对</span></summary>
+        <summary><span data-i18n="au.125">改变反思 · 使用说明</span><span class="trap-tag"><span data-i18n="au.126">困局⑤ 总想证明自己对</span></span></summary>
         <div class="guide-body">
-          <p><strong>不要问「我做错了什么」</strong>，只问<strong>「我能改变哪里？」</strong>。反思只想改变，不涉及羞耻、内疚，也不必解释为什么。</p>
-          <div class="formula-box">四要素：<strong>在哪里变 · 什么时机 · 谁帮忙 · 什么资源</strong> — 没有「为什么」</div>
-          <p>每日记录可改变事项（daily change log），从对错判断转向改变可能，算改变带来的 ROI。</p>
+          <p><strong><span data-i18n="au.127">不要问「我做错了什么」</span></strong><span data-i18n="au.128">，只问</span><strong><span data-i18n="au.129">「我能改变哪里？」</span></strong><span data-i18n="au.130">。反思只想改变，不涉及羞耻、内疚，也不必解释为什么。</span></p>
+          <div class="formula-box"><span data-i18n="au.131">四要素：</span><strong><span data-i18n="au.132">在哪里变 · 什么时机 · 谁帮忙 · 什么资源</span></strong><span data-i18n="au.133"> — 没有「为什么」</span></div>
+          <p><span data-i18n="ws.reflect.d3">每日记录可改变事项（daily change log），从对错判断转向改变可能，算改变带来的 ROI。</span></p>
         </div>
       </details>
       <div class="card">
-        <p class="card-title">今日改变反思</p>
-        <div class="field"><label for="refDate">日期</label><input type="date" id="refDate" /></div>
-        <div class="field"><label for="refTopic">反思主题</label><input type="text" id="refTopic" placeholder="如：提升 side-project 产出 / 调整育儿时间分配" /></div>
+        <p class="card-title"><span data-i18n="ws.reflect.d2">今日改变反思</span></p>
+        <div class="field"><label for="refDate"><span data-i18n="fl.日期">日期</span></label><input type="date" id="refDate" /></div>
+        <div class="field"><label for="refTopic"><span data-i18n="fl.反思主题">反思主题</span></label><input type="text" id="refTopic"  data-i18n-ph="fp.如提升sideproje3954" placeholder="如：提升 side-project 产出 / 调整育儿时间分配" /></div>
         <div class="reflect-grid">
           <div class="reflect-box r1">
-            <label for="refWhere">① 在哪里变？</label>
-            <span class="desc">最需要在哪里变</span>
+            <label for="refWhere"><span data-i18n="fl.①在哪里变">① 在哪里变？</span></label>
+            <span class="desc"><span data-i18n="au.134">最需要在哪里变</span></span>
             <textarea id="refWhere" style="margin-top:8px"></textarea>
           </div>
           <div class="reflect-box r2">
-            <label for="refWhen">② 什么时机变？</label>
+            <label for="refWhen"><span data-i18n="fl.②什么时机变">② 什么时机变？</span></label>
             <textarea id="refWhen" style="margin-top:8px"></textarea>
           </div>
           <div class="reflect-box r3">
-            <label for="refWho">③ 需要谁帮忙？</label>
+            <label for="refWho"><span data-i18n="fl.③需要谁帮忙">③ 需要谁帮忙？</span></label>
             <textarea id="refWho" style="margin-top:8px"></textarea>
           </div>
           <div class="reflect-box r4">
-            <label for="refWhat">④ 需要什么资源？</label>
+            <label for="refWhat"><span data-i18n="fl.④需要什么资源">④ 需要什么资源？</span></label>
             <textarea id="refWhat" style="margin-top:8px"></textarea>
           </div>
         </div>
-        <div class="field"><label for="refRoi">预期 ROI（改变带来的回报）</label><textarea id="refRoi" placeholder="可量化的下一步产出"></textarea></div>
+        <div class="field"><label for="refRoi"><span data-i18n="fl.预期ROI改变带来的回报">预期 ROI（改变带来的回报）</span></label><textarea id="refRoi" placeholder="可量化的下一步产出"></textarea></div>
         <div class="actions">
-          <button type="button" class="btn" id="saveRefBtn">保存反思</button>
-          <span class="saved-toast" id="savedRefToast">已保存</span>
+          <button type="button" class="btn" id="saveRefBtn"><span data-i18n="ws.opinion.b.保存反思">保存反思</span></button>
+          <span class="saved-toast" id="savedRefToast"><span data-i18n="au.135">已保存</span></span>
         </div>
       </div>
-      <div class="card"><p class="card-title">历史反思</p><div class="record-list" id="reflectList"><div class="empty-table">尚无记录</div></div></div>
+      <div class="card"><p class="card-title"><span data-i18n="ws.opinion.d1">历史反思</span></p><div class="record-list" id="reflectList"><div class="empty-table"><span data-i18n="au.136">尚无记录</span></div></div></div>
     </div>
 
     <!-- ========== ⑥ 意见听取 ========== -->
     <div class="panel" id="panel-opinion">
       <details class="guide">
-        <summary>意见听取 · 使用说明<span class="trap-tag">困局⑥ 亲朋言听计从</span></summary>
+        <summary><span data-i18n="au.137">意见听取 · 使用说明</span><span class="trap-tag"><span data-i18n="au.138">困局⑥ 亲朋言听计从</span></span></summary>
         <div class="guide-body">
-          <p>两条轨道分开用。<strong>亲朋意见</strong>：从陌生人视角评估给建议的人，把亲密度与专业度分离。权重 = 专业度 × 相关性，综合分 &lt;0 建议忽略。</p>
-          <div class="formula-box"><strong>总分</strong> = 四项评分之和（-1 / 0 / +1）· ≥2 可参考 · 0~1 谨慎 · &lt;0 忽略</div>
-          <p><strong>课代表意见</strong>：用《真本事》框架 + 课代表公开主张过一遍这件事。不是替立正说话，是借透镜自己判断；填完可复制给 Cursor 走课代表 Skill。</p>
-          <h3>收到亲朋意见后</h3>
+          <p><span data-i18n="au.139">两条轨道分开用。</span><strong><span data-i18n="au.140">亲朋意见</span></strong><span data-i18n="au.141">：从陌生人视角评估给建议的人，把亲密度与专业度分离。权重 = 专业度 × 相关性，综合分 </span>&lt;<span data-i18n="au.142">0 建议忽略。</span></p>
+          <div class="formula-box"><strong><span data-i18n="au.143">总分</span></strong><span data-i18n="au.144"> = 四项评分之和（-1 / 0 / +1）· ≥2 可参考 · 0~1 谨慎 · </span>&lt;<span data-i18n="au.145">0 忽略</span></div>
+          <p><strong><span data-i18n="au.146">课代表意见</span></strong><span data-i18n="au.147">：用《真本事》框架 + 课代表公开主张过一遍这件事。不是替立正说话，是借透镜自己判断；填完可复制给 Cursor 走课代表 Skill。</span></p>
+          <h3><span data-i18n="ws.opinion.title">收到亲朋意见后</span></h3>
           <ul>
-            <li><strong>完全错</strong>：简单表示感激，避免冲突浪费时间</li>
-            <li><strong>有对的地方</strong>：提炼可改变点 → 如何变 / 何时变 / 路径 / 谁帮忙（求变是中性，不是否定自己）</li>
+            <li><strong><span data-i18n="au.148">完全错</span></strong><span data-i18n="au.149">：简单表示感激，避免冲突浪费时间</span></li>
+            <li><strong><span data-i18n="au.150">有对的地方</span></strong><span data-i18n="au.151">：提炼可改变点 → 如何变 / 何时变 / 路径 / 谁帮忙（求变是中性，不是否定自己）</span></li>
           </ul>
         </div>
       </details>
 
       <div class="dual-switch" id="opSwitch">
-        <button type="button" class="active" data-op-mode="kin">亲朋意见</button>
-        <button type="button" data-op-mode="kdb">课代表意见</button>
+        <button type="button" class="active" data-op-mode="kin"><span data-i18n="ws.opinion.b.亲朋意见">亲朋意见</span></button>
+        <button type="button" data-op-mode="kdb"><span data-i18n="ws.opinion.b.课代表意见">课代表意见</span></button>
       </div>
 
       <div class="dual-form active" id="opFormKin">
       <div class="card">
-        <p class="card-title">评估一条意见</p>
-        <p class="card-desc">对方在评论什么领域，就按那个领域来打分。</p>
+        <p class="card-title"><span data-i18n="ws.opinion.d2">评估一条意见</span></p>
+        <p class="card-desc"><span data-i18n="ws.opinion.d3">对方在评论什么领域，就按那个领域来打分。</span></p>
 
-        <div class="field"><label for="opSource">意见来源</label><input type="text" id="opSource" placeholder="如：爸爸、同事张三" /></div>
-        <div class="field"><label for="opTopic">意见内容 / 涉及领域</label><input type="text" id="opTopic" placeholder="如：建议我考研、劝我换赛道做 AI" /></div>
+        <div class="field"><label for="opSource"><span data-i18n="fl.意见来源">意见来源</span></label><input type="text" id="opSource"  data-i18n-ph="fp.如爸爸同事张三7533" placeholder="如：爸爸、同事张三" /></div>
+        <div class="field"><label for="opTopic"><span data-i18n="fl.意见内容涉及领域">意见内容 / 涉及领域</span></label><input type="text" id="opTopic"  data-i18n-ph="fp.如建议我考研劝我换赛道做2107" placeholder="如：建议我考研、劝我换赛道做 AI" /></div>
 
         <div class="score-hero">
           <div class="value na" id="opScoreHero">—</div>
-          <div class="label">意见权重总分（-4 ~ +4）</div>
+          <div class="label"><span data-i18n="au.152">意见权重总分（-4 ~ +4）</span></div>
           <div class="verdict" id="opVerdict"></div>
         </div>
 
         <div class="score-grid" id="opScoreGrid">
           <div class="score-item">
-            <span class="q">1. 对所评论领域有没有<strong>直接一线经历</strong>？</span>
+            <span class="q"><span data-i18n="au.153">1. 对所评论领域有没有</span><strong><span data-i18n="au.154">直接一线经历</span></strong>？</span>
             <select data-op="exp">
-              <option value="1">有 → +1</option>
-              <option value="0" selected>没有 / 不确定 → 0</option>
+              <option value="1" data-i18n="fo.有16249">有 → +1</option>
+              <option value="0" selected data-i18n="fo.没有不确定02358">没有 / 不确定 → 0</option>
             </select>
           </div>
           <div class="score-item">
-            <span class="q">2. 对方<strong>学历</strong>？</span>
+            <span class="q"><span data-i18n="au.155">2. 对方</span><strong><span data-i18n="au.156">学历</span></strong>？</span>
             <select data-op="edu">
-              <option value="1">985 及以上 → +1</option>
-              <option value="0" selected>本科 → 0</option>
-              <option value="-1">未上过本科 → -1</option>
+              <option value="1" data-i18n="fo.985及以上18687">985 及以上 → +1</option>
+              <option value="0" selected data-i18n="fo.本科08892">本科 → 0</option>
+              <option value="-1" data-i18n="fo.未上过本科14806">未上过本科 → -1</option>
             </select>
           </div>
           <div class="score-item">
-            <span class="q">3. 对方<strong>收入</strong>是否高于社会平均？</span>
+            <span class="q"><span data-i18n="au.157">3. 对方</span><strong><span data-i18n="au.158">收入</span></strong><span data-i18n="au.159">是否高于社会平均？</span></span>
             <select data-op="income">
-              <option value="1">月入 2 万以上 → +1</option>
-              <option value="0" selected>1–2 万 → 0</option>
-              <option value="-1">1 万以下 → -1</option>
+              <option value="1" data-i18n="fo.月入2万以上16153">月入 2 万以上 → +1</option>
+              <option value="0" selected data-i18n="fo.12万06175">1–2 万 → 0</option>
+              <option value="-1" data-i18n="fo.1万以下14945">1 万以下 → -1</option>
             </select>
           </div>
           <div class="score-item">
-            <span class="q">4. 有没有<strong>学习习惯和上进动力</strong>？</span>
+            <span class="q"><span data-i18n="au.160">4. 有没有</span><strong><span data-i18n="au.161">学习习惯和上进动力</span></strong>？</span>
             <select data-op="learn">
-              <option value="1">看书 / 读报 / 系统学习 → +1</option>
-              <option value="0" selected>只看新闻 → 0</option>
-              <option value="-1">只看短视频 → -1</option>
+              <option value="1" data-i18n="fo.看书读报系统学习1375">看书 / 读报 / 系统学习 → +1</option>
+              <option value="0" selected data-i18n="fo.只看新闻0577">只看新闻 → 0</option>
+              <option value="-1" data-i18n="fo.只看短视频11737">只看短视频 → -1</option>
             </select>
           </div>
         </div>
 
-        <div class="field"><label for="opNote">备注</label><textarea id="opNote" placeholder="最终决定：采纳 / 忽略 / 再验证"></textarea></div>
+        <div class="field"><label for="opNote"><span data-i18n="fl.备注">备注</span></label><textarea id="opNote" placeholder="最终决定：采纳 / 忽略 / 再验证"></textarea></div>
 
-        <div class="section-divider">收到意见后怎么办</div>
+        <div class="section-divider"><span data-i18n="au.162">收到意见后怎么办</span></div>
         <div class="field">
-          <label for="opResponse">这条意见属于？</label>
+          <label for="opResponse"><span data-i18n="fl.这条意见属于">这条意见属于？</span></label>
           <select id="opResponse">
-            <option value="">— 选择 —</option>
-            <option value="wrong">完全错 → 简单表示感激即可</option>
-            <option value="partial">有对的地方 → 填写下方改变清单</option>
+            <option value="" data-i18n="fo.选择1065">— 选择 —</option>
+            <option value="wrong" data-i18n="fo.完全错简单表示感激即可9466">完全错 → 简单表示感激即可</option>
+            <option value="partial" data-i18n="fo.有对的地方填写下方改变清6548">有对的地方 → 填写下方改变清单</option>
           </select>
         </div>
         <div class="response-box hidden" id="opPartialBox">
-          <div class="field"><label for="opChangeWhat">提炼：有哪些地方我可以改变？</label><textarea id="opChangeWhat"></textarea></div>
+          <div class="field"><label for="opChangeWhat"><span data-i18n="fl.提炼有哪些地方我可以改变">提炼：有哪些地方我可以改变？</span></label><textarea id="opChangeWhat"></textarea></div>
           <div class="matrix-row">
-            <div class="field"><label for="opChangeHow">如何改变？</label><textarea id="opChangeHow"></textarea></div>
-            <div class="field"><label for="opChangeWhen">什么时候改变？</label><textarea id="opChangeWhen"></textarea></div>
+            <div class="field"><label for="opChangeHow"><span data-i18n="fl.如何改变">如何改变？</span></label><textarea id="opChangeHow"></textarea></div>
+            <div class="field"><label for="opChangeWhen"><span data-i18n="fl.什么时候改变">什么时候改变？</span></label><textarea id="opChangeWhen"></textarea></div>
           </div>
           <div class="matrix-row">
-            <div class="field"><label for="opChangePath">改变路径是什么？</label><textarea id="opChangePath"></textarea></div>
-            <div class="field"><label for="opChangeWho">需要谁的帮助？</label><textarea id="opChangeWho"></textarea></div>
+            <div class="field"><label for="opChangePath"><span data-i18n="fl.改变路径是什么">改变路径是什么？</span></label><textarea id="opChangePath"></textarea></div>
+            <div class="field"><label for="opChangeWho"><span data-i18n="fl.需要谁的帮助">需要谁的帮助？</span></label><textarea id="opChangeWho"></textarea></div>
           </div>
         </div>
 
         <div class="actions">
-          <button type="button" class="btn" id="saveOpBtn">保存评估</button>
-          <span class="saved-toast" id="savedOpToast">已保存</span>
+          <button type="button" class="btn" id="saveOpBtn"><span data-i18n="ws.opinion.b.保存评估">保存评估</span></button>
+          <span class="saved-toast" id="savedOpToast"><span data-i18n="au.163">已保存</span></span>
         </div>
       </div>
 
       <div class="card">
-        <p class="card-title">历史评估</p>
-        <div class="record-list" id="opinionList"><div class="empty-table">尚无记录</div></div>
+        <p class="card-title"><span data-i18n="ws.opinion.d4">历史评估</span></p>
+        <div class="record-list" id="opinionList"><div class="empty-table"><span data-i18n="au.164">尚无记录</span></div></div>
       </div>
       </div>
 
       <div class="dual-form" id="opFormKdb">
         <div class="card">
-          <p class="card-title">课代表意见</p>
-          <p class="card-desc">学点真本事，做点真东西。先写处境，勾陷阱和框架，再决定自己怎么走；需要出处时把下方提示词交给 Cursor。</p>
+          <p class="card-title"><span data-i18n="ws.opinion.d5">课代表意见</span></p>
+          <p class="card-desc"><span data-i18n="ws.opinion.d6">学点真本事，做点真东西。先写处境，勾陷阱和框架，再决定自己怎么走；需要出处时把下方提示词交给 Cursor。</span></p>
 
           <div class="field">
-            <label for="kdbSituation">这件事 / 我卡在哪</label>
+            <label for="kdbSituation"><span data-i18n="fl.这件事我卡在哪">这件事 / 我卡在哪</span></label>
             <textarea id="kdbSituation" class="tall" placeholder="如：家里劝我考公；同事说教务填报才是正业，别再做人居数字化；我在犹豫要不要把林孪智服做成代表作"></textarea>
           </div>
 
           <div class="field">
-            <label>我可能踩了哪类陷阱（《真本事》框架一）</label>
+            <label><span data-i18n="au.165">我可能踩了哪类陷阱（《真本事》框架一）</span></label>
             <div class="chip-row" id="kdbTrapRow">
-              <label><input type="checkbox" data-kdb-trap="object" /> 客体思维（他们应该怎样对我）</label>
-              <label><input type="checkbox" data-kdb-trap="fixed" /> 固定型（我不是那种人）</label>
-              <label><input type="checkbox" data-kdb-trap="score" /> 打分思维（用薪资/职级/学历压扁）</label>
+              <label><input type="checkbox" data-kdb-trap="object" /><span data-i18n="au.166"> 客体思维（他们应该怎样对我）</span></label>
+              <label><input type="checkbox" data-kdb-trap="fixed" /><span data-i18n="au.167"> 固定型（我不是那种人）</span></label>
+              <label><input type="checkbox" data-kdb-trap="score" /><span data-i18n="au.168"> 打分思维（用薪资/职级/学历压扁）</span></label>
             </div>
           </div>
 
           <div class="field">
-            <label for="kdbFramework">打算用哪套框架</label>
+            <label for="kdbFramework"><span data-i18n="fl.打算用哪套框架">打算用哪套框架</span></label>
             <select id="kdbFramework">
-              <option value="">— 尚未选定 —</option>
-              <option value="traps">三大思维陷阱 → 主体 / 成长 / 多维</option>
-              <option value="craft">手艺思维（行动、反馈、结果）</option>
-              <option value="finance">财务自由公式（勿当理财建议）</option>
-              <option value="value">个人价值公式：市场 × 产品 × 杠杆</option>
-              <option value="dao">道天地将法（行业 / 平台 / 人 / 方法）</option>
-              <option value="ten">抓住 10% / 识别 fake work</option>
-              <option value="jungle">手艺 + 坚持 / 丛林能力</option>
+              <option value="" data-i18n="fo.尚未选定9023">— 尚未选定 —</option>
+              <option value="traps" data-i18n="fo.三大思维陷阱主体成长多维309">三大思维陷阱 → 主体 / 成长 / 多维</option>
+              <option value="craft" data-i18n="fo.手艺思维行动反馈结果8866">手艺思维（行动、反馈、结果）</option>
+              <option value="finance" data-i18n="fo.财务自由公式勿当理财建议2773">财务自由公式（勿当理财建议）</option>
+              <option value="value" data-i18n="fo.个人价值公式市场产品杠杆6368">个人价值公式：市场 × 产品 × 杠杆</option>
+              <option value="dao" data-i18n="fo.道天地将法行业平台人方法2634">道天地将法（行业 / 平台 / 人 / 方法）</option>
+              <option value="ten" data-i18n="fo.抓住10识别fakewo306">抓住 10% / 识别 fake work</option>
+              <option value="jungle" data-i18n="fo.手艺坚持丛林能力6903">手艺 + 坚持 / 丛林能力</option>
             </select>
           </div>
 
           <div class="field">
-            <label>相关透镜（Public Axioms，可多选）</label>
+            <label><span data-i18n="au.169">相关透镜（Public Axioms，可多选）</span></label>
             <div class="axiom-picks" id="kdbAxiomPicks">
-              <label><input type="checkbox" data-kdb-axiom="1" /> 先说清结果</label>
-              <label><input type="checkbox" data-kdb-axiom="3" /> 投入 / 产出 / 成果</label>
-              <label><input type="checkbox" data-kdb-axiom="4" /> 靠近真实反馈</label>
-              <label><input type="checkbox" data-kdb-axiom="5" /> 先删除再自动化</label>
-              <label><input type="checkbox" data-kdb-axiom="7" /> 判断放到杠杆位</label>
-              <label><input type="checkbox" data-kdb-axiom="8" /> 工作能否积累</label>
-              <label><input type="checkbox" data-kdb-axiom="11" /> 理解 vs 信念</label>
-              <label><input type="checkbox" data-kdb-axiom="12" /> 做小但要真</label>
+              <label><input type="checkbox" data-kdb-axiom="1" /><span data-i18n="au.170"> 先说清结果</span></label>
+              <label><input type="checkbox" data-kdb-axiom="3" /><span data-i18n="au.171"> 投入 / 产出 / 成果</span></label>
+              <label><input type="checkbox" data-kdb-axiom="4" /><span data-i18n="au.172"> 靠近真实反馈</span></label>
+              <label><input type="checkbox" data-kdb-axiom="5" /><span data-i18n="au.173"> 先删除再自动化</span></label>
+              <label><input type="checkbox" data-kdb-axiom="7" /><span data-i18n="au.174"> 判断放到杠杆位</span></label>
+              <label><input type="checkbox" data-kdb-axiom="8" /><span data-i18n="au.175"> 工作能否积累</span></label>
+              <label><input type="checkbox" data-kdb-axiom="11" /><span data-i18n="au.176"> 理解 vs 信念</span></label>
+              <label><input type="checkbox" data-kdb-axiom="12" /><span data-i18n="au.177"> 做小但要真</span></label>
             </div>
           </div>
 
           <div class="field">
-            <label for="kdbVerdict">我现在的判断</label>
+            <label for="kdbVerdict"><span data-i18n="fl.我现在的判断">我现在的判断</span></label>
             <textarea id="kdbVerdict" placeholder="这件事真正要改变什么？最小的真动作是什么？"></textarea>
           </div>
           <div class="field">
-            <label for="kdbNext">本周可验证的一步</label>
+            <label for="kdbNext"><span data-i18n="fl.本周可验证的一步">本周可验证的一步</span></label>
             <textarea id="kdbNext" placeholder="找谁、做什么、观察什么、何时复盘"></textarea>
           </div>
 
-          <div class="section-divider">复制给 Cursor · 课代表 Skill</div>
-          <div class="prompt-out" id="kdbPromptOut">填写处境后自动生成…</div>
+          <div class="section-divider"><span data-i18n="au.178">复制给 Cursor · 课代表 Skill</span></div>
+          <div class="prompt-out" id="kdbPromptOut"><span data-i18n="au.179">填写处境后自动生成…</span></div>
           <div class="actions" style="margin-top:12px">
-            <button type="button" class="btn" id="copyKdbBtn">复制给 Cursor</button>
-            <button type="button" class="btn btn-ghost" id="saveKdbBtn">保存这条意见</button>
-            <button type="button" class="btn btn-ghost" id="clearKdbBtn">清空</button>
-            <span class="saved-toast" id="savedKdbToast">已保存</span>
+            <button type="button" class="btn" id="copyKdbBtn"><span data-i18n="ws.penetrate.b.复制给Cursor">复制给 Cursor</span></button>
+            <button type="button" class="btn btn-ghost" id="saveKdbBtn"><span data-i18n="ws.penetrate.b.保存这条意见">保存这条意见</span></button>
+            <button type="button" class="btn btn-ghost" id="clearKdbBtn"><span data-i18n="ws.btn.clear">清空</span></button>
+            <span class="saved-toast" id="savedKdbToast"><span data-i18n="au.180">已保存</span></span>
           </div>
         </div>
 
         <div class="card">
-          <p class="card-title">历史课代表意见</p>
-          <div class="record-list" id="kdbOpinionList"><div class="empty-table">尚无记录</div></div>
+          <p class="card-title"><span data-i18n="ws.penetrate.d1">历史课代表意见</span></p>
+          <div class="record-list" id="kdbOpinionList"><div class="empty-table"><span data-i18n="au.181">尚无记录</span></div></div>
         </div>
       </div>
     </div>
@@ -2014,262 +2021,262 @@
     <!-- ========== ⑦ 穿透不确定性的能力 ========== -->
     <div class="panel" id="panel-penetrate">
       <details class="guide" open>
-        <summary>穿透不确定性 · 使用说明<span class="trap-tag">AI 时代</span></summary>
+        <summary><span data-i18n="au.182">穿透不确定性 · 使用说明</span><span class="trap-tag"><span data-i18n="au.183">AI 时代</span></span></summary>
         <div class="guide-body">
-          <p>有知识、有技能仍拿不到结果，差的往往不是运气，而是<strong>穿透不确定性的能力</strong>——看不见，但可控。</p>
-          <div class="formula-box">心态切换：从「<strong>会不会</strong>」（考试思维 / 知识技能）→「<strong>能不能</strong>」（结果思维）。AI 已在知识与技能上大幅超越个人时，注意力应放在能拿结果的能力上。</div>
-          <h3>六个可刻意提升的能力</h3>
+          <p><span data-i18n="au.184">有知识、有技能仍拿不到结果，差的往往不是运气，而是</span><strong><span data-i18n="au.185">穿透不确定性的能力</span></strong><span data-i18n="au.186">——看不见，但可控。</span></p>
+          <div class="formula-box"><span data-i18n="au.187">心态切换：从「</span><strong><span data-i18n="au.188">会不会</span></strong><span data-i18n="au.189">」（考试思维 / 知识技能）→「</span><strong><span data-i18n="au.190">能不能</span></strong><span data-i18n="au.191">」（结果思维）。AI 已在知识与技能上大幅超越个人时，注意力应放在能拿结果的能力上。</span></div>
+          <h3><span data-i18n="ws.penetrate.title">六个可刻意提升的能力</span></h3>
           <ul>
-            <li><strong>定义问题</strong>：别急着解题，先问「真正要解决的是什么」</li>
-            <li><strong>拆解问题</strong>：把模糊大题拆成可行动、可验证的小块</li>
-            <li><strong>借力整合</strong>：接受自己「不会」，用他人 / 工具 / AI 拼出结果</li>
-            <li><strong>决策</strong>：信息不完备时仍要选，并承担后果</li>
-            <li><strong>迭代纠偏</strong>：用反馈修正方向，而不是一次做对</li>
-            <li><strong>Ownership 与上心</strong>：对结果负责，而不是对「我做过了」负责</li>
+            <li><strong><span data-i18n="au.192">定义问题</span></strong><span data-i18n="au.193">：别急着解题，先问「真正要解决的是什么」</span></li>
+            <li><strong><span data-i18n="au.194">拆解问题</span></strong><span data-i18n="au.195">：把模糊大题拆成可行动、可验证的小块</span></li>
+            <li><strong><span data-i18n="au.196">借力整合</span></strong><span data-i18n="au.197">：接受自己「不会」，用他人 / 工具 / AI 拼出结果</span></li>
+            <li><strong><span data-i18n="au.198">决策</span></strong><span data-i18n="au.199">：信息不完备时仍要选，并承担后果</span></li>
+            <li><strong><span data-i18n="au.200">迭代纠偏</span></strong><span data-i18n="au.201">：用反馈修正方向，而不是一次做对</span></li>
+            <li><strong><span data-i18n="au.202">Ownership 与上心</span></strong><span data-i18n="au.203">：对结果负责，而不是对「我做过了」负责</span></li>
           </ul>
-          <p>同背景人结果分野，多半差在这组能力，而不是又多背了一门课。</p>
+          <p><span data-i18n="ws.penetrate.d4">同背景人结果分野，多半差在这组能力，而不是又多背了一门课。</span></p>
         </div>
       </details>
 
       <div class="shift-box">
-        <p class="shift-title">本周自检四问</p>
-        <p>① 我定义的问题是别人真正要的吗？　② 拆到哪一步就可以本周验证？　③ 我在硬扛「自己不会」的部分吗？该借谁 / 什么工具？　④ 结果差时，我归因运气，还是可迭代的决策与执行？</p>
+        <p class="shift-title"><span data-i18n="au.204">本周自检四问</span></p>
+        <p><span data-i18n="ws.penetrate.d5">① 我定义的问题是别人真正要的吗？　② 拆到哪一步就可以本周验证？　③ 我在硬扛「自己不会」的部分吗？该借谁 / 什么工具？　④ 结果差时，我归因运气，还是可迭代的决策与执行？</span></p>
       </div>
 
       <div class="card">
-        <p class="card-title">卡住一事 · 穿透力复盘</p>
-        <p class="card-desc">选一件最近卡住的事，对六项能力打分（1=薄弱 · 3=及格 · 5=能拿结果），并写下本周可验证的下一步。</p>
+        <p class="card-title"><span data-i18n="ws.penetrate.d2">卡住一事 · 穿透力复盘</span></p>
+        <p class="card-desc"><span data-i18n="ws.penetrate.d3">选一件最近卡住的事，对六项能力打分（1=薄弱 · 3=及格 · 5=能拿结果），并写下本周可验证的下一步。</span></p>
 
         <div class="row-date">
-          <div class="field"><label for="penDate">日期</label><input type="date" id="penDate" /></div>
+          <div class="field"><label for="penDate"><span data-i18n="fl.日期">日期</span></label><input type="date" id="penDate" /></div>
           <div class="field">
-            <label for="penMindset">当前默认思维</label>
+            <label for="penMindset"><span data-i18n="fl.当前默认思维">当前默认思维</span></label>
             <select id="penMindset">
-              <option value="know">会不会（先囤知识 / 等准备好）</option>
-              <option value="can" selected>能不能（以结果为导向推进）</option>
-              <option value="mix">两者混杂，正在切换</option>
+              <option value="know" data-i18n="fo.会不会先囤知识等准备好985">会不会（先囤知识 / 等准备好）</option>
+              <option value="can" selected data-i18n="fo.能不能以结果为导向推进536">能不能（以结果为导向推进）</option>
+              <option value="mix" data-i18n="fo.两者混杂正在切换845">两者混杂，正在切换</option>
             </select>
           </div>
         </div>
-        <div class="field"><label for="penTopic">卡住的事 / 目标结果</label><input type="text" id="penTopic" placeholder="如：把调研报告变成可拍板方案并推动落地" /></div>
+        <div class="field"><label for="penTopic"><span data-i18n="fl.卡住的事目标结果">卡住的事 / 目标结果</span></label><input type="text" id="penTopic"  data-i18n-ph="fp.如把调研报告变成可拍板方9485" placeholder="如：把调研报告变成可拍板方案并推动落地" /></div>
 
         <div class="score-hero">
           <div class="value na" id="penScoreHero">—</div>
-          <div class="label">穿透力均分（1–5）</div>
+          <div class="label"><span data-i18n="au.205">穿透力均分（1–5）</span></div>
           <div class="verdict" id="penVerdict"></div>
         </div>
 
         <div class="cap-grid" id="penCapGrid">
           <div class="cap-item">
             <div class="cap-head">
-              <span class="cap-name">① 定义问题</span>
-              <select data-pen-cap="define"><option value="1">1 薄弱</option><option value="2">2</option><option value="3" selected>3 及格</option><option value="4">4</option><option value="5">5 能拿结果</option></select>
+              <span class="cap-name"><span data-i18n="au.206">① 定义问题</span></span>
+              <select data-pen-cap="define"><option value="1" data-i18n="fo.1薄弱8364">1 薄弱</option><option value="2">2</option><option value="3" selected data-i18n="fo.3及格3175">3 及格</option><option value="4">4</option><option value="5" data-i18n="fo.5能拿结果4071">5 能拿结果</option></select>
             </div>
-            <p class="cap-hint">真正要解决的是什么？别一上来解题。</p>
+            <p class="cap-hint"><span data-i18n="au.207">真正要解决的是什么？别一上来解题。</span></p>
             <textarea data-pen-note="define" placeholder="当前定义 / 本周怎么改定义"></textarea>
           </div>
           <div class="cap-item">
             <div class="cap-head">
-              <span class="cap-name">② 拆解问题</span>
-              <select data-pen-cap="break"><option value="1">1 薄弱</option><option value="2">2</option><option value="3" selected>3 及格</option><option value="4">4</option><option value="5">5 能拿结果</option></select>
+              <span class="cap-name"><span data-i18n="au.208">② 拆解问题</span></span>
+              <select data-pen-cap="break"><option value="1" data-i18n="fo.1薄弱8364">1 薄弱</option><option value="2">2</option><option value="3" selected data-i18n="fo.3及格3175">3 及格</option><option value="4">4</option><option value="5" data-i18n="fo.5能拿结果4071">5 能拿结果</option></select>
             </div>
-            <p class="cap-hint">能否拆成可行动、可验证的小块？</p>
+            <p class="cap-hint"><span data-i18n="au.209">能否拆成可行动、可验证的小块？</span></p>
             <textarea data-pen-note="break" placeholder="最小可验证步骤是什么"></textarea>
           </div>
           <div class="cap-item">
             <div class="cap-head">
-              <span class="cap-name">③ 借力整合</span>
-              <select data-pen-cap="leverage"><option value="1">1 薄弱</option><option value="2">2</option><option value="3" selected>3 及格</option><option value="4">4</option><option value="5">5 能拿结果</option></select>
+              <span class="cap-name"><span data-i18n="au.210">③ 借力整合</span></span>
+              <select data-pen-cap="leverage"><option value="1" data-i18n="fo.1薄弱8364">1 薄弱</option><option value="2">2</option><option value="3" selected data-i18n="fo.3及格3175">3 及格</option><option value="4">4</option><option value="5" data-i18n="fo.5能拿结果4071">5 能拿结果</option></select>
             </div>
-            <p class="cap-hint">接受「不会」——人、工具、AI 哪里能补上？</p>
+            <p class="cap-hint"><span data-i18n="au.211">接受「不会」——人、工具、AI 哪里能补上？</span></p>
             <textarea data-pen-note="leverage" placeholder="要借谁 / 什么工具 / 哪段交给 AI"></textarea>
           </div>
           <div class="cap-item">
             <div class="cap-head">
-              <span class="cap-name">④ 决策</span>
-              <select data-pen-cap="decide"><option value="1">1 薄弱</option><option value="2">2</option><option value="3" selected>3 及格</option><option value="4">4</option><option value="5">5 能拿结果</option></select>
+              <span class="cap-name"><span data-i18n="au.212">④ 决策</span></span>
+              <select data-pen-cap="decide"><option value="1" data-i18n="fo.1薄弱8364">1 薄弱</option><option value="2">2</option><option value="3" selected data-i18n="fo.3及格3175">3 及格</option><option value="4">4</option><option value="5" data-i18n="fo.5能拿结果4071">5 能拿结果</option></select>
             </div>
-            <p class="cap-hint">信息不完备时，是否仍能拍板并承担后果？</p>
+            <p class="cap-hint"><span data-i18n="au.213">信息不完备时，是否仍能拍板并承担后果？</span></p>
             <textarea data-pen-note="decide" placeholder="待决事项 + 截止日期 + 默认选项"></textarea>
           </div>
           <div class="cap-item">
             <div class="cap-head">
-              <span class="cap-name">⑤ 迭代纠偏</span>
-              <select data-pen-cap="iterate"><option value="1">1 薄弱</option><option value="2">2</option><option value="3" selected>3 及格</option><option value="4">4</option><option value="5">5 能拿结果</option></select>
+              <span class="cap-name"><span data-i18n="au.214">⑤ 迭代纠偏</span></span>
+              <select data-pen-cap="iterate"><option value="1" data-i18n="fo.1薄弱8364">1 薄弱</option><option value="2">2</option><option value="3" selected data-i18n="fo.3及格3175">3 及格</option><option value="4">4</option><option value="5" data-i18n="fo.5能拿结果4071">5 能拿结果</option></select>
             </div>
-            <p class="cap-hint">用反馈修正方向，而不是追求一次做对。</p>
+            <p class="cap-hint"><span data-i18n="au.215">用反馈修正方向，而不是追求一次做对。</span></p>
             <textarea data-pen-note="iterate" placeholder="上次反馈是什么 / 下次改哪一点"></textarea>
           </div>
           <div class="cap-item">
             <div class="cap-head">
-              <span class="cap-name">⑥ Ownership 与上心</span>
-              <select data-pen-cap="own"><option value="1">1 薄弱</option><option value="2">2</option><option value="3" selected>3 及格</option><option value="4">4</option><option value="5">5 能拿结果</option></select>
+              <span class="cap-name"><span data-i18n="au.216">⑥ Ownership 与上心</span></span>
+              <select data-pen-cap="own"><option value="1" data-i18n="fo.1薄弱8364">1 薄弱</option><option value="2">2</option><option value="3" selected data-i18n="fo.3及格3175">3 及格</option><option value="4">4</option><option value="5" data-i18n="fo.5能拿结果4071">5 能拿结果</option></select>
             </div>
-            <p class="cap-hint">对结果负责，还是只对「我做过了」负责？</p>
+            <p class="cap-hint"><span data-i18n="au.217">对结果负责，还是只对「我做过了」负责？</span></p>
             <textarea data-pen-note="own" placeholder="结果责任边界 / 我亲自盯什么"></textarea>
           </div>
         </div>
 
-        <div class="section-divider">四问落地 + 本周行动</div>
-        <div class="field"><label for="penQ1">① 定义的问题是别人真正要的吗？</label><textarea id="penQ1"></textarea></div>
-        <div class="field"><label for="penQ2">② 拆到哪一步就可以本周验证？</label><textarea id="penQ2"></textarea></div>
-        <div class="field"><label for="penQ3">③ 在硬扛「不会」吗？该借谁 / 什么工具？</label><textarea id="penQ3"></textarea></div>
-        <div class="field"><label for="penQ4">④ 结果差时归因运气，还是可迭代的决策与执行？</label><textarea id="penQ4"></textarea></div>
-        <div class="field"><label for="penNext">本周可验证的下一步（必须可观察）</label><textarea id="penNext" class="tall" placeholder="如：周三前把方案压成 1 页决策稿，约甲方 30 分钟确认「真正要的结果」"></textarea></div>
+        <div class="section-divider"><span data-i18n="au.218">四问落地 + 本周行动</span></div>
+        <div class="field"><label for="penQ1"><span data-i18n="fl.①定义的问题是别人真正要的吗">① 定义的问题是别人真正要的吗？</span></label><textarea id="penQ1"></textarea></div>
+        <div class="field"><label for="penQ2"><span data-i18n="fl.②拆到哪一步就可以本周验证">② 拆到哪一步就可以本周验证？</span></label><textarea id="penQ2"></textarea></div>
+        <div class="field"><label for="penQ3"><span data-i18n="fl.③在硬扛不会吗该借谁什么工具">③ 在硬扛「不会」吗？该借谁 / 什么工具？</span></label><textarea id="penQ3"></textarea></div>
+        <div class="field"><label for="penQ4"><span data-i18n="fl.④结果差时归因运气还是可迭代">④ 结果差时归因运气，还是可迭代的决策与执行？</span></label><textarea id="penQ4"></textarea></div>
+        <div class="field"><label for="penNext"><span data-i18n="fl.本周可验证的下一步必须可观察">本周可验证的下一步（必须可观察）</span></label><textarea id="penNext" class="tall" placeholder="如：周三前把方案压成 1 页决策稿，约甲方 30 分钟确认「真正要的结果」"></textarea></div>
 
         <div class="actions">
-          <button type="button" class="btn" id="savePenBtn">保存复盘</button>
-          <button type="button" class="btn btn-ghost" id="clearPenBtn">清空</button>
-          <span class="saved-toast" id="savedPenToast">已保存</span>
+          <button type="button" class="btn" id="savePenBtn"><span data-i18n="ws.dualcard.b.保存复盘">保存复盘</span></button>
+          <button type="button" class="btn btn-ghost" id="clearPenBtn"><span data-i18n="ws.btn.clear">清空</span></button>
+          <span class="saved-toast" id="savedPenToast"><span data-i18n="au.219">已保存</span></span>
         </div>
       </div>
 
       <div class="card">
-        <p class="card-title">历史复盘</p>
-        <div class="record-list" id="penetrateList"><div class="empty-table">尚无记录</div></div>
+        <p class="card-title"><span data-i18n="ws.dualcard.d1">历史复盘</span></p>
+        <div class="record-list" id="penetrateList"><div class="empty-table"><span data-i18n="au.220">尚无记录</span></div></div>
       </div>
     </div>
 
     <!-- ========== ⑧ AI协作双卡系统 ========== -->
     <div class="panel" id="panel-dualcard">
       <details class="guide" open>
-        <summary>AI协作双卡 · 使用说明<span class="trap-tag">协作方法</span></summary>
+        <summary><span data-i18n="au.221">AI协作双卡 · 使用说明</span><span class="trap-tag"><span data-i18n="au.222">协作方法</span></span></summary>
         <div class="guide-body">
-          <p>只有拥有这三项能力，你才能胜任与 AI 的协作，才能在 AI 犯错时提供准确的指导。</p>
-          <div class="formula-box">方法论：遇到任何编程互动，只问一句——<strong>我现在该掏出哪张卡？</strong><br>
-            从零建设 / 加功能 → <strong>建设卡（3C）</strong>　·　报错或不符预期 → <strong>诊断卡（CER）</strong></div>
+          <p><span data-i18n="ws.dualcard.lead">只有拥有这三项能力，你才能胜任与 AI 的协作，才能在 AI 犯错时提供准确的指导。</span></p>
+          <div class="formula-box"><span data-i18n="au.223">方法论：遇到任何编程互动，只问一句——</span><strong><span data-i18n="au.224">我现在该掏出哪张卡？</span></strong><br><span data-i18n="au.225">
+            从零建设 / 加功能 → </span><strong><span data-i18n="au.226">建设卡（3C）</span></strong><span data-i18n="au.227">　·　报错或不符预期 → </span><strong><span data-i18n="au.228">诊断卡（CER）</span></strong></div>
         </div>
       </details>
 
       <div class="skill-pillar">
-        <h3>① 环境亲和力</h3>
-        <p class="sub">打破对底层系统的恐惧</p>
-        <p>你习惯了漂亮的图形界面。一旦看到黑底白字的命令行，或复杂的文件夹层级，就会本能恐惧、不敢乱动，生怕把电脑搞坏。</p>
-        <div class="builder"><strong>Builder 视角：</strong>黑框框不是黑客专属，它只是操作系统入口。图形界面是样板间，好看但受限；命令行简陋，但你能控制一切。</div>
-        <p><strong>训练目标：</strong>不必背几百个 Linux 命令；学会指派 AI 操作这个入口，并会在不同目录间切换。</p>
-        <div class="dont-panic">💡 Dont Panic #1：看到黑框框不要慌，那是你通过 AI 掌控系统的最短路径。</div>
+        <h3><span data-i18n="ws.dualcard.title">① 环境亲和力</span></h3>
+        <p class="sub"><span data-i18n="au.229">打破对底层系统的恐惧</span></p>
+        <p><span data-i18n="ws.dualcard.d6">你习惯了漂亮的图形界面。一旦看到黑底白字的命令行，或复杂的文件夹层级，就会本能恐惧、不敢乱动，生怕把电脑搞坏。</span></p>
+        <div class="builder"><strong><span data-i18n="au.230">Builder 视角：</span></strong><span data-i18n="au.231">黑框框不是黑客专属，它只是操作系统入口。图形界面是样板间，好看但受限；命令行简陋，但你能控制一切。</span></div>
+        <p><strong><span data-i18n="au.232">训练目标：</span></strong><span data-i18n="au.233">不必背几百个 Linux 命令；学会指派 AI 操作这个入口，并会在不同目录间切换。</span></p>
+        <div class="dont-panic"><span data-i18n="au.234">💡 Dont Panic #1：看到黑框框不要慌，那是你通过 AI 掌控系统的最短路径。</span></div>
       </div>
 
       <div class="skill-pillar">
-        <h3>② 报错耐受力</h3>
-        <p class="sub">从失败到线索的心态重塑</p>
-        <p>在 Excel / PPT 里，报错常意味着文件坏了，像灾难。编程时看到满屏红色 Error，初学者会想：我搞砸了、我不适合学这个。</p>
-        <div class="builder"><strong>Builder 视角：</strong>报错是常态，也是朋友。红字不是批评，而是线索——系统写给 AI 的诊断书。</div>
-        <p><strong>训练目标：</strong>不必读懂每个术语；做冷静的问题分析者——判断环境问题还是逻辑问题，再把报错原封不动交给 AI。</p>
-        <div class="dont-panic">💡 Dont Panic #2：看到红字不要慌，报错越长，AI 修得越快。</div>
+        <h3><span data-i18n="au.235">② 报错耐受力</span></h3>
+        <p class="sub"><span data-i18n="au.236">从失败到线索的心态重塑</span></p>
+        <p><span data-i18n="ws.dualcard.d7">在 Excel / PPT 里，报错常意味着文件坏了，像灾难。编程时看到满屏红色 Error，初学者会想：我搞砸了、我不适合学这个。</span></p>
+        <div class="builder"><strong><span data-i18n="au.237">Builder 视角：</span></strong><span data-i18n="au.238">报错是常态，也是朋友。红字不是批评，而是线索——系统写给 AI 的诊断书。</span></div>
+        <p><strong><span data-i18n="au.239">训练目标：</span></strong><span data-i18n="au.240">不必读懂每个术语；做冷静的问题分析者——判断环境问题还是逻辑问题，再把报错原封不动交给 AI。</span></p>
+        <div class="dont-panic"><span data-i18n="au.241">💡 Dont Panic #2：看到红字不要慌，报错越长，AI 修得越快。</span></div>
       </div>
 
       <div class="skill-pillar">
-        <h3>③ 逻辑描述力</h3>
-        <p class="sub">学会结构化表达</p>
-        <p>很多人跟 AI「许愿」：帮我做一个好用的网页。结果一塌糊涂——你觉得 AI 笨，AI 觉得你莫名其妙。</p>
-        <div class="builder"><strong>Builder 视角：</strong>AI 是极度听话但极度死板的乙方。不给清晰边界，它就会脑补。</div>
-        <p><strong>训练目标：</strong>不要求天才逻辑，要求会拆解——把模糊想法拆成背景、组件、标准。</p>
-        <div class="dont-panic">💡 Dont Panic #3：面对空白和不确定不要慌，描述清楚逻辑，AI 就能高效完成任务。</div>
+        <h3><span data-i18n="au.242">③ 逻辑描述力</span></h3>
+        <p class="sub"><span data-i18n="au.243">学会结构化表达</span></p>
+        <p><span data-i18n="ws.dualcard.d8">很多人跟 AI「许愿」：帮我做一个好用的网页。结果一塌糊涂——你觉得 AI 笨，AI 觉得你莫名其妙。</span></p>
+        <div class="builder"><strong><span data-i18n="au.244">Builder 视角：</span></strong><span data-i18n="au.245">AI 是极度听话但极度死板的乙方。不给清晰边界，它就会脑补。</span></div>
+        <p><strong><span data-i18n="au.246">训练目标：</span></strong><span data-i18n="au.247">不要求天才逻辑，要求会拆解——把模糊想法拆成背景、组件、标准。</span></p>
+        <div class="dont-panic"><span data-i18n="au.248">💡 Dont Panic #3：面对空白和不确定不要慌，描述清楚逻辑，AI 就能高效完成任务。</span></div>
       </div>
 
       <div class="card">
-        <p class="card-title">掏出哪张卡？</p>
-        <p class="card-desc">填完后可一键复制给 AI。先选卡，再填空。</p>
+        <p class="card-title"><span data-i18n="ws.dualcard.d2">掏出哪张卡？</span></p>
+        <p class="card-desc"><span data-i18n="ws.dualcard.d3">填完后可一键复制给 AI。先选卡，再填空。</span></p>
 
         <div class="dual-switch" id="dualSwitch">
-          <button type="button" class="active" data-dual="build">建设卡 · 3C</button>
-          <button type="button" data-dual="diag">诊断卡 · CER</button>
+          <button type="button" class="active" data-dual="build"><span data-i18n="ws.dualcard.b.建设卡3C">建设卡 · 3C</span></button>
+          <button type="button" data-dual="diag"><span data-i18n="ws.dualcard.b.诊断卡CER">诊断卡 · CER</span></button>
         </div>
 
         <div class="dual-form active" id="dualFormBuild">
-          <p class="card-desc" style="margin-top:0">何时用：从零做项目，或给现有项目加新功能。别直接下命令，先填好三个空。</p>
-          <div class="field"><label for="c3Title">事项标题（可选）</label><input type="text" id="c3Title" placeholder="如：做一个人生密度周报页" /></div>
+          <p class="card-desc" style="margin-top:0"><span data-i18n="ws.dualcard.d4">何时用：从零做项目，或给现有项目加新功能。别直接下命令，先填好三个空。</span></p>
+          <div class="field"><label for="c3Title"><span data-i18n="fl.事项标题可选">事项标题（可选）</span></label><input type="text" id="c3Title"  data-i18n-ph="fp.如做一个人生密度周报页4206" placeholder="如：做一个人生密度周报页" /></div>
           <div class="field">
-            <label for="c3Context">Context · 背景</label>
-            <span class="desc">我要做什么？目标用户是谁？核心目的是什么？</span>
+            <label for="c3Context"><span data-i18n="au.249">Context · 背景</span></label>
+            <span class="desc"><span data-i18n="au.250">我要做什么？目标用户是谁？核心目的是什么？</span></span>
             <textarea id="c3Context" class="tall" placeholder="如：给自己做本地周报页，汇总近 7 天密度，目标是周日 2 分钟复盘"></textarea>
           </div>
           <div class="field">
-            <label for="c3Components">Components · 组件</label>
-            <span class="desc">包含哪些具体部分？（输入框、按钮、数据库表、页面区块…）</span>
+            <label for="c3Components"><span data-i18n="au.251">Components · 组件</span></label>
+            <span class="desc"><span data-i18n="au.252">包含哪些具体部分？（输入框、按钮、数据库表、页面区块…）</span></span>
             <textarea id="c3Components" class="tall" placeholder="如：日期选择、C/L/P 输入、密度百分比展示、历史表格"></textarea>
           </div>
           <div class="field">
-            <label for="c3Criteria">Criteria · 标准 / 限制</label>
-            <span class="desc">有什么硬限制？（语言、样式、绝不能删原始文件…）</span>
+            <label for="c3Criteria"><span data-i18n="au.253">Criteria · 标准 / 限制</span></label>
+            <span class="desc"><span data-i18n="au.254">有什么硬限制？（语言、样式、绝不能删原始文件…）</span></span>
             <textarea id="c3Criteria" class="tall" placeholder="如：必须用现有 localStorage 结构；禁止改配色系统；中文界面"></textarea>
           </div>
         </div>
 
         <div class="dual-form" id="dualFormDiag">
-          <p class="card-desc" style="margin-top:0">何时用：程序报错（红字），或运行结果跟你想的不一样。别只说「不工作」，提供完整错误现场。</p>
-          <div class="field"><label for="cerTitle">事项标题（可选）</label><input type="text" id="cerTitle" placeholder="如：保存按钮点了没反应" /></div>
+          <p class="card-desc" style="margin-top:0"><span data-i18n="ws.dualcard.d5">何时用：程序报错（红字），或运行结果跟你想的不一样。别只说「不工作」，提供完整错误现场。</span></p>
+          <div class="field"><label for="cerTitle"><span data-i18n="fl.事项标题可选">事项标题（可选）</span></label><input type="text" id="cerTitle"  data-i18n-ph="fp.如保存按钮点了没反应6930" placeholder="如：保存按钮点了没反应" /></div>
           <div class="field">
-            <label for="cerContext">Context · 现场</label>
-            <span class="desc">刚才执行了什么命令？环境是什么？（系统 / 目录 / 工具）</span>
+            <label for="cerContext"><span data-i18n="au.255">Context · 现场</span></label>
+            <span class="desc"><span data-i18n="au.256">刚才执行了什么命令？环境是什么？（系统 / 目录 / 工具）</span></span>
             <textarea id="cerContext" class="tall" placeholder="如：Windows 11，在项目根目录运行 python app.py，用 Chrome 打开 localhost:5000"></textarea>
           </div>
           <div class="field">
-            <label for="cerError">Error · 报错 / 异常现象</label>
-            <span class="desc">完整报错原文，或不正常现象的客观描述</span>
+            <label for="cerError"><span data-i18n="au.257">Error · 报错 / 异常现象</span></label>
+            <span class="desc"><span data-i18n="au.258">完整报错原文，或不正常现象的客观描述</span></span>
             <textarea id="cerError" class="tall" placeholder="把红字整段粘贴进来；或：页面空白，控制台显示 Failed to fetch"></textarea>
           </div>
           <div class="field">
-            <label for="cerRequest">Request · 期待与判断</label>
-            <span class="desc">我期待什么？怀疑是环境问题还是逻辑问题？</span>
+            <label for="cerRequest"><span data-i18n="au.259">Request · 期待与判断</span></label>
+            <span class="desc"><span data-i18n="au.260">我期待什么？怀疑是环境问题还是逻辑问题？</span></span>
             <textarea id="cerRequest" class="tall" placeholder="如：期待点击后写入 JSON；怀疑是路径/权限（环境）而不是业务逻辑"></textarea>
           </div>
           <div class="field">
-            <label for="cerSuspect">初步判断</label>
+            <label for="cerSuspect"><span data-i18n="fl.初步判断">初步判断</span></label>
             <select id="cerSuspect">
-              <option value="env">偏向环境问题（路径 / 依赖 / 权限 / 端口）</option>
-              <option value="logic">偏向逻辑问题（代码逻辑 / 条件 / 数据）</option>
-              <option value="unsure" selected>尚不确定</option>
+              <option value="env" data-i18n="fo.偏向环境问题路径依赖权限4385">偏向环境问题（路径 / 依赖 / 权限 / 端口）</option>
+              <option value="logic" data-i18n="fo.偏向逻辑问题代码逻辑条件2345">偏向逻辑问题（代码逻辑 / 条件 / 数据）</option>
+              <option value="unsure" selected data-i18n="fo.尚不确定2891">尚不确定</option>
             </select>
           </div>
         </div>
 
-        <div class="section-divider">给 AI 的提示词</div>
-        <div class="prompt-out" id="dualPromptOut">填写上方字段后自动生成…</div>
+        <div class="section-divider"><span data-i18n="au.261">给 AI 的提示词</span></div>
+        <div class="prompt-out" id="dualPromptOut"><span data-i18n="au.262">填写上方字段后自动生成…</span></div>
         <div class="actions" style="margin-top:12px">
-          <button type="button" class="btn" id="copyDualBtn">复制给 AI</button>
-          <button type="button" class="btn btn-ghost" id="saveDualBtn">保存这张卡</button>
-          <button type="button" class="btn btn-ghost" id="clearDualBtn">清空</button>
-          <span class="saved-toast" id="savedDualToast">已保存</span>
+          <button type="button" class="btn" id="copyDualBtn"><span data-i18n="ws.bias.b.复制给AI">复制给 AI</span></button>
+          <button type="button" class="btn btn-ghost" id="saveDualBtn"><span data-i18n="ws.bias.b.保存这张卡">保存这张卡</span></button>
+          <button type="button" class="btn btn-ghost" id="clearDualBtn"><span data-i18n="ws.btn.clear">清空</span></button>
+          <span class="saved-toast" id="savedDualToast"><span data-i18n="au.263">已保存</span></span>
         </div>
       </div>
 
       <div class="card">
-        <p class="card-title">历史双卡</p>
-        <div class="record-list" id="dualcardList"><div class="empty-table">尚无记录</div></div>
+        <p class="card-title"><span data-i18n="ws.bias.d1">历史双卡</span></p>
+        <div class="record-list" id="dualcardList"><div class="empty-table"><span data-i18n="au.264">尚无记录</span></div></div>
       </div>
     </div>
 
     <!-- ========== ⑨ 认知偏差环 ========== -->
     <div class="panel" id="panel-bias">
       <details class="guide" open>
-        <summary>认知偏差环 · 使用说明<span class="trap-tag">思维校准</span></summary>
+        <summary><span data-i18n="au.265">认知偏差环 · 使用说明</span><span class="trap-tag"><span data-i18n="au.266">思维校准</span></span></summary>
         <div class="guide-body">
           <div class="formula-box">
-            <strong>来源</strong>：Buster Benson 四问题框架 + John Manoogian III 圆环海报（Cognitive Bias Codex）。屠龙的胭脂井常引用此「约 180 条偏差环」。
-          </div>
-          <p>不必背全表。先记住大脑要解决的四个问题，再在对应象限里定位具体偏差：</p>
+            <strong><span data-i18n="au.267">来源</span></strong><span data-i18n="au.268">：Buster Benson 四问题框架 + John Manoogian III 圆环海报（Cognitive Bias Codex）。屠龙的胭脂井常引用此「约 180 条偏差环」。
+          </span></div>
+          <p><span data-i18n="ws.bias.d2">不必背全表。先记住大脑要解决的四个问题，再在对应象限里定位具体偏差：</span></p>
           <ul>
-            <li><strong>信息太多</strong> → 过滤（会漏掉有用信息）</li>
-            <li><strong>意义不够</strong> → 脑补故事（会造出幻觉）</li>
-            <li><strong>需要快行动</strong> → 仓促决策（常自私/离谱）</li>
-            <li><strong>该记住什么</strong> → 记忆筛选（会加固偏见）</li>
+            <li><strong><span data-i18n="au.269">信息太多</span></strong><span data-i18n="au.270"> → 过滤（会漏掉有用信息）</span></li>
+            <li><strong><span data-i18n="au.271">意义不够</span></strong><span data-i18n="au.272"> → 脑补故事（会造出幻觉）</span></li>
+            <li><strong><span data-i18n="au.273">需要快行动</span></strong><span data-i18n="au.274"> → 仓促决策（常自私/离谱）</span></li>
+            <li><strong><span data-i18n="au.275">该记住什么</span></strong><span data-i18n="au.276"> → 记忆筛选（会加固偏见）</span></li>
           </ul>
-          <p>点「我中过」做轻量自检；备注会随整库 JSON 一并备份。</p>
+          <p><span data-i18n="ws.leon.d7">点「我中过」做轻量自检；备注会随整库 JSON 一并备份。</span></p>
           <p style="margin-top:10px">
-            <a href="cognitive-bias-codex.html" style="margin-right:12px">打开互动海报 →</a>
-            <a href="cognitive-bias-explorer.html">打开独立检索界面 →</a>
+            <a href="cognitive-bias-codex.html" style="margin-right:12px"><span data-i18n="au.277">打开互动海报 →</span></a>
+            <a href="cognitive-bias-explorer.html"><span data-i18n="au.278">打开独立检索界面 →</span></a>
           </p>
         </div>
       </details>
 
       <div class="card" style="margin-bottom:16px">
-        <p class="card-title">单独界面</p>
-        <p class="card-desc">圆环海报适合浏览结构；检索界面适合搜名字、写「我中过」。</p>
+        <p class="card-title"><span data-i18n="ws.leon.d1">单独界面</span></p>
+        <p class="card-desc"><span data-i18n="ws.leon.d2">圆环海报适合浏览结构；检索界面适合搜名字、写「我中过」。</span></p>
         <div class="actions" style="flex-wrap:wrap">
-          <a class="btn" href="cognitive-bias-codex.html">互动海报（Codex）</a>
-          <a class="btn btn-ghost" href="cognitive-bias-explorer.html">检索 Explorer</a>
+          <a class="btn" href="cognitive-bias-codex.html"><span data-i18n="au.279">互动海报（Codex）</span></a>
+          <a class="btn btn-ghost" href="cognitive-bias-explorer.html"><span data-i18n="au.280">检索 Explorer</span></a>
         </div>
       </div>
 
@@ -2277,33 +2284,33 @@
       <div class="bias-quad-grid" id="biasQuadGrid"></div>
 
       <div class="card">
-        <p class="card-title">检索与对照</p>
-        <p class="card-desc">中英文搜索 · 按象限筛选 · 可只看「我中过」</p>
+        <p class="card-title"><span data-i18n="ws.leon.d3">检索与对照</span></p>
+        <p class="card-desc"><span data-i18n="ws.leon.d4">中英文搜索 · 按象限筛选 · 可只看「我中过」</span></p>
         <div class="field">
-          <label for="biasSearch">搜索偏差</label>
-          <input type="search" id="biasSearch" placeholder="如：确认、沉没成本、Dunning、锚定…" />
+          <label for="biasSearch"><span data-i18n="fl.搜索偏差">搜索偏差</span></label>
+          <input type="search" id="biasSearch"  data-i18n-ph="fp.如确认沉没成本Dunni9933" placeholder="如：确认、沉没成本、Dunning、锚定…" />
         </div>
         <div class="bias-filters" id="biasFilters" role="group" aria-label="象限筛选"></div>
         <div class="inline-row" style="margin-bottom:12px">
           <input type="checkbox" id="biasOnlySpotted" />
-          <label for="biasOnlySpotted" style="margin:0;font-weight:400">只看我中过的</label>
+          <label for="biasOnlySpotted" style="margin:0;font-weight:400"><span data-i18n="fl.只看我中过的">只看我中过的</span></label>
         </div>
-        <div id="biasList"><div class="bias-empty">加载中…</div></div>
+        <div id="biasList"><div class="bias-empty"><span data-i18n="au.281">加载中…</span></div></div>
       </div>
     </div>
 
     <!-- ========== ⑩ 生命之轮 ========== -->
     <div class="panel" id="panel-leon">
       <details class="guide">
-        <summary>生命之轮 · 使用说明<span class="trap-tag">健康 · 财富 · 幸福</span></summary>
+        <summary><span data-i18n="au.282">生命之轮 · 使用说明</span><span class="trap-tag"><span data-i18n="au.283">健康 · 财富 · 幸福</span></span></summary>
         <div class="guide-body">
-          <div class="formula-box">
-            真源：<a href="https://docs.qq.com/sheet/DQkZ1RERNbEZOdmd0?tab=000001" target="_blank" rel="noopener">Wheel of Life by Leon</a>
+          <div class="formula-box"><span data-i18n="au.284">
+            真源：</span><a href="https://docs.qq.com/sheet/DQkZ1RERNbEZOdmd0?tab=000001" target="_blank" rel="noopener">Wheel of Life by Leon</a><span data-i18n="au.285">
             （@爱旅行的四重奏 视频分享）。三柱各三维，分数 0–10。
-            视频：<a href="https://www.youtube.com/watch?v=37FTO0aQycc" target="_blank" rel="noopener">YouTube</a>
+            视频：</span><a href="https://www.youtube.com/watch?v=37FTO0aQycc" target="_blank" rel="noopener">YouTube</a>
           </div>
-          <p>主画面是轮盘，不是表格。点轴或拖动圆点打分；圆不圆比均分更重要——缺口就是下一季要收购的那一维。</p>
-          <p>三柱对照三课：<strong>财富</strong>对第一桶金，<strong>幸福 / 体验 / 时间</strong>对根学，<strong>家庭 / 社会</strong>对无职权影响力。</p>
+          <p><span data-i18n="ws.leon.d8">主画面是轮盘，不是表格。点轴或拖动圆点打分；圆不圆比均分更重要——缺口就是下一季要收购的那一维。</span></p>
+          <p><span data-i18n="au.286">三柱对照三课：</span><strong><span data-i18n="au.287">财富</span></strong><span data-i18n="au.288">对第一桶金，</span><strong><span data-i18n="au.289">幸福 / 体验 / 时间</span></strong><span data-i18n="au.290">对根学，</span><strong><span data-i18n="au.291">家庭 / 社会</span></strong><span data-i18n="au.292">对无职权影响力。</span></p>
         </div>
       </details>
 
@@ -2316,52 +2323,52 @@
           <div class="stats" id="wheelStats"></div>
           <div class="card" id="wheelDetail"></div>
           <div class="card">
-            <p class="card-title">九维打分</p>
-            <p class="card-desc">0 = 这一维几乎空着 · 10 = 足以支撑你现在想过的人生</p>
+            <p class="card-title"><span data-i18n="ws.leon.d5">九维打分</span></p>
+            <p class="card-desc"><span data-i18n="ws.leon.d6">0 = 这一维几乎空着 · 10 = 足以支撑你现在想过的人生</span></p>
             <div class="wheel-sliders" id="wheelSliders"></div>
             <div class="field" style="margin-top:14px">
-              <label for="wheelNote">这一轮备注</label>
+              <label for="wheelNote"><span data-i18n="fl.这一轮备注">这一轮备注</span></label>
               <textarea id="wheelNote" placeholder="最低的两维，本季准备补哪一块？"></textarea>
             </div>
             <div class="actions">
-              <button type="button" class="btn" id="saveWheelBtn">保存快照</button>
-              <button type="button" class="btn btn-ghost" id="sampleWheelBtn">载入表示例</button>
-              <button type="button" class="btn btn-ghost" id="clearWheelBtn">清零</button>
-              <span class="saved-toast" id="savedWheelToast">已保存</span>
+              <button type="button" class="btn" id="saveWheelBtn"><span data-i18n="ws.btn.saveSnap">保存快照</span></button>
+              <button type="button" class="btn btn-ghost" id="sampleWheelBtn"><span data-i18n="ws.btn.loadDemo">载入表示例</span></button>
+              <button type="button" class="btn btn-ghost" id="clearWheelBtn"><span data-i18n="ws.leon.b.清零">清零</span></button>
+              <span class="saved-toast" id="savedWheelToast"><span data-i18n="au.293">已保存</span></span>
             </div>
           </div>
         </div>
       </div>
 
       <div class="card">
-        <p class="card-title">历史快照</p>
-        <p class="card-desc">点一笔可叠在轮上对比。数据只存在本机。</p>
-        <div class="wheel-snaps" id="wheelHistory"><div class="bias-empty">还没有快照。打完分后点「保存快照」。</div></div>
+        <p class="card-title"><span data-i18n="ws.kpi.d1">历史快照</span></p>
+        <p class="card-desc"><span data-i18n="ws.kpi.d2">点一笔可叠在轮上对比。数据只存在本机。</span></p>
+        <div class="wheel-snaps" id="wheelHistory"><div class="bias-empty"><span data-i18n="au.294">还没有快照。打完分后点「保存快照」。</span></div></div>
       </div>
 
       <details class="guide" id="leonPlaybookFold">
-        <summary>三课查阅卡 · 卡住时对照<span class="trap-tag">影响力 · 第一桶金 · 根学</span></summary>
+        <summary><span data-i18n="au.295">三课查阅卡 · 卡住时对照</span><span class="trap-tag"><span data-i18n="au.296">影响力 · 第一桶金 · 根学</span></span></summary>
         <div class="guide-body">
-          <p>同一人的三条腿：2021 无职权影响力 → 2023 第一桶金 → 2025 根学。点轮上某一维，侧栏会出现相关卡片。</p>
+          <p><span data-i18n="ws.kpi.lead">同一人的三条腿：2021 无职权影响力 → 2023 第一桶金 → 2025 根学。点轮上某一维，侧栏会出现相关卡片。</span></p>
           <div class="stats" id="leonStats"></div>
           <div class="leon-legs" id="leonLegs"></div>
           <div class="card" style="margin-top:12px">
-            <p class="card-title">检索与对照</p>
-            <p class="card-desc">按课筛选 · 搜索金句/场景 · 可只看「对照过」</p>
+            <p class="card-title"><span data-i18n="ws.kpi.d3">检索与对照</span></p>
+            <p class="card-desc"><span data-i18n="ws.kpi.d4">按课筛选 · 搜索金句/场景 · 可只看「对照过」</span></p>
             <div class="field">
-              <label for="leonSearch">搜索卡片</label>
-              <input type="search" id="leonSearch" placeholder="如：倾听、BATNA、doubles、眼镜、过期、第一桶金…" />
+              <label for="leonSearch"><span data-i18n="fl.搜索卡片">搜索卡片</span></label>
+              <input type="search" id="leonSearch"  data-i18n-ph="fp.如倾听BATNAdoub5777" placeholder="如：倾听、BATNA、doubles、眼镜、过期、第一桶金…" />
             </div>
             <div class="bias-filters" id="leonFilters" role="group" aria-label="来源筛选"></div>
             <div class="inline-row" style="margin-bottom:12px">
               <input type="checkbox" id="leonOnlyMarked" />
-              <label for="leonOnlyMarked" style="margin:0;font-weight:400">只看我对照过的</label>
+              <label for="leonOnlyMarked" style="margin:0;font-weight:400"><span data-i18n="fl.只看我对照过的">只看我对照过的</span></label>
             </div>
-            <div id="leonList"><div class="bias-empty">加载中…</div></div>
+            <div id="leonList"><div class="bias-empty"><span data-i18n="au.297">加载中…</span></div></div>
           </div>
           <div class="card">
-            <p class="card-title">完整材料</p>
-            <p class="card-desc">工具箱只收可检索框架；逐字稿与会议纪要在学习目录。</p>
+            <p class="card-title"><span data-i18n="ws.kpi.d5">完整材料</span></p>
+            <p class="card-desc"><span data-i18n="ws.kpi.d6">工具箱只收可检索框架；逐字稿与会议纪要在学习目录。</span></p>
             <div class="leon-src" id="leonSources"></div>
           </div>
         </div>
@@ -2371,88 +2378,88 @@
     <!-- ========== ⑪ 个人影响力 KPI ========== -->
     <div class="panel" id="panel-kpi">
       <details class="guide" open>
-        <summary>个人影响力 · 使用说明<span class="trap-tag">Key Person of Influence</span></summary>
+        <summary><span data-i18n="au.298">个人影响力 · 使用说明</span><span class="trap-tag">Key Person of Influence</span></summary>
         <div class="guide-body">
-          <div class="formula-box">
+          <div class="formula-box"><span data-i18n="au.299">
             真源：Daniel Priestley《Key Person of Influence》· 蔡蔡方法论笔记。
-            <strong>不仅要做得好，还要让别人知道你做得好。</strong>
+            </span><strong><span data-i18n="au.300">不仅要做得好，还要让别人知道你做得好。</span></strong>
           </div>
-          <p>你已经站在一座价值之山上。KPI 不是网红，是在一个利基里被看见、被需要、被转介的人。「让别人知道」本身要经营。先钉死利基，再把 5P 做成 90 天战役。</p>
+          <p><span data-i18n="ws.kpi.d13">你已经站在一座价值之山上。KPI 不是网红，是在一个利基里被看见、被需要、被转介的人。「让别人知道」本身要经营。先钉死利基，再把 5P 做成 90 天战役。</span></p>
           <ul>
-            <li><strong>Pitch</strong> 推销/提案：先卖观点再卖产品；完整稿按 CAPSTONE；在市场里练</li>
-            <li><strong>Publish</strong> 内容输出：7-11-4；做成即使你不在也能工作的影响力资产</li>
-            <li><strong>Product</strong> 产品化：Gift → P4P → Core → P4C；客户买的是 Outcome</li>
-            <li><strong>Profile</strong> 公众形象：You are what Google says you are · S.A.L.T.</li>
-            <li><strong>Partnership</strong> 合作：相乘不是相加；Brand × Distribution × Product</li>
+            <li><strong>Pitch</strong><span data-i18n="au.301"> 推销/提案：先卖观点再卖产品；完整稿按 CAPSTONE；在市场里练</span></li>
+            <li><strong>Publish</strong><span data-i18n="au.302"> 内容输出：7-11-4；做成即使你不在也能工作的影响力资产</span></li>
+            <li><strong>Product</strong><span data-i18n="au.303"> 产品化：Gift → P4P → Core → P4C；客户买的是 Outcome</span></li>
+            <li><strong>Profile</strong><span data-i18n="au.304"> 公众形象：You are what Google says you are · S.A.L.T.</span></li>
+            <li><strong>Partnership</strong><span data-i18n="au.305"> 合作：相乘不是相加；Brand × Distribution × Product</span></li>
           </ul>
         </div>
       </details>
 
       <div class="kpi-p-grid">
-        <div class="kpi-p"><div class="kpi-en">Pitch</div><h3>推销 / 提案</h3><p>先创造 Lightbulb Moment。Belief drives behavior。你一直都在 Pitch。</p></div>
-        <div class="kpi-p"><div class="kpi-en">Publish</div><h3>内容输出</h3><p>7 小时接触、11 次互动、4 个场景。建立即使你不在也能工作的资产。</p></div>
-        <div class="kpi-p"><div class="kpi-en">Product</div><h3>产品化</h3><p>Gift / P4P / Core / P4C 组成生态。客户买的是 Outcome，不是功能清单。</p></div>
-        <div class="kpi-p"><div class="kpi-en">Profile</div><h3>公众形象</h3><p>S.A.L.T.：社交、奖项背书、线下活动、第三方媒体。搜索结果即你。</p></div>
-        <div class="kpi-p"><div class="kpi-en">Partnership</div><h3>合作</h3><p>10×10×10 相乘。Brand · Distribution · Product 互补。With or without you。</p></div>
+        <div class="kpi-p"><div class="kpi-en">Pitch</div><h3><span data-i18n="ws.kpi.title">推销 / 提案</span></h3><p><span data-i18n="ws.kpi.d14">先创造 Lightbulb Moment。Belief drives behavior。你一直都在 Pitch。</span></p></div>
+        <div class="kpi-p"><div class="kpi-en">Publish</div><h3><span data-i18n="au.306">内容输出</span></h3><p><span data-i18n="ws.kpi.d15">7 小时接触、11 次互动、4 个场景。建立即使你不在也能工作的资产。</span></p></div>
+        <div class="kpi-p"><div class="kpi-en">Product</div><h3><span data-i18n="au.307">产品化</span></h3><p><span data-i18n="ws.kpi.d16">Gift / P4P / Core / P4C 组成生态。客户买的是 Outcome，不是功能清单。</span></p></div>
+        <div class="kpi-p"><div class="kpi-en">Profile</div><h3><span data-i18n="au.308">公众形象</span></h3><p><span data-i18n="ws.kpi.d17">S.A.L.T.：社交、奖项背书、线下活动、第三方媒体。搜索结果即你。</span></p></div>
+        <div class="kpi-p"><div class="kpi-en">Partnership</div><h3><span data-i18n="au.309">合作</span></h3><p><span data-i18n="ws.kpi.d18">10×10×10 相乘。Brand · Distribution · Product 互补。With or without you。</span></p></div>
       </div>
 
       <div class="card">
-        <p class="card-title">利基：你在哪一块被需要</p>
-        <p class="card-desc">KPI 先缩范围。服务所有人 = 谁也记不住你。</p>
-        <div class="field"><label for="kpiNiche">我的利基 / 战场</label><input type="text" id="kpiNiche" placeholder="如：高职实训室数字化、存量住宅更新、个人密度复盘" /></div>
-        <div class="field"><label for="kpiAudience">我服务谁（具体到角色）</label><textarea id="kpiAudience" placeholder="如：教务处实训科老师；想把课改做成可交付工具的高职教师"></textarea></div>
-        <div class="field"><label for="kpiWhy">别人为什么找我，而不是找别人</label><textarea id="kpiWhy" placeholder="如：我能把公文、系统、现场三件事做成同一套可重复产线"></textarea></div>
+        <p class="card-title"><span data-i18n="ws.kpi.d7">利基：你在哪一块被需要</span></p>
+        <p class="card-desc"><span data-i18n="ws.kpi.d8">KPI 先缩范围。服务所有人 = 谁也记不住你。</span></p>
+        <div class="field"><label for="kpiNiche"><span data-i18n="fl.我的利基战场">我的利基 / 战场</span></label><input type="text" id="kpiNiche"  data-i18n-ph="fp.如高职实训室数字化存量住9597" placeholder="如：高职实训室数字化、存量住宅更新、个人密度复盘" /></div>
+        <div class="field"><label for="kpiAudience"><span data-i18n="fl.我服务谁具体到角色">我服务谁（具体到角色）</span></label><textarea id="kpiAudience" placeholder="如：教务处实训科老师；想把课改做成可交付工具的高职教师"></textarea></div>
+        <div class="field"><label for="kpiWhy"><span data-i18n="fl.别人为什么找我而不是找别人">别人为什么找我，而不是找别人</span></label><textarea id="kpiWhy" placeholder="如：我能把公文、系统、现场三件事做成同一套可重复产线"></textarea></div>
       </div>
 
       <div class="card">
-        <p class="card-title">5P 自检（0–10）</p>
-        <p class="card-desc">0 = 这一柱几乎空着 · 10 = 利基里的人已经在用 / 在转介。圆不圆比均分更重要。</p>
+        <p class="card-title"><span data-i18n="ws.kpi.d9">5P 自检（0–10）</span></p>
+        <p class="card-desc"><span data-i18n="ws.kpi.d10">0 = 这一柱几乎空着 · 10 = 利基里的人已经在用 / 在转介。圆不圆比均分更重要。</span></p>
         <div class="stats" id="kpiStats"></div>
         <div id="kpiSliders"></div>
       </div>
 
       <div class="card">
-        <p class="card-title">Pitch 三档（Social → Scheduled → Sales）</p>
-        <p class="card-desc">兴趣 → 参与 → 行动。完整稿可按 CAPSTONE：Clarity / Authority / Problem / Solution / The Why / Opportunity / Next Steps / Essence。先卖观点，再卖产品。</p>
-        <div class="field"><label for="kpiPitch30">Social Pitch · 30 秒</label><textarea id="kpiPitch30" placeholder="第一次见面：你是谁、帮谁、对方为什么要继续听"></textarea></div>
-        <div class="field"><label for="kpiPitch3">Scheduled Pitch · 3 分钟</label><textarea id="kpiPitch3" placeholder="对方已预期你会讲：痛点代价 → 方法 → 一个证据 → 下一步"></textarea></div>
-        <div class="field"><label for="kpiPitch12">Sales Pitch · 12 分钟 / CAPSTONE</label><textarea id="kpiPitch12" placeholder="C 清晰 · A 权威 · P 问题 · S 方案 · T 初衷 · O 机会 · N 下一步 · E 离开时的感觉"></textarea></div>
+        <p class="card-title"><span data-i18n="ws.kpi.d11">Pitch 三档（Social → Scheduled → Sales）</span></p>
+        <p class="card-desc"><span data-i18n="ws.kpi.d12">兴趣 → 参与 → 行动。完整稿可按 CAPSTONE：Clarity / Authority / Problem / Solution / The Why / Opportunity / Next Steps / Essence。先卖观点，再卖产品。</span></p>
+        <div class="field"><label for="kpiPitch30"><span data-i18n="au.310">Social Pitch · 30 秒</span></label><textarea id="kpiPitch30" placeholder="第一次见面：你是谁、帮谁、对方为什么要继续听"></textarea></div>
+        <div class="field"><label for="kpiPitch3"><span data-i18n="au.311">Scheduled Pitch · 3 分钟</span></label><textarea id="kpiPitch3" placeholder="对方已预期你会讲：痛点代价 → 方法 → 一个证据 → 下一步"></textarea></div>
+        <div class="field"><label for="kpiPitch12"><span data-i18n="au.312">Sales Pitch · 12 分钟 / CAPSTONE</span></label><textarea id="kpiPitch12" placeholder="C 清晰 · A 权威 · P 问题 · S 方案 · T 初衷 · O 机会 · N 下一步 · E 离开时的感觉"></textarea></div>
       </div>
 
       <div class="card">
-        <p class="card-title">本季 90 天战役</p>
-        <p class="card-desc">每个 P 只写一件本季能完成的动作。五件同时开工等于一件都不做。</p>
-        <div class="field"><label for="kpiActPitch">Pitch · 本季动作</label><input type="text" id="kpiActPitch" placeholder="如：把 30 秒稿对着 5 个陌生人说完并改一版" /></div>
-        <div class="field"><label for="kpiActPublish">Publish · 本季动作</label><input type="text" id="kpiActPublish" placeholder="如：发 1 篇可转载的方法文，而不是动态" /></div>
-        <div class="field"><label for="kpiActProduct">Product · 本季动作</label><input type="text" id="kpiActProduct" placeholder="如：把工具箱做成可给别人用的 1.0，而不是只自用" /></div>
-        <div class="field"><label for="kpiActProfile">Profile · 本季动作</label><input type="text" id="kpiActProfile" placeholder="如：GitHub / 主页上用一句话写清利基" /></div>
-        <div class="field"><label for="kpiActPartner">Partnership · 本季动作</label><input type="text" id="kpiActPartner" placeholder="如：约 1 个已有流量的节点，交换一次联合分享" /></div>
-        <div class="field"><label for="kpiNote">备注</label><textarea id="kpiNote" placeholder="最低的两根柱子，本季先补哪一根？"></textarea></div>
+        <p class="card-title"><span data-i18n="ws.harvest.d1">本季 90 天战役</span></p>
+        <p class="card-desc"><span data-i18n="ws.harvest.d2">每个 P 只写一件本季能完成的动作。五件同时开工等于一件都不做。</span></p>
+        <div class="field"><label for="kpiActPitch"><span data-i18n="au.313">Pitch · 本季动作</span></label><input type="text" id="kpiActPitch"  data-i18n-ph="fp.如把30秒稿对着5个陌生9228" placeholder="如：把 30 秒稿对着 5 个陌生人说完并改一版" /></div>
+        <div class="field"><label for="kpiActPublish"><span data-i18n="au.314">Publish · 本季动作</span></label><input type="text" id="kpiActPublish"  data-i18n-ph="fp.如发1篇可转载的方法文而4970" placeholder="如：发 1 篇可转载的方法文，而不是动态" /></div>
+        <div class="field"><label for="kpiActProduct"><span data-i18n="au.315">Product · 本季动作</span></label><input type="text" id="kpiActProduct"  data-i18n-ph="fp.如把工具箱做成可给别人用9212" placeholder="如：把工具箱做成可给别人用的 1.0，而不是只自用" /></div>
+        <div class="field"><label for="kpiActProfile"><span data-i18n="au.316">Profile · 本季动作</span></label><input type="text" id="kpiActProfile"  data-i18n-ph="fp.如GitHub主页上用一3406" placeholder="如：GitHub / 主页上用一句话写清利基" /></div>
+        <div class="field"><label for="kpiActPartner"><span data-i18n="au.317">Partnership · 本季动作</span></label><input type="text" id="kpiActPartner"  data-i18n-ph="fp.如约1个已有流量的节点交5946" placeholder="如：约 1 个已有流量的节点，交换一次联合分享" /></div>
+        <div class="field"><label for="kpiNote"><span data-i18n="fl.备注">备注</span></label><textarea id="kpiNote" placeholder="最低的两根柱子，本季先补哪一根？"></textarea></div>
         <div class="actions">
-          <button type="button" class="btn" id="saveKpiBtn">保存当前</button>
-          <button type="button" class="btn btn-ghost" id="snapKpiBtn">存一版快照</button>
-          <button type="button" class="btn btn-ghost" id="clearKpiBtn">清空表单</button>
-          <span class="saved-toast" id="savedKpiToast">已保存</span>
+          <button type="button" class="btn" id="saveKpiBtn"><span data-i18n="ws.btn.saveCur">保存当前</span></button>
+          <button type="button" class="btn btn-ghost" id="snapKpiBtn"><span data-i18n="ws.btn.saveSnap">存一版快照</span></button>
+          <button type="button" class="btn btn-ghost" id="clearKpiBtn"><span data-i18n="ws.btn.clearForm">清空表单</span></button>
+          <span class="saved-toast" id="savedKpiToast"><span data-i18n="au.318">已保存</span></span>
         </div>
       </div>
 
       <div class="card">
-        <p class="card-title">历史快照</p>
-        <p class="card-desc">看 5P 有没有在变圆。数据随整库 JSON 备份。</p>
-        <div class="record-list" id="kpiHistory"><div class="empty-table">还没有快照。打完分后点「存一版快照」。</div></div>
+        <p class="card-title"><span data-i18n="ws.harvest.d3">历史快照</span></p>
+        <p class="card-desc"><span data-i18n="ws.harvest.d4">看 5P 有没有在变圆。数据随整库 JSON 备份。</span></p>
+        <div class="record-list" id="kpiHistory"><div class="empty-table"><span data-i18n="au.319">还没有快照。打完分后点「存一版快照」。</span></div></div>
       </div>
     </div>
 
     <!-- ========== ⑫ 日省收获 ========== -->
     <div class="panel" id="panel-harvest">
       <div class="card">
-        <p class="card-title">周 · 月 · 年关键词</p>
-        <p class="card-desc">从日省记录中自动提炼（三条收获、完成），看见自己走到了哪里。</p>
+        <p class="card-title"><span data-i18n="ws.harvest.d5">周 · 月 · 年关键词</span></p>
+        <p class="card-desc"><span data-i18n="ws.harvest.d6">从日省记录中自动提炼（三条收获、完成），看见自己走到了哪里。</span></p>
         <div class="keywords-wrap" id="keywordsPanel"></div>
       </div>
       <div class="card">
-        <p class="card-title">日省 · 收获</p>
-        <p class="card-desc">主页「行动」记下的<strong>最多三条收获</strong>会按日期汇入此处；每条旁标注归入生命之轮哪一维。空的不显示。</p>
+        <p class="card-title"><span data-i18n="ws.harvest.d7">日省 · 收获</span></p>
+        <p class="card-desc"><span data-i18n="au.320">主页「行动」记下的</span><strong><span data-i18n="au.321">最多三条收获</span></strong><span data-i18n="au.322">会按日期汇入此处；每条旁标注归入生命之轮哪一维。空的不显示。</span></p>
         <div id="harvestPanel"></div>
       </div>
     </div>
@@ -2463,6 +2470,7 @@
 
   
 
+<script src="assets/lixing-i18n.js?v=20260930g"></script>
 <script src="assets/lixing-cloud-auth.js"></script>
   <script src="assets/lixing-v1.js?v=20260830f"></script>
   <script src="assets/cognitive-bias/biases-data.js"></script>
@@ -4216,7 +4224,7 @@
                 <b>例子</b><p>${esc(b.example || "—")}</p>
                 <b>提醒</b><p>${esc(b.tip || "—")}</p>
               </div>
-              ${spot ? `<div class="note-row"><input type="text" data-bias-note="${esc(b.id)}" placeholder="备注：什么场景中过？" value="${esc(spot.note || "")}" /></div>` : ""}
+              ${spot ? `<div class="note-row"><input type="text" data-bias-note="${esc(b.id)}"  data-i18n-ph="fp.备注什么场景中过2518" placeholder="备注：什么场景中过？" value="${esc(spot.note || "")}" /></div>` : ""}
             </div>`;
           }
         }
@@ -4648,7 +4656,7 @@
             <b>怎么做</b><p>${esc(c.how || "—")}</p>
             <b>对照</b><p>${esc(c.check || "—")}</p>
           </div>
-          ${mark ? `<div class="note-row"><input type="text" data-leon-note="${esc(c.id)}" placeholder="这一周我怎么用？" value="${esc(mark.note || "")}" /></div>` : ""}
+          ${mark ? `<div class="note-row"><input type="text" data-leon-note="${esc(c.id)}"  data-i18n-ph="fp.这一周我怎么用8452" placeholder="这一周我怎么用？" value="${esc(mark.note || "")}" /></div>` : ""}
         </div>`;
       }).join("");
     }
@@ -4995,3 +5003,26 @@
   <script src="assets/icons-test.js?v=20260903b"></script>
 </body>
 </html>
+
+<script>
+  /* 030：字体大小 大/中/小 设置（工具台+主页通用，body[data-fs] 缩放） */
+  (function () {
+    var KEY = "life-density-fontsize";
+    function apply(v) {
+      document.documentElement.setAttribute("data-fs", v);
+      var btns = document.querySelectorAll("#fontSizePick .fsp-btn");
+      btns.forEach(function (b) { b.classList.toggle("is-on", b.getAttribute("data-fs") === v); });
+    }
+    var saved;
+    try { saved = localStorage.getItem(KEY) || "m"; } catch (e) { saved = "m"; }
+    apply(saved);
+    document.addEventListener("click", function (ev) {
+      var b = ev.target.closest && ev.target.closest("#fontSizePick .fsp-btn");
+      if (!b) return;
+      var v = b.getAttribute("data-fs");
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      apply(v);
+    });
+    window.__applyFs = apply;
+  })();
+</script>
