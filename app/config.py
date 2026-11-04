@@ -33,6 +33,7 @@ class Settings:
     turso_auth_token: str
     ai_builder_token: str
     ai_builders_backend: str
+    voice_stt_enabled: bool
     static_dir: Path
     port: int
 
@@ -66,6 +67,8 @@ def _build_settings() -> Settings:
         turso_auth_token=os.getenv("TURSO_AUTH_TOKEN", "").strip(),
         ai_builder_token=os.getenv("AI_BUILDER_TOKEN", "").strip(),
         ai_builders_backend=os.getenv("AI_BUILDERS_BACKEND", "https://space.ai-builders.com/backend").strip().rstrip("/"),
+        # 语音转写（Grok STT 按音频时长计费）默认关闭；PRO 服务上线后置 VOICE_STT_ENABLED=true 重新开放
+        voice_stt_enabled=os.getenv("VOICE_STT_ENABLED", "false").lower() in {"1", "true", "yes"},
         static_dir=static,
         port=int(os.getenv("PORT", "8010")),
     )

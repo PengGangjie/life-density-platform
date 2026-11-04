@@ -8,11 +8,14 @@ from .config import get_settings
 
 
 def token_configured() -> bool:
-    return bool(get_settings().ai_builder_token)
+    settings = get_settings()
+    return settings.voice_stt_enabled and bool(settings.ai_builder_token)
 
 
 def transcribe_blob(audio_bytes: bytes, filename: str = "voice.webm", language: str = "zh") -> dict:
     settings = get_settings()
+    if not settings.voice_stt_enabled:
+        return {"ok": False, "error": "语音转写暂未开放，PRO 服务上线后启用", "available": False}
     token = settings.ai_builder_token
     if not token:
         return {"ok": False, "error": "未配置 AI_BUILDER_TOKEN", "available": False}
