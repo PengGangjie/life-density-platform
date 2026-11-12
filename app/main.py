@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import os
+import re
+import time
 from typing import Union
 
 from fastapi import FastAPI, File, Request, UploadFile
@@ -13,6 +15,7 @@ from logto import LogtoClient, LogtoConfig, Storage, UserInfoScope
 from starlette.middleware.sessions import SessionMiddleware
 
 from .config import get_settings
+from .db import add_waitlist as db_add_waitlist
 from .db import get_state, ping_db, put_state, upsert_user
 from . import audio_proxy
 
@@ -37,6 +40,7 @@ PUBLIC_PATHS = {
     "/shenshou.html",
     "/api/me",
     "/api/audio/config",
+    "/api/waitlist",
 }
 
 MAX_AUDIO_BYTES = 15 * 1024 * 1024
@@ -236,6 +240,49 @@ async def write_state(request: Request):
         return JSONResponse({"detail": "data 须为对象"}, status_code=400)
     updated_at = put_state(sub, json.dumps(data, ensure_ascii=False))
     return {"ok": True, "updated_at": updated_at}
+
+
+# ---- PRO 上线通知登记（waitlist）----
+WAITLIST_EMAIL_RE = re.compile(r"^[^@\s]{1,64}@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$")
+_waitlist_hits: dict[str, list[float]] = {}
+WAITLIST_RATE_WINDOW = 60.0
+WAITLIST_RATE_MAX = 5
+
+
+def _rate_limited(ip: str) -> bool:
+    now = time.time()
+    hits = [t for t in _waitlist_hits.get(ip, []) if now - t < WAITLIST_RATE_WINDOW]
+    if len(hits) >= WAITLIST_RATE_MAX:
+        _waitlist_hits[ip] = hits
+        return True
+    hits.append(now)
+    _waitlist_hits[ip] = hits
+    return False
+
+
+@app.post("/api/waitlist")
+async def join_waitlist(request: Request):
+    if _rate_limited(request.client.host if request.client else "anon"):
+        return JSONResponse({"detail": "稍后再试"}, status_code=429)
+    raw = await request.body()
+    if len(raw) > 1024:
+        return JSONResponse({"detail": "payload 过大"}, status_code=413)
+    try:
+        body = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return JSONResponse({"detail": "invalid json"}, status_code=400)
+    email = str(body.get("email", "")).strip() if isinstance(body, dict) else ""
+    lang = str(body.get("lang", ""))[:8] if isinstance(body, dict) else ""
+    source = str(body.get("source", ""))[:32] if isinstance(body, dict) else ""
+    if not email or len(email) > 254 or not WAITLIST_EMAIL_RE.match(email):
+        return JSONResponse({"detail": "邮箱格式不正确"}, status_code=400)
+    try:
+        fresh = db_add_waitlist(email, lang or None, source or None)
+    except RuntimeError:
+        return JSONResponse({"detail": "服务暂不可用，请稍后再试"}, status_code=503)
+    except Exception:
+        return JSONResponse({"detail": "登记失败，请稍后再试"}, status_code=500)
+    return {"ok": True, "fresh": fresh}
 
 
 static_dir = settings.static_dir

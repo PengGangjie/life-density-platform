@@ -169,6 +169,38 @@
     content: "今"; position: absolute; top: 6px; right: 6px; font-size: 10px;
     background: #c9a85c; color: #14110d; border-radius: 3px; padding: 1px 5px;
   }
+  /* ===== 壁纸/桌面组件（聚聚方案 · 神兽版） ===== */
+  .wp-entry { margin-top: 12px; display: flex; gap: 8px; align-items: center; justify-content: center;
+    border: 1px dashed rgba(201,168,92,.45); border-radius: 9px; padding: 9px 12px;
+    color: #f0d78c; font-size: 13px; letter-spacing: .1em; cursor: pointer; background: rgba(201,168,92,.06); }
+  .wp-entry:active { background: rgba(201,168,92,.14); }
+  .wp-entry .d { width: 5px; height: 5px; transform: rotate(45deg); background: #c9a85c; }
+  .wp-mask { position: fixed; inset: 0; z-index: 60; display: none;
+    background: rgba(10,9,13,.82); backdrop-filter: blur(6px); }
+  .wp-mask.open { display: flex; align-items: center; justify-content: center; }
+  .wp-panel { width: min(92vw, 420px); max-height: 88vh; overflow-y: auto; border-radius: 16px;
+    border: 1px solid rgba(201,168,92,.4); background: linear-gradient(176deg, #1d1826, #100e14);
+    box-shadow: 0 18px 60px rgba(0,0,0,.6), 0 0 40px rgba(201,168,92,.08); padding: 20px 18px 18px; }
+  .wp-panel h4 { font-size: 15px; letter-spacing: .3em; color: #c9a85c; text-align: center;
+    text-shadow: 0 0 10px rgba(201,168,92,.3); }
+  .wp-panel .tip { margin-top: 10px; font-size: 11.5px; color: #9a917d; line-height: 1.8; text-align: center; letter-spacing: .06em; }
+  .wp-sizes { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 13px; }
+  .wp-sizes button { border: 1px solid rgba(201,168,92,.4); background: rgba(201,168,92,.07);
+    color: #f0ead9; border-radius: 10px; padding: 12px 8px; font-family: inherit; cursor: pointer; }
+  .wp-sizes button b { display: block; font-size: 14px; letter-spacing: .12em; color: #f0d78c; }
+  .wp-sizes button small { display: block; margin-top: 3px; font-size: 10.5px; color: #9a917d; }
+  .wp-sizes button:active { background: rgba(201,168,92,.16); }
+  .wp-preview { margin-top: 13px; text-align: center; display: none; }
+  .wp-preview img { max-width: 100%; max-height: 46vh; border-radius: 8px;
+    border: 1px solid rgba(201,168,92,.35); }
+  .wp-dl { display: none; margin: 11px auto 0; width: fit-content; text-decoration: none;
+    border: 1.5px solid rgba(201,168,92,.5); color: #f0d78c; border-radius: 999px; padding: 9px 26px;
+    font-size: 13.5px; letter-spacing: .2em; background: linear-gradient(172deg, rgba(201,168,92,.13), rgba(201,168,92,.03));
+    box-shadow: 0 0 16px rgba(201,168,92,.1); }
+  .wp-close { display: block; margin: 13px auto 0; background: none; color: #9a917d;
+    border: 1px solid rgba(154,145,125,.35); border-radius: 999px; padding: 7px 22px;
+    font-family: inherit; font-size: 12.5px; letter-spacing: .18em; cursor: pointer; }
+
   .foot { margin-top: 28px; text-align: center; font-size: 12px; color: #7a7261; letter-spacing: .15em; line-height: 2; }
 </style>
 </head>
@@ -193,6 +225,7 @@
       <div class="quote"><span id="quote">—</span><small id="src"></small></div>
       <div class="story" id="story">—</div>
       <div class="skill"><span class="ic">技能</span><span id="skill">—</span></div>
+      <div class="wp-entry" id="wpEntry"><span class="d"></span>存为壁纸 · 桌面组件</div>
       <div class="morrow">明日 · ？<img id="morrowImg" alt="" width="48" height="36" decoding="async" /></div>
     </div>
   </div>
@@ -215,6 +248,22 @@
 
   <div class="foot">
     <span class="char-li">砺</span>行 · 灰度验证版 · 数据本地留存
+  </div>
+
+  <div class="wp-mask" id="wpMask">
+    <div class="wp-panel">
+      <h4>存为壁纸 · 桌面组件</h4>
+      <p class="tip">生成今日神兽壁纸 → 保存到相册 →<br />iOS 桌面长按 → 添加「照片」小组件 → 选这张照片<br />（官方机制，每日一换，山海常伴）</p>
+      <div class="wp-sizes">
+        <button data-w="1170" data-h="2532" data-v="lock"><b>锁屏壁纸</b><small>1170 × 2532</small></button>
+        <button data-w="800" data-h="800" data-v="widget"><b>小组件 · 小</b><small>800 × 800</small></button>
+        <button data-w="1696" data-h="1180" data-v="widget"><b>小组件 · 中（横）</b><small>1696 × 1180</small></button>
+        <button data-w="1180" data-h="1696" data-v="widget"><b>小组件 · 大（竖）</b><small>1180 × 1696</small></button>
+      </div>
+      <div class="wp-preview" id="wpPreview"><img id="wpImg" alt="壁纸预览" /></div>
+      <a class="wp-dl oil-dl" id="wpDl" download>保存图片</a>
+      <button class="wp-close" id="wpClose">收起</button>
+    </div>
   </div>
 
 <script src="assets/shenshou-data.js?v=20261026"></script>
@@ -412,6 +461,163 @@
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState === "visible" && State.today() !== pageDay) location.reload();
   });
+
+  /* ===== 壁纸生成器（聚聚 drawWallpaper 方案 · 神兽版：金框菱标换红框红星） ===== */
+  var WP = (function () {
+    function loadImg(src) {
+      return new Promise(function (res, rej) {
+        var im = new Image();
+        im.onload = function () { res(im); };
+        im.onerror = rej;
+        im.src = src;
+      });
+    }
+    function artOf(key) {
+      return "assets/shenshou-art/en-" + key + ".jpg";
+    }
+    var kai = 'LXKai, "KaiTi", "STKaiti", serif';
+
+    function diamond(x, cx, cy, r, fill, stroke, lw) {
+      x.save(); x.translate(cx, cy); x.rotate(Math.PI / 4);
+      x.fillStyle = fill; x.strokeStyle = stroke; x.lineWidth = lw;
+      x.fillRect(-r, -r, r * 2, r * 2); x.strokeRect(-r, -r, r * 2, r * 2);
+      x.restore();
+    }
+
+    async function draw(key, W, H, variant) {
+      var b = S.all[key]; if (!b) throw new Error("无神兽");
+      var im;
+      try { im = await loadImg(artOf(key)); }
+      catch (e) { im = await loadImg("assets/shenshou-art/" + key + ".png"); }
+      try {
+        await Promise.race([
+          document.fonts.load('bold 100px LXKai'),
+          new Promise(function (r) { setTimeout(r, 800); })
+        ]);
+      } catch (e) { /* 系统楷体兜底 */ }
+
+      var lock = variant === "lock";
+      var M = Math.round(Math.min(W, H) * (lock ? 0.038 : 0.05));
+      var TOP = lock ? Math.round(H * 0.033) : 0, BOT = lock ? Math.round(H * 0.083) : 0;
+      var c = document.createElement("canvas"); c.width = W; c.height = H;
+      var x = c.getContext("2d");
+      x.fillStyle = "#0f0e12"; x.fillRect(0, 0, W, H);
+
+      /* 插画 cover（锁屏垂直焦点偏上 35%；widget 全幅居中） */
+      var iw = M, Wd = W - M * 2, Hd = H - TOP - BOT;
+      var s = Math.max(Wd / im.width, Hd / im.height);
+      var dw = im.width * s, dh = im.height * s;
+      x.drawImage(im, iw + (Wd - dw) / 2, TOP + (Hd - dh) * (lock ? 0.35 : 0.5), dw, dh);
+
+      /* 暗角渐变（夜墨） */
+      var g = x.createLinearGradient(0, TOP, 0, H - BOT);
+      g.addColorStop(0, "rgba(15,14,18,.42)"); g.addColorStop(.45, "rgba(15,14,18,.08)"); g.addColorStop(1, "rgba(15,14,18,.68)");
+      x.fillStyle = g; x.fillRect(M, TOP, Wd, Hd);
+
+      /* 金色网点 */
+      var dotStep = Math.max(26, Math.round(Math.min(W, H) / 34));
+      x.fillStyle = "rgba(201,168,92,.10)";
+      for (var yy = (lock ? TOP : M) + 18; yy < H - (lock ? BOT : M); yy += dotStep)
+        for (var xx = M + 18; xx < W - M; xx += dotStep) x.fillRect(xx, yy, dotStep / 13, dotStep / 13);
+
+      /* 画框：金双线 + 四角金菱形 */
+      var lw = Math.max(4, Math.round(Math.min(W, H) / 150));
+      x.strokeStyle = "#c9a85c"; x.lineWidth = lw * 1.8; x.strokeRect(M / 2, M / 2, W - M, H - M);
+      x.strokeStyle = "rgba(240,234,217,.55)"; x.lineWidth = lw * .65;
+      x.strokeRect(M / 2 + lw * 3.2, M / 2 + lw * 3.2, W - M - lw * 6.4, H - M - lw * 6.4);
+      var cr = Math.min(W, H) / 52;
+      diamond(x, M / 2, M / 2, cr, "#c9a85c", "rgba(240,234,217,.8)", Math.max(2, lw * .5));
+      diamond(x, W - M / 2, M / 2, cr, "#c9a85c", "rgba(240,234,217,.8)", Math.max(2, lw * .5));
+      diamond(x, W - M / 2, H - M / 2, cr, "#c9a85c", "rgba(240,234,217,.8)", Math.max(2, lw * .5));
+      diamond(x, M / 2, H - M / 2, cr, "#c9a85c", "rgba(240,234,217,.8)", Math.max(2, lw * .5));
+
+      var wx = (S.wuxingNight || S.wuxingColor)[b.wuxing] || "#f0d78c";
+      var sub = "司" + b.dim + (b.dim2 ? "·" + b.dim2 : "") + " · 五行" + b.wuxing + " · " + S.rarityName[b.rarity];
+      if (lock) {
+        /* 顶条：品牌行 */
+        x.fillStyle = "#17141c"; x.fillRect(0, 0, W, TOP);
+        x.fillStyle = "#c9a85c"; for (var tx = 0; tx < W; tx += 26) x.fillRect(tx, TOP - 10, 15, 10);
+        x.fillStyle = "rgba(240,234,217,.9)"; x.font = "700 30px " + kai; x.textBaseline = "middle";
+        x.fillText("砺行 · 山海日课 · LIXING SHANHAI DAILY", M + 26, TOP / 2);
+        /* 底部名牌 */
+        x.fillStyle = "#17141c"; x.fillRect(0, H - BOT, W, BOT);
+        x.fillStyle = "#c9a85c"; for (var bx = 0; bx < W; bx += 26) x.fillRect(bx, H - BOT, 15, 10);
+        x.textAlign = "center"; x.textBaseline = "alphabetic";
+        x.fillStyle = "#f0ead9"; x.font = "bold 104px " + kai;
+        x.fillText(b.name, W / 2, H - BOT + 100);
+        x.fillStyle = wx; x.font = "bold 32px " + kai;
+        x.fillText(sub, W / 2, H - BOT + 156);
+        x.fillStyle = "rgba(201,168,92,.8)"; x.font = "700 24px Consolas,monospace";
+        x.fillText("L I X I N G · 山海日课", W / 2, H - BOT + 200);
+        x.textAlign = "left";
+      } else {
+        /* 小组件版：底部渐变名牌 + 右上稀有度菱标 */
+        var gh = H * 0.36;
+        var g2 = x.createLinearGradient(0, H - gh, 0, H);
+        g2.addColorStop(0, "rgba(15,14,18,0)"); g2.addColorStop(.45, "rgba(15,14,18,.84)"); g2.addColorStop(1, "rgba(15,14,18,.97)");
+        x.fillStyle = g2; x.fillRect(0, H - gh, W, gh);
+        x.textAlign = "center"; x.textBaseline = "alphabetic";
+        var fs = Math.round(Math.min(W, H) * (W > H ? 0.16 : 0.13));
+        x.fillStyle = "#f0ead9"; x.font = "bold " + fs + "px " + kai;
+        x.fillText(b.name, W / 2, H - Math.round(Math.min(W, H) * 0.165));
+        x.fillStyle = wx; x.font = "bold " + Math.round(fs * 0.3) + "px " + kai;
+        x.fillText(sub, W / 2, H - Math.round(Math.min(W, H) * 0.088));
+        x.fillStyle = "rgba(240,234,217,.62)"; x.font = "700 " + Math.round(fs * 0.22) + "px Consolas,monospace";
+        x.fillText("L I X I N G · 山海日课", W / 2, H - Math.round(Math.min(W, H) * 0.045));
+        x.textAlign = "left";
+        var sr = Math.min(W, H) / 21, sx = W - M - sr * 1.5, sy = M + sr * 1.6;
+        var badge = b.rarity === "s1" ? "#d6494f" : "#c9a85c";
+        diamond(x, sx, sy, sr * 0.7, badge, "rgba(240,234,217,.85)", Math.max(2, lw * .5));
+        if (b.rarity === "s1") {
+          x.fillStyle = "#f0ead9"; x.font = "bold " + Math.round(sr * 0.55) + "px " + kai;
+          x.textAlign = "center"; x.fillText("神", sx, sy + sr * 0.2); x.textAlign = "left";
+        }
+      }
+      return c;
+    }
+
+    var mask = document.getElementById("wpMask");
+    var prev = document.getElementById("wpPreview");
+    var img = document.getElementById("wpImg");
+    var dl = document.getElementById("wpDl");
+    var busy = false;
+
+    document.getElementById("wpEntry").addEventListener("click", function () { mask.classList.add("open"); });
+    document.getElementById("wpClose").addEventListener("click", function () { mask.classList.remove("open"); });
+    mask.addEventListener("click", function (e) { if (e.target === mask) mask.classList.remove("open"); });
+
+    Array.prototype.forEach.call(mask.querySelectorAll(".wp-sizes button"), function (btn) {
+      btn.addEventListener("click", async function () {
+        if (busy) return; busy = true;
+        btn.disabled = true;
+        try {
+          var c = await draw(t.key, +btn.dataset.w, +btn.dataset.h, btn.dataset.v);
+          var url = c.toDataURL("image/jpeg", 0.92);
+          img.src = url;
+          dl.href = url;
+          dl.setAttribute("download", "lixing-beast-" + (t.key || "shenshou") + "-" + btn.dataset.v +
+            "-" + btn.dataset.w + "x" + btn.dataset.h + ".jpg");
+          dl.style.display = "block";
+          prev.style.display = "block";
+        } catch (err) {
+          var msg = "生成失败：" + (err && err.message ? err.message : err);
+          err_slot = mask.querySelector(".tip");
+          if (err_slot) err_slot.textContent = msg;
+          if (window.console) console.warn(msg);
+        }
+        btn.disabled = false; busy = false;
+      });
+    });
+    /* ?wp=1 直开弹层并自动生成小组件·小预览（headless 验收用；真机点选任意尺寸） */
+    try {
+      if (/[?&]wp=1/.test(location.search)) {
+        mask.classList.add("open");
+        var auto = mask.querySelector('.wp-sizes button[data-v="widget"][data-w="800"]');
+        if (auto && !/[?&]nogen=1/.test(location.search)) auto.click();
+      }
+    } catch (e) { /* file:// 无 search，忽略 */ }
+    return { draw: draw };
+  })();
 })();
 </script>
 </body>

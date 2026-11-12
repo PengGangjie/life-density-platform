@@ -1,8 +1,10 @@
 /* 砺行升级页（paywall）— 订阅就绪 UI
  * 移植 Supastack apps/mobile/app/paywall.tsx 的角色：功能对比 + 激活入口，
  * 视觉沿用砺行暖纸 + 朱砂（--paper/--accent-warm 设计变量同源）。
- * 现阶段 BILLING_PROVIDER=local：不展示价格（上线时公布），提供激活码入口
- * 供未来内测发放；provider 切换后此处改为拉取订阅商品。
+ * 现阶段 BILLING_PROVIDER=local 且默认 WAITLIST_MODE：不展示价格（上线时公布），
+ * 激活码入口改为 waitlist 邮箱登记（POST /api/waitlist，上线第一时间通知）；
+ * WAITLIST_MODE=false 回退激活码内测发放；provider 切换后此处改为拉取订阅商品。
+ * 原生电容壳内不联网（隐私口径 Data Not Collected）——只展示官网登记指引。
  */
 (function () {
   "use strict";
@@ -67,6 +69,31 @@
     }).join("");
   }
 
+  function waitlistMode() {
+    if (cfg().WAITLIST_MODE === false) return false; /* 显式关才走激活码 */
+    return cfg().BILLING_PROVIDER === "local" || cfg().WAITLIST_MODE === true;
+  }
+  function inNativeApp() {
+    return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+  }
+
+  function actionForm() {
+    if (cfg().PAYWALL_ACTIVATION_INPUT === false) return "";
+    if (!waitlistMode()) {
+      return '<form class="lxpw-act" data-slot="form">'
+        + '<input data-slot="key" placeholder="' + esc(t("pw.key.ph")) + '" autocomplete="off" spellcheck="false" />'
+        + '<button type="submit">' + esc(t("pw.cta")) + "</button></form>"
+        + '<p class="lxpw-err" data-slot="err"></p>';
+    }
+    if (inNativeApp()) {
+      return '<p class="lxpw-err" data-slot="err" style="display:block;text-align:center;">' + esc(t("pw.wait.native")) + "</p>";
+    }
+    return '<form class="lxpw-act" data-slot="form">'
+      + '<input data-slot="key" type="email" placeholder="' + esc(t("pw.wait.ph")) + '" autocomplete="email" spellcheck="false" />'
+      + '<button type="submit">' + esc(t("pw.wait.cta")) + "</button></form>"
+      + '<p class="lxpw-err" data-slot="err"></p>';
+  }
+
   function build() {
     var style = document.createElement("style");
     style.textContent = [
@@ -127,11 +154,7 @@
       + '<ul class="lxpw-list">' + featureRows() + "</ul>"
       + addonSection
       + '<div data-slot="state">' + statusLine() + "</div>"
-      + (cfg().PAYWALL_ACTIVATION_INPUT === false ? "" :
-         '<form class="lxpw-act" data-slot="form">'
-      + '<input data-slot="key" placeholder="' + esc(t("pw.key.ph")) + '" autocomplete="off" spellcheck="false" />'
-      + '<button type="submit">' + esc(t("pw.cta")) + "</button></form>"
-      + '<p class="lxpw-err" data-slot="err"></p>')
+      + actionForm()
       + '<p class="lxpw-note">' + esc(t("pw.note")) + "</p>"
       + "</div>";
 
@@ -172,10 +195,38 @@
 
   function onSubmit(ev) {
     ev.preventDefault();
-    if (!window.LixingEntitlements) return;
+    var form = modal.querySelector('[data-slot="form"]');
+    if (!form) return;
     var input = modal.querySelector('[data-slot="key"]');
     var btn = modal.querySelector('.lxpw-act button');
     var err = modal.querySelector('[data-slot="err"]');
+    if (waitlistMode()) {
+      /* waitlist：邮箱登记，POST /api/waitlist；file:// 或断网走兜底文案 */
+      var email = (input.value || "").trim();
+      if (!/^[^@\s]{1,64}@[A-Za-z0-9.-]+\.[A-Za-z0-9-]+$/.test(email)) {
+        err.textContent = t("pw.wait.err");
+        return;
+      }
+      btn.disabled = true;
+      fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, lang: lang(), source: "paywall" })
+      }).then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      }).then(function (d) {
+        btn.disabled = false;
+        input.value = "";
+        err.style.color = "var(--accent-warm,#c93756)";
+        err.textContent = d && d.fresh === false ? t("pw.wait.dup") : t("pw.wait.ok");
+      }).catch(function () {
+        btn.disabled = false;
+        err.textContent = t("pw.wait.err");
+      });
+      return;
+    }
+    if (!window.LixingEntitlements) return;
     btn.disabled = true;
     window.LixingEntitlements.activate(input.value.trim()).then(function (r) {
       btn.disabled = false;

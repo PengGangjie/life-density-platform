@@ -29,6 +29,12 @@ CREATE TABLE IF NOT EXISTS life_state_pending (
   data_json TEXT NOT NULL,
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS waitlist (
+  email TEXT PRIMARY KEY,
+  lang TEXT,
+  source TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 """
 
 
@@ -235,3 +241,18 @@ def consume_pending(email: str) -> None:
             "DELETE FROM life_state_pending WHERE lower(email) = ?",
             [email],
         )
+
+
+def add_waitlist(email: str, lang: str | None = None, source: str | None = None) -> bool:
+    """PRO 上线通知登记（email 主键幂等）。返回是否新插入。"""
+    ensure_schema()
+    email = email.strip().lower()
+    with turso_client() as client:
+        rows = client.execute("SELECT 1 FROM waitlist WHERE email = ?", [email]).rows
+        if rows:
+            return False
+        client.execute(
+            "INSERT INTO waitlist (email, lang, source) VALUES (?, ?, ?)",
+            [email, lang, source],
+        )
+        return True
